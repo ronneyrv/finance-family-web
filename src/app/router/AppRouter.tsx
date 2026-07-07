@@ -7,6 +7,8 @@ import CreditCardsPage from '../../pages/CreditCards/CreditCardsPage'
 import TransactionsPage from '../../pages/Transactions/TransactionsPage'
 import DashboardPage from '../../pages/Dashboard/DashboardPage'
 import AppLayout from '../../components/layout/AppLayout'
+import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
+import { ProtectedRoute } from '../../components/auth/ProtectedRoute'
 
 function AppRouter() {
   return (
@@ -14,14 +16,18 @@ function AppRouter() {
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        <Route path="/login" element={<LoginPage />} />
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
 
-        <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/transactions" element={<TransactionsPage />} />
-          <Route path="/credit-cards" element={<CreditCardsPage />} />
-          <Route path="/purchases" element={<PurchasesPage />} />
-          <Route path="/goals" element={<GoalsPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/credit-cards" element={<CreditCardsPage />} />
+            <Route path="/purchases" element={<PurchasesPage />} />
+            <Route path="/goals" element={<GoalsPage />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

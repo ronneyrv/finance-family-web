@@ -1,3 +1,4 @@
+import { authStorage } from '../../features/auth/storage/authStorage'
 import { ApiError, type ApiErrorResponse } from './apiError'
 import type { RequestOptions } from './types'
 
@@ -8,6 +9,7 @@ async function request<TResponse, TBody = unknown>(
   options: RequestOptions<TBody> = {},
 ): Promise<TResponse> {
   const { body, headers, ...requestInit } = options
+  const accessToken = authStorage.getAccessToken()
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...requestInit,
@@ -15,6 +17,9 @@ async function request<TResponse, TBody = unknown>(
       Accept: 'application/json',
       ...(body !== undefined && {
         'Content-Type': 'application/json',
+      }),
+      ...(accessToken && {
+        Authorization: `Bearer ${accessToken}`,
       }),
       ...headers,
     },
