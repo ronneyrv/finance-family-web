@@ -1,0 +1,173 @@
+import { formatCurrency } from '../../../lib/formatters/currency'
+import { formatDate } from '../../../lib/formatters/date'
+import type { TransactionResponse } from '../model/transactionTypes'
+import { Pencil, Trash2 } from 'lucide-react'
+import { paymentMethodLabels } from '../model/paymentMethods'
+
+type TransactionListProps = {
+  transactions: TransactionResponse[]
+  onEdit: (transaction: TransactionResponse) => void
+  onDelete: (transaction: TransactionResponse) => void
+}
+
+function TransactionList({ transactions, onEdit, onDelete }: TransactionListProps) {
+  if (transactions.length === 0) {
+    return (
+      <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-8 text-center">
+        <p className="font-medium">Nenhuma transação encontrada</p>
+
+        <p className="mt-2 text-sm text-slate-400">
+          Suas movimentações financeiras aparecerão aqui.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8">
+      <div className="space-y-3 lg:hidden">
+        {transactions.map((transaction) => (
+          <article
+            key={transaction.id}
+            className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="truncate font-medium">{transaction.description}</h2>
+
+                <p className="mt-1 text-sm text-slate-400">
+                  {transaction.category}
+                  {transaction.subCategory ? ` · ${transaction.subCategory}` : ''}
+                </p>
+
+                <p className="mt-2 text-xs text-slate-500">
+                  {formatDate(transaction.transactionDate)}
+                  {' · '}
+                  {paymentMethodLabels[transaction.paymentMethod]}
+                </p>
+              </div>
+
+              <span
+                className={
+                  transaction.type === 'INCOME'
+                    ? 'shrink-0 font-semibold text-emerald-400'
+                    : 'shrink-0 font-semibold text-red-400'
+                }
+              >
+                {transaction.type === 'INCOME' ? '+' : '-'} {formatCurrency(transaction.amount)}
+              </span>
+            </div>
+            <div className="mt-4 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => onEdit(transaction)}
+                className="flex items-center gap-2 text-sm font-medium text-emerald-400 transition hover:text-emerald-300"
+                aria-label={`Editar ${transaction.description}`}
+              >
+                <Pencil size={16} />
+                Editar
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onDelete(transaction)}
+                className="flex items-center gap-2 text-sm font-medium text-red-400 transition hover:text-red-300"
+                aria-label={`Excluir ${transaction.description}`}
+              >
+                <Trash2 size={16} />
+                Excluir
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-xl border border-slate-800 bg-slate-950 lg:block">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="border-b border-slate-800 bg-slate-900/50">
+              <tr className="text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                <th className="px-6 py-4">Data</th>
+                <th className="px-6 py-4">Descrição</th>
+                <th className="px-6 py-4">Categoria</th>
+                <th className="px-6 py-4">Tipo</th>
+                <th className="px-6 py-4">Pagamento</th>
+                <th className="px-6 py-4 text-right">Valor</th>
+                <th className="px-6 py-4 text-right">Ações</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-800">
+              {transactions.map((transaction) => (
+                <tr key={transaction.id} className="transition-colors hover:bg-slate-900/50">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
+                    {formatDate(transaction.transactionDate)}
+                  </td>
+
+                  <td className="px-6 py-4 font-medium">{transaction.description}</td>
+
+                  <td className="px-6 py-4">
+                    <p className="text-sm">{transaction.category}</p>
+
+                    {transaction.subCategory && (
+                      <p className="mt-1 text-xs text-slate-500">{transaction.subCategory}</p>
+                    )}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <span
+                      className={
+                        transaction.type === 'INCOME'
+                          ? 'rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400'
+                          : 'rounded-full bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400'
+                      }
+                    >
+                      {transaction.type === 'INCOME' ? 'Receita' : 'Despesa'}
+                    </span>
+                  </td>
+
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
+                    {paymentMethodLabels[transaction.paymentMethod]}
+                  </td>
+
+                  <td
+                    className={
+                      transaction.type === 'INCOME'
+                        ? 'whitespace-nowrap px-6 py-4 text-right font-semibold text-emerald-400'
+                        : 'whitespace-nowrap px-6 py-4 text-right font-semibold text-red-400'
+                    }
+                  >
+                    {transaction.type === 'INCOME' ? '+' : '-'} {formatCurrency(transaction.amount)}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(transaction)}
+                      className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-emerald-500/10 hover:text-emerald-400"
+                      aria-label={`Editar ${transaction.description}`}
+                      title="Editar transação"
+                    >
+                      <Pencil size={18} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onDelete(transaction)}
+                      className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-red-500/10 hover:text-red-400"
+                      aria-label={`Excluir ${transaction.description}`}
+                      title="Excluir transação"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default TransactionList
