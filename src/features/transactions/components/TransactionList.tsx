@@ -11,6 +11,14 @@ type TransactionListProps = {
 }
 
 function TransactionList({ transactions, onEdit, onDelete }: TransactionListProps) {
+  function getCategoryLabel(transaction: TransactionResponse) {
+    if (transaction.transactionKind === 'CREDIT_CARD_PAYMENT') {
+      return 'Pagamento de fatura'
+    }
+
+    return transaction.category ?? 'Sem categoria'
+  }
+
   if (transactions.length === 0) {
     return (
       <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-8 text-center">
@@ -36,8 +44,10 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                 <h2 className="truncate font-medium">{transaction.description}</h2>
 
                 <p className="mt-1 text-sm text-slate-400">
-                  {transaction.category}
-                  {transaction.subCategory ? ` · ${transaction.subCategory}` : ''}
+                  {getCategoryLabel(transaction)}
+                  {transaction.transactionKind === 'REGULAR' && transaction.subCategory
+                    ? ` · ${transaction.subCategory}`
+                    : ''}
                 </p>
 
                 <p className="mt-2 text-xs text-slate-500">
@@ -57,27 +67,30 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                 {transaction.type === 'INCOME' ? '+' : '-'} {formatCurrency(transaction.amount)}
               </span>
             </div>
-            <div className="mt-4 flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => onEdit(transaction)}
-                className="flex items-center gap-2 text-sm font-medium text-emerald-400 transition hover:text-emerald-300"
-                aria-label={`Editar ${transaction.description}`}
-              >
-                <Pencil size={16} />
-                Editar
-              </button>
 
-              <button
-                type="button"
-                onClick={() => onDelete(transaction)}
-                className="flex items-center gap-2 text-sm font-medium text-red-400 transition hover:text-red-300"
-                aria-label={`Excluir ${transaction.description}`}
-              >
-                <Trash2 size={16} />
-                Excluir
-              </button>
-            </div>
+            {transaction.transactionKind === 'REGULAR' && (
+              <div className="mt-4 flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => onEdit(transaction)}
+                  className="flex items-center gap-2 text-sm font-medium text-emerald-400 transition hover:text-emerald-300"
+                  aria-label={`Editar ${transaction.description}`}
+                >
+                  <Pencil size={16} />
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onDelete(transaction)}
+                  className="flex items-center gap-2 text-sm font-medium text-red-400 transition hover:text-red-300"
+                  aria-label={`Excluir ${transaction.description}`}
+                >
+                  <Trash2 size={16} />
+                  Excluir
+                </button>
+              </div>
+            )}
           </article>
         ))}
       </div>
@@ -107,10 +120,16 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                   <td className="px-6 py-4 font-medium">{transaction.description}</td>
 
                   <td className="px-6 py-4">
-                    <p className="text-sm">{transaction.category}</p>
+                    <p className="text-sm">{getCategoryLabel(transaction)}</p>
 
-                    {transaction.subCategory && (
-                      <p className="mt-1 text-xs text-slate-500">{transaction.subCategory}</p>
+                    {transaction.transactionKind === 'CREDIT_CARD_PAYMENT' ? (
+                      <p className="mt-1 text-xs text-slate-500">
+                        Conta: {transaction.accountName}
+                      </p>
+                    ) : (
+                      transaction.subCategory && (
+                        <p className="mt-1 text-xs text-slate-500">{transaction.subCategory}</p>
+                      )
                     )}
                   </td>
 
@@ -139,26 +158,31 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                   >
                     {transaction.type === 'INCOME' ? '+' : '-'} {formatCurrency(transaction.amount)}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right">
-                    <button
-                      type="button"
-                      onClick={() => onEdit(transaction)}
-                      className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-emerald-500/10 hover:text-emerald-400"
-                      aria-label={`Editar ${transaction.description}`}
-                      title="Editar transação"
-                    >
-                      <Pencil size={18} />
-                    </button>
 
-                    <button
-                      type="button"
-                      onClick={() => onDelete(transaction)}
-                      className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-red-500/10 hover:text-red-400"
-                      aria-label={`Excluir ${transaction.description}`}
-                      title="Excluir transação"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
+                    {transaction.transactionKind === 'REGULAR' && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => onEdit(transaction)}
+                          className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-emerald-500/10 hover:text-emerald-400"
+                          aria-label={`Editar ${transaction.description}`}
+                          title="Editar transação"
+                        >
+                          <Pencil size={18} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => onDelete(transaction)}
+                          className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-red-500/10 hover:text-red-400"
+                          aria-label={`Excluir ${transaction.description}`}
+                          title="Excluir transação"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
