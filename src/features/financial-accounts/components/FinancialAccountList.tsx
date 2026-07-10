@@ -1,0 +1,111 @@
+import { Banknote, Landmark, Pencil, PiggyBank, Trash2, WalletCards } from 'lucide-react'
+
+import { formatCurrency } from '../../../lib/formatters/currency'
+import type { AccountType, FinancialAccountResponse } from '../model/financialAccountTypes'
+
+type FinancialAccountListProps = {
+  financialAccounts: FinancialAccountResponse[]
+  onEdit: (financialAccount: FinancialAccountResponse) => void
+  onDelete: (financialAccount: FinancialAccountResponse) => void
+}
+
+const accountTypeLabels: Record<AccountType, string> = {
+  CHECKING_ACCOUNT: 'Conta corrente',
+  SAVINGS_ACCOUNT: 'Conta poupança',
+  DIGITAL_ACCOUNT: 'Conta digital',
+  CASH: 'Dinheiro',
+}
+
+const accountTypeIcons = {
+  CHECKING_ACCOUNT: Landmark,
+  SAVINGS_ACCOUNT: PiggyBank,
+  DIGITAL_ACCOUNT: WalletCards,
+  CASH: Banknote,
+} satisfies Record<AccountType, typeof Landmark>
+
+function FinancialAccountList({ financialAccounts, onEdit, onDelete }: FinancialAccountListProps) {
+  if (financialAccounts.length === 0) {
+    return (
+      <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-8 text-center">
+        <WalletCards className="mx-auto text-slate-500" size={32} />
+
+        <p className="mt-4 font-medium">Nenhuma conta financeira cadastrada</p>
+
+        <p className="mt-2 text-sm text-slate-400">
+          Cadastre uma conta para acompanhar seus saldos e realizar pagamentos.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {financialAccounts.map((financialAccount) => {
+        const Icon = accountTypeIcons[financialAccount.accountType]
+
+        return (
+          <article
+            key={financialAccount.id}
+            className="rounded-xl border border-slate-800 bg-slate-950 p-5"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400">
+                  <Icon size={22} />
+                </div>
+
+                <div className="min-w-0">
+                  <h2 className="truncate font-semibold">{financialAccount.name}</h2>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    {accountTypeLabels[financialAccount.accountType]}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 gap-1">
+                <button
+                  type="button"
+                  onClick={() => onEdit(financialAccount)}
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-emerald-500/10 hover:text-emerald-400"
+                  aria-label={`Editar ${financialAccount.name}`}
+                  title="Editar conta"
+                >
+                  <Pencil size={17} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onDelete(financialAccount)}
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-red-500/10 hover:text-red-400"
+                  aria-label={`Excluir ${financialAccount.name}`}
+                  title="Excluir conta"
+                >
+                  <Trash2 size={17} />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Saldo atual</p>
+
+              <p className="mt-1 text-xl font-semibold">
+                {formatCurrency(financialAccount.currentBalance)}
+              </p>
+            </div>
+
+            <div className="mt-6 border-t border-slate-800 pt-4">
+              <p className="text-xs text-slate-500">Saldo inicial</p>
+
+              <p className="mt-1 text-sm font-medium">
+                {formatCurrency(financialAccount.initialBalance)}
+              </p>
+            </div>
+          </article>
+        )
+      })}
+    </div>
+  )
+}
+
+export default FinancialAccountList

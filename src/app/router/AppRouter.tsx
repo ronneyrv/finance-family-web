@@ -1,4 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
+import { ProtectedRoute } from '../../components/auth/ProtectedRoute'
 import LoginPage from '../../pages/Login/LoginPage'
 import NotFoundPage from '../../pages/NotFound/NotFoundPage'
 import GoalsPage from '../../pages/Goals/GoalsPage'
@@ -7,9 +9,8 @@ import CreditCardsPage from '../../pages/CreditCards/CreditCardsPage'
 import TransactionsPage from '../../pages/Transactions/TransactionsPage'
 import DashboardPage from '../../pages/Dashboard/DashboardPage'
 import AppLayout from '../../components/layout/AppLayout'
-import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
-import { ProtectedRoute } from '../../components/auth/ProtectedRoute'
 import InvoicesPage from '../../pages/Invoices/InvoicesPage'
+import FinancialAccountsPage from '../../pages/FinancialAccounts/FinancialAccountsPage'
 
 function AppRouter() {
   return (
@@ -25,6 +26,7 @@ function AppRouter() {
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/financial-accounts" element={<FinancialAccountsPage />} />
             <Route path="/credit-cards" element={<CreditCardsPage />} />
             <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/purchases" element={<PurchasesPage />} />
