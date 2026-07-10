@@ -123,7 +123,7 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
             max="31"
             value={closingDay}
             onChange={(event) => setClosingDay(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
         </label>
 
@@ -138,7 +138,7 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
             max="31"
             value={dueDay}
             onChange={(event) => setDueDay(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
         </label>
       </div>

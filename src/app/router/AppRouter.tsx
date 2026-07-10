@@ -9,6 +9,7 @@ import DashboardPage from '../../pages/Dashboard/DashboardPage'
 import AppLayout from '../../components/layout/AppLayout'
 import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
 import { ProtectedRoute } from '../../components/auth/ProtectedRoute'
+import InvoicesPage from '../../pages/Invoices/InvoicesPage'
 
 function AppRouter() {
   return (
@@ -25,6 +26,7 @@ function AppRouter() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/credit-cards" element={<CreditCardsPage />} />
+            <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/purchases" element={<PurchasesPage />} />
             <Route path="/goals" element={<GoalsPage />} />
           </Route>

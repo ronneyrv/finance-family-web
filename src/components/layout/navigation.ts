@@ -1,5 +1,6 @@
 import {
   CreditCard,
+  FileText,
   Goal,
   LayoutDashboard,
   ReceiptText,
@@ -28,6 +29,11 @@ export const navigationItems: NavigationItem[] = [
     label: 'Cartões',
     path: '/credit-cards',
     icon: CreditCard,
+  },
+  {
+    label: 'Faturas',
+    path: '/invoices',
+    icon: FileText,
   },
   {
     label: 'Compras',
