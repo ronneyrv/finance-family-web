@@ -5,6 +5,8 @@ import type { CategoryResponse, SubCategoryResponse } from '../../categories/mod
 import { transactionsApi } from '../api/transactionsApi'
 import { paymentMethodLabels, paymentMethodsByType } from '../model/paymentMethods'
 import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
+import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
+import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -26,12 +28,40 @@ function TransactionForm({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
     transaction?.paymentMethod ?? 'PIX',
   )
+  const [accountId, setAccountId] = useState(transaction?.accountId ?? '')
   const [categoryId, setCategoryId] = useState(transaction?.categoryId ?? '')
   const [subCategoryId, setSubCategoryId] = useState(transaction?.subCategoryId ?? '')
+
+  const [financialAccounts, setFinancialAccounts] = useState<FinancialAccountResponse[]>([])
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    let isCancelled = false
+
+    async function loadFinancialAccounts() {
+      try {
+        const response = await financialAccountsApi.findAll()
+
+        if (!isCancelled) {
+          setFinancialAccounts(response)
+        }
+      } catch {
+        if (!isCancelled) {
+          setErrorMessage('Não foi possível carregar as contas financeiras.')
+        }
+      }
+    }
+
+    void loadFinancialAccounts()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     let isCancelled = false
@@ -115,6 +145,7 @@ function TransactionForm({
         transactionDate,
         type,
         paymentMethod,
+        accountId,
         categoryId,
         subCategoryId: subCategoryId || undefined,
       }
@@ -183,6 +214,25 @@ function TransactionForm({
             {paymentMethodsByType[type].map((method) => (
               <option key={method} value={method}>
                 {paymentMethodLabels[method]}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="sm:col-span-2">
+          <span className="text-sm text-slate-300">Conta financeira</span>
+
+          <select
+            required
+            value={accountId}
+            onChange={(event) => setAccountId(event.target.value)}
+            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+          >
+            <option value="">Selecione uma conta</option>
+
+            {financialAccounts.map((financialAccount) => (
+              <option key={financialAccount.id} value={financialAccount.id}>
+                {financialAccount.name}
               </option>
             ))}
           </select>

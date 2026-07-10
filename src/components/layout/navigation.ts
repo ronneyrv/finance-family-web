@@ -4,7 +4,7 @@ import {
   Goal,
   LayoutDashboard,
   ReceiptText,
-  ShoppingCart,
+  Landmark,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -26,6 +26,11 @@ export const navigationItems: NavigationItem[] = [
     icon: ReceiptText,
   },
   {
+    label: 'Contas',
+    path: '/financial-accounts',
+    icon: Landmark,
+  },
+  {
     label: 'Cartões',
     path: '/credit-cards',
     icon: CreditCard,
@@ -34,11 +39,6 @@ export const navigationItems: NavigationItem[] = [
     label: 'Faturas',
     path: '/invoices',
     icon: FileText,
-  },
-  {
-    label: 'Compras',
-    path: '/purchases',
-    icon: ShoppingCart,
   },
   {
     label: 'Metas',
