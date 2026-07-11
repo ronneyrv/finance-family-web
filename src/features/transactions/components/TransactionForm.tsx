@@ -3,13 +3,19 @@ import { useEffect, useState, type SubmitEvent } from 'react'
 import { categoriesApi } from '../../categories/api/categoriesApi'
 import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
 import { transactionsApi } from '../api/transactionsApi'
-import { paymentMethodLabels, paymentMethodsByType } from '../model/paymentMethods'
+import { paymentMethodsByType } from '../model/paymentMethods'
 import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
 import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
 import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
 import { creditCardsApi } from '../../credit-cards/api/creditCardsApi'
 import type { CreditCardResponse } from '../../credit-cards/model/creditCardTypes'
 import { purchasesApi } from '../../purchases/api/purchasesApi'
+import TransactionTypeSelector from './form/TransactionTypeSelector'
+import PaymentMethodSelector from './form/PaymentMethodSelector'
+import InstallmentSelector from './form/InstallmentSelector'
+import CreditCardSelector from './form/CreditCardSelector'
+import FinancialAccountSelector from './form/FinancialAccountSelector'
+import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -135,7 +141,7 @@ function TransactionForm({
     if (!paymentMethodsByType[nextType].includes(paymentMethod)) {
       setPaymentMethod('PIX')
       setCreditCardId('')
-      setInstallments('1')
+      setInstallments('')
     }
   }
 
@@ -149,7 +155,7 @@ function TransactionForm({
       setSubCategories([])
     } else {
       setCreditCardId('')
-      setInstallments('1')
+      setInstallments('')
     }
   }
 
@@ -178,7 +184,7 @@ function TransactionForm({
         setAmount('')
         setTransactionDate('')
         setCreditCardId('')
-        setInstallments('1')
+        setInstallments('')
         setCategoryId('')
         setSubCategoryId('')
         setSubCategories([])
@@ -243,93 +249,29 @@ function TransactionForm({
       </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <label className="sm:col-span-2">
-          <span className="text-sm text-slate-300">Tipo</span>
+        <TransactionTypeSelector value={type} onChange={handleTypeChange} />
 
-          <select
-            value={type}
-            onChange={(event) => handleTypeChange(event.target.value as TransactionType)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-          >
-            <option value="EXPENSE">Despesa</option>
-            <option value="INCOME">Receita</option>
-          </select>
-        </label>
-
-        <label className="sm:col-span-2">
-          <span className="text-sm text-slate-300">Forma de pagamento</span>
-
-          <select
-            value={paymentMethod}
-            onChange={(event) => handlePaymentMethodChange(event.target.value as PaymentMethod)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-          >
-            {paymentMethodsByType[type]
-              .filter((method) => !transaction || method !== 'CREDIT_CARD')
-              .map((method) => (
-                <option key={method} value={method}>
-                  {paymentMethodLabels[method]}
-                </option>
-              ))}
-          </select>
-        </label>
+        <PaymentMethodSelector
+          methods={paymentMethodsByType[type]}
+          value={paymentMethod}
+          onChange={handlePaymentMethodChange}
+        />
 
         {paymentMethod === 'CREDIT_CARD' ? (
           <>
-            <label>
-              <span className="text-sm text-slate-300">Cartão de crédito</span>
-
-              <select
-                required
-                value={creditCardId}
-                onChange={(event) => setCreditCardId(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-              >
-                <option value="">Selecione um cartão</option>
-
-                {creditCards.map((creditCard) => (
-                  <option key={creditCard.id} value={creditCard.id}>
-                    {creditCard.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              <span className="text-sm text-slate-300">Parcelas</span>
-
-              <input
-                required
-                type="number"
-                inputMode="numeric"
-                min="1"
-                max="36"
-                step="1"
-                value={installments}
-                onChange={(event) => setInstallments(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              />
-            </label>
+            <CreditCardSelector
+              creditCards={creditCards}
+              value={creditCardId}
+              onChange={setCreditCardId}
+            />
+            <InstallmentSelector value={installments} onChange={setInstallments} />
           </>
         ) : (
-          <label className="sm:col-span-2">
-            <span className="text-sm text-slate-300">Conta financeira</span>
-
-            <select
-              required
-              value={accountId}
-              onChange={(event) => setAccountId(event.target.value)}
-              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-            >
-              <option value="">Selecione uma conta</option>
-
-              {financialAccounts.map((financialAccount) => (
-                <option key={financialAccount.id} value={financialAccount.id}>
-                  {financialAccount.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <FinancialAccountSelector
+            accounts={financialAccounts}
+            value={accountId}
+            onChange={setAccountId}
+          />
         )}
 
         <label>
@@ -339,7 +281,7 @@ function TransactionForm({
             required
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className={fieldClassName}
           />
         </label>
 
@@ -355,7 +297,7 @@ function TransactionForm({
             placeholder="0,00"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
           />
         </label>
 
@@ -367,7 +309,7 @@ function TransactionForm({
             type="date"
             value={transactionDate}
             onChange={(event) => setTransactionDate(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className={fieldClassName}
           />
         </label>
 
@@ -380,7 +322,7 @@ function TransactionForm({
                 required
                 value={categoryId}
                 onChange={(event) => handleCategoryChange(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+                className={fieldClassName}
               >
                 <option value="">Selecione</option>
 
@@ -399,7 +341,7 @@ function TransactionForm({
                 value={subCategoryId}
                 disabled={!categoryId}
                 onChange={(event) => setSubCategoryId(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 disabled:cursor-not-allowed disabled:opacity-50"
+                className={fieldClassName}
               >
                 <option value="">Sem subcategoria</option>
 
