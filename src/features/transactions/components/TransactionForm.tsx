@@ -7,6 +7,9 @@ import { paymentMethodLabels, paymentMethodsByType } from '../model/paymentMetho
 import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
 import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
 import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
+import { creditCardsApi } from '../../credit-cards/api/creditCardsApi'
+import type { CreditCardResponse } from '../../credit-cards/model/creditCardTypes'
+import { purchasesApi } from '../../purchases/api/purchasesApi'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -29,10 +32,14 @@ function TransactionForm({
     transaction?.paymentMethod ?? 'PIX',
   )
   const [accountId, setAccountId] = useState(transaction?.accountId ?? '')
+  const [creditCardId, setCreditCardId] = useState('')
+  const [installments, setInstallments] = useState('1')
+
   const [categoryId, setCategoryId] = useState(transaction?.categoryId ?? '')
   const [subCategoryId, setSubCategoryId] = useState(transaction?.subCategoryId ?? '')
 
   const [financialAccounts, setFinancialAccounts] = useState<FinancialAccountResponse[]>([])
+  const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
 
@@ -42,21 +49,25 @@ function TransactionForm({
   useEffect(() => {
     let isCancelled = false
 
-    async function loadFinancialAccounts() {
+    async function loadPaymentSources() {
       try {
-        const response = await financialAccountsApi.findAll()
+        const [financialAccountsResponse, creditCardsResponse] = await Promise.all([
+          financialAccountsApi.findAll(),
+          creditCardsApi.findAll(),
+        ])
 
         if (!isCancelled) {
-          setFinancialAccounts(response)
+          setFinancialAccounts(financialAccountsResponse)
+          setCreditCards(creditCardsResponse)
         }
       } catch {
         if (!isCancelled) {
-          setErrorMessage('Não foi possível carregar as contas financeiras.')
+          setErrorMessage('Não foi possível carregar as contas e cartões.')
         }
       }
     }
 
-    void loadFinancialAccounts()
+    void loadPaymentSources()
 
     return () => {
       isCancelled = true
@@ -123,6 +134,22 @@ function TransactionForm({
 
     if (!paymentMethodsByType[nextType].includes(paymentMethod)) {
       setPaymentMethod('PIX')
+      setCreditCardId('')
+      setInstallments('1')
+    }
+  }
+
+  function handlePaymentMethodChange(nextPaymentMethod: PaymentMethod) {
+    setPaymentMethod(nextPaymentMethod)
+
+    if (nextPaymentMethod === 'CREDIT_CARD') {
+      setAccountId('')
+      setCategoryId('')
+      setSubCategoryId('')
+      setSubCategories([])
+    } else {
+      setCreditCardId('')
+      setInstallments('1')
     }
   }
 
@@ -138,6 +165,26 @@ function TransactionForm({
     try {
       setIsSubmitting(true)
       setErrorMessage(null)
+
+      if (paymentMethod === 'CREDIT_CARD') {
+        await purchasesApi.create(creditCardId, {
+          description,
+          totalAmount: Number(amount),
+          installments: Number(installments),
+          purchaseDate: transactionDate,
+        })
+
+        setDescription('')
+        setAmount('')
+        setTransactionDate('')
+        setCreditCardId('')
+        setInstallments('1')
+        setCategoryId('')
+        setSubCategoryId('')
+        setSubCategories([])
+
+        return
+      }
 
       const request = {
         description,
@@ -167,7 +214,13 @@ function TransactionForm({
         setSubCategories([])
       }
     } catch {
-      setErrorMessage('Não foi possível criar a transação.')
+      setErrorMessage(
+        paymentMethod === 'CREDIT_CARD'
+          ? 'Não foi possível registrar a compra no cartão.'
+          : transaction
+            ? 'Não foi possível atualizar a transação.'
+            : 'Não foi possível criar a transação.',
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -208,35 +261,76 @@ function TransactionForm({
 
           <select
             value={paymentMethod}
-            onChange={(event) => setPaymentMethod(event.target.value as PaymentMethod)}
+            onChange={(event) => handlePaymentMethodChange(event.target.value as PaymentMethod)}
             className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
           >
-            {paymentMethodsByType[type].map((method) => (
-              <option key={method} value={method}>
-                {paymentMethodLabels[method]}
-              </option>
-            ))}
+            {paymentMethodsByType[type]
+              .filter((method) => !transaction || method !== 'CREDIT_CARD')
+              .map((method) => (
+                <option key={method} value={method}>
+                  {paymentMethodLabels[method]}
+                </option>
+              ))}
           </select>
         </label>
 
-        <label className="sm:col-span-2">
-          <span className="text-sm text-slate-300">Conta financeira</span>
+        {paymentMethod === 'CREDIT_CARD' ? (
+          <>
+            <label>
+              <span className="text-sm text-slate-300">Cartão de crédito</span>
 
-          <select
-            required
-            value={accountId}
-            onChange={(event) => setAccountId(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-          >
-            <option value="">Selecione uma conta</option>
+              <select
+                required
+                value={creditCardId}
+                onChange={(event) => setCreditCardId(event.target.value)}
+                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+              >
+                <option value="">Selecione um cartão</option>
 
-            {financialAccounts.map((financialAccount) => (
-              <option key={financialAccount.id} value={financialAccount.id}>
-                {financialAccount.name}
-              </option>
-            ))}
-          </select>
-        </label>
+                {creditCards.map((creditCard) => (
+                  <option key={creditCard.id} value={creditCard.id}>
+                    {creditCard.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              <span className="text-sm text-slate-300">Parcelas</span>
+
+              <input
+                required
+                type="number"
+                inputMode="numeric"
+                min="1"
+                max="36"
+                step="1"
+                value={installments}
+                onChange={(event) => setInstallments(event.target.value)}
+                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+            </label>
+          </>
+        ) : (
+          <label className="sm:col-span-2">
+            <span className="text-sm text-slate-300">Conta financeira</span>
+
+            <select
+              required
+              value={accountId}
+              onChange={(event) => setAccountId(event.target.value)}
+              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            >
+              <option value="">Selecione uma conta</option>
+
+              {financialAccounts.map((financialAccount) => (
+                <option key={financialAccount.id} value={financialAccount.id}>
+                  {financialAccount.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
         <label>
           <span className="text-sm text-slate-300">Descrição</span>
@@ -277,43 +371,47 @@ function TransactionForm({
           />
         </label>
 
-        <label>
-          <span className="text-sm text-slate-300">Categoria</span>
+        {paymentMethod !== 'CREDIT_CARD' && (
+          <>
+            <label>
+              <span className="text-sm text-slate-300">Categoria</span>
 
-          <select
-            required
-            value={categoryId}
-            onChange={(event) => handleCategoryChange(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-          >
-            <option value="">Selecione</option>
+              <select
+                required
+                value={categoryId}
+                onChange={(event) => handleCategoryChange(event.target.value)}
+                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+              >
+                <option value="">Selecione</option>
 
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <label className="sm:col-span-2">
-          <span className="text-sm text-slate-300">Subcategoria</span>
+            <label>
+              <span className="text-sm text-slate-300">Subcategoria</span>
 
-          <select
-            value={subCategoryId}
-            disabled={!categoryId}
-            onChange={(event) => setSubCategoryId(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <option value="">Sem subcategoria</option>
+              <select
+                value={subCategoryId}
+                disabled={!categoryId}
+                onChange={(event) => setSubCategoryId(event.target.value)}
+                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Sem subcategoria</option>
 
-            {subCategories.map((subCategory) => (
-              <option key={subCategory.id} value={subCategory.id}>
-                {subCategory.name}
-              </option>
-            ))}
-          </select>
-        </label>
+                {subCategories.map((subCategory) => (
+                  <option key={subCategory.id} value={subCategory.id}>
+                    {subCategory.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        )}
       </div>
 
       {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
