@@ -1,5 +1,6 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 
+import { ChevronDown, ChevronRight, Filter } from 'lucide-react'
 import { transactionsApi } from '../../features/transactions/api/transactionsApi'
 import type { TransactionResponse } from '../../features/transactions/model/transactionTypes'
 import { ApiError } from '../../lib/api/apiError'
@@ -9,6 +10,7 @@ import DeleteTransactionDialog from '../../features/transactions/components/Dele
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
+  const [showFilters, setShowFilters] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [transactionToDelete, setTransactionToDelete] = useState<TransactionResponse | null>(null)
@@ -148,60 +150,6 @@ function TransactionsPage() {
         <p className="mt-2 text-sm text-slate-400">Acompanhe suas receitas e despesas.</p>
       </div>
 
-      <form
-        onSubmit={handleFilterSubmit}
-        className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6"
-      >
-        <div>
-          <h2 className="font-semibold">Filtrar por período</h2>
-
-          <p className="mt-1 text-sm text-slate-400">
-            Selecione uma data inicial e final para consultar as movimentações.
-          </p>
-        </div>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
-          <label>
-            <span className="text-sm text-slate-300">Data inicial</span>
-
-            <input
-              type="date"
-              value={startDate}
-              onChange={(event) => setStartDate(event.target.value)}
-              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-            />
-          </label>
-
-          <label>
-            <span className="text-sm text-slate-300">Data final</span>
-
-            <input
-              type="date"
-              value={endDate}
-              onChange={(event) => setEndDate(event.target.value)}
-              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-            />
-          </label>
-
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              className="flex-1 rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 lg:flex-none"
-            >
-              Filtrar
-            </button>
-
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="flex-1 rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 lg:flex-none"
-            >
-              Limpar
-            </button>
-          </div>
-        </div>
-      </form>
-
       <TransactionForm
         key={transactionToEdit?.id ?? 'new'}
         transaction={transactionToEdit ?? undefined}
@@ -209,6 +157,75 @@ function TransactionsPage() {
         onUpdated={handleTransactionUpdated}
         onCancelEdit={() => setTransactionToEdit(null)}
       />
+
+      <button
+        type="button"
+        onClick={() => setShowFilters((value) => !value)}
+        className="mt-6 mb-6 flex w-full items-center justify-between rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-hover)"
+      >
+        <span className="flex items-center gap-2">
+          <Filter size={18} />
+          Filtros
+        </span>
+
+        {showFilters ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+      </button>
+
+      {showFilters && (
+        <form
+          onSubmit={handleFilterSubmit}
+          className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6"
+        >
+          <div>
+            <h2 className="font-semibold">Filtrar por período</h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Selecione uma data inicial e final para consultar as movimentações.
+            </p>
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
+            <label>
+              <span className="text-sm text-slate-300">Data inicial</span>
+
+              <input
+                type="date"
+                value={startDate}
+                onChange={(event) => setStartDate(event.target.value)}
+                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+              />
+            </label>
+
+            <label>
+              <span className="text-sm text-slate-300">Data final</span>
+
+              <input
+                type="date"
+                value={endDate}
+                onChange={(event) => setEndDate(event.target.value)}
+                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+              />
+            </label>
+
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                className="flex-1 rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 lg:flex-none"
+              >
+                Filtrar
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="flex-1 rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 lg:flex-none"
+              >
+                Limpar
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
 
       <TransactionList
         transactions={transactions}

@@ -1,3 +1,5 @@
+import { fieldClassName } from '../../../../components/ui/forms/fieldClass'
+
 type InstallmentSelectorProps = {
   value: string
   onChange: (value: string) => void
@@ -16,7 +18,7 @@ function InstallmentSelector({ value, onChange }: InstallmentSelectorProps) {
         max="36"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
       />
     </label>
   )

@@ -15,7 +15,7 @@ function FinancialAccountSelector({ accounts, value, onChange }: FinancialAccoun
         required
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+        className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2.5 text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
       >
         <option value="">Selecione uma conta</option>
 

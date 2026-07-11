@@ -3,7 +3,7 @@ import { useEffect, useState, type SubmitEvent } from 'react'
 import { categoriesApi } from '../../categories/api/categoriesApi'
 import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
 import { transactionsApi } from '../api/transactionsApi'
-import { paymentMethodLabels, paymentMethodsByType } from '../model/paymentMethods'
+import { paymentMethodsByType } from '../model/paymentMethods'
 import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
 import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
 import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
@@ -15,6 +15,7 @@ import PaymentMethodSelector from './form/PaymentMethodSelector'
 import InstallmentSelector from './form/InstallmentSelector'
 import CreditCardSelector from './form/CreditCardSelector'
 import FinancialAccountSelector from './form/FinancialAccountSelector'
+import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -140,7 +141,7 @@ function TransactionForm({
     if (!paymentMethodsByType[nextType].includes(paymentMethod)) {
       setPaymentMethod('PIX')
       setCreditCardId('')
-      setInstallments('1')
+      setInstallments('')
     }
   }
 
@@ -154,7 +155,7 @@ function TransactionForm({
       setSubCategories([])
     } else {
       setCreditCardId('')
-      setInstallments('1')
+      setInstallments('')
     }
   }
 
@@ -183,7 +184,7 @@ function TransactionForm({
         setAmount('')
         setTransactionDate('')
         setCreditCardId('')
-        setInstallments('1')
+        setInstallments('')
         setCategoryId('')
         setSubCategoryId('')
         setSubCategories([])
@@ -250,19 +251,11 @@ function TransactionForm({
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <TransactionTypeSelector value={type} onChange={handleTypeChange} />
 
-        <PaymentMethodSelector>
-          <select
-            value={paymentMethod}
-            onChange={(event) => handlePaymentMethodChange(event.target.value as PaymentMethod)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-          >
-            {paymentMethodsByType[type].map((method) => (
-              <option key={method} value={method}>
-                {paymentMethodLabels[method]}
-              </option>
-            ))}
-          </select>
-        </PaymentMethodSelector>
+        <PaymentMethodSelector
+          methods={paymentMethodsByType[type]}
+          value={paymentMethod}
+          onChange={handlePaymentMethodChange}
+        />
 
         {paymentMethod === 'CREDIT_CARD' ? (
           <>
@@ -288,7 +281,7 @@ function TransactionForm({
             required
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className={fieldClassName}
           />
         </label>
 
@@ -304,7 +297,7 @@ function TransactionForm({
             placeholder="0,00"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
           />
         </label>
 
@@ -316,7 +309,7 @@ function TransactionForm({
             type="date"
             value={transactionDate}
             onChange={(event) => setTransactionDate(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className={fieldClassName}
           />
         </label>
 
@@ -329,7 +322,7 @@ function TransactionForm({
                 required
                 value={categoryId}
                 onChange={(event) => handleCategoryChange(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+                className={fieldClassName}
               >
                 <option value="">Selecione</option>
 
@@ -348,7 +341,7 @@ function TransactionForm({
                 value={subCategoryId}
                 disabled={!categoryId}
                 onChange={(event) => setSubCategoryId(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 disabled:cursor-not-allowed disabled:opacity-50"
+                className={fieldClassName}
               >
                 <option value="">Sem subcategoria</option>
 

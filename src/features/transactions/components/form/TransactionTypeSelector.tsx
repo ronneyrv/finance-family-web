@@ -1,3 +1,6 @@
+import { ArrowDownCircle, ArrowUpCircle } from 'lucide-react'
+
+import SegmentedButton from '../../../../components/ui/buttons/SegmentedButton'
 import type { TransactionType } from '../../model/transactionTypes'
 
 type TransactionTypeSelectorProps = {
@@ -7,18 +10,27 @@ type TransactionTypeSelectorProps = {
 
 function TransactionTypeSelector({ value, onChange }: TransactionTypeSelectorProps) {
   return (
-    <label className="sm:col-span-2">
-      <span className="text-sm text-slate-300">Tipo</span>
+    <div className="sm:col-span-2">
+      <span className="text-sm font-medium text-(--color-text)">Tipo</span>
 
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value as TransactionType)}
-        className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
-      >
-        <option value="EXPENSE">Despesa</option>
-        <option value="INCOME">Receita</option>
-      </select>
-    </label>
+      <div className="mt-2 grid grid-cols-2 gap-3">
+        <SegmentedButton
+          selected={value === 'INCOME'}
+          icon={<ArrowUpCircle size={16} />}
+          onClick={() => onChange('INCOME')}
+        >
+          Receita
+        </SegmentedButton>
+
+        <SegmentedButton
+          selected={value === 'EXPENSE'}
+          icon={<ArrowDownCircle size={16} />}
+          onClick={() => onChange('EXPENSE')}
+        >
+          Despesa
+        </SegmentedButton>
+      </div>
+    </div>
   )
 }
 

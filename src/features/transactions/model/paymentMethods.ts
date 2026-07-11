@@ -8,7 +8,7 @@ export const paymentMethodsByType: Record<TransactionType, PaymentMethod[]> = {
 export const paymentMethodLabels: Record<PaymentMethod, string> = {
   PIX: 'PIX',
   CASH: 'Dinheiro',
-  DEBIT_CARD: 'Cartão de débito',
-  CREDIT_CARD: 'Cartão de crédito',
-  BANK_TRANSFER: 'Transferência bancária',
+  DEBIT_CARD: 'Débito',
+  CREDIT_CARD: 'Crédito',
+  BANK_TRANSFER: 'Transferência',
 }

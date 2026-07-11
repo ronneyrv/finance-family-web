@@ -1,0 +1,26 @@
+:root {
+  /* Backgrounds */
+  --color-background: #0f172a;
+  --color-surface: #162033;
+  --color-surface-hover: #1d2a40;
+
+  /* Borders */
+  --color-border: #334155;
+
+  /* Typography */
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  /* Primary */
+  --color-primary: #3b82f6;
+  --color-primary-bg: rgba(59, 130, 246, 0.12);
+  --color-primary-hover: rgba(59, 130, 246, 0.2);
+
+  /* Financial */
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+
+  /* Feedback */
+  --color-info: #38bdf8;
+}
