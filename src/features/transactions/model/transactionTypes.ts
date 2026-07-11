@@ -1,6 +1,6 @@
 export type TransactionType = 'INCOME' | 'EXPENSE'
 
-export type PaymentMethod = 'PIX' | 'CASH' | 'DEBIT_CARD' | 'BANK_TRANSFER'
+export type PaymentMethod = 'PIX' | 'CASH' | 'DEBIT_CARD' | 'CREDIT_CARD' | 'BANK_TRANSFER'
 
 export type TransactionKind = 'REGULAR' | 'CREDIT_CARD_PAYMENT'
 
