@@ -6,6 +6,7 @@ import { ApiError } from '../../../lib/api/apiError'
 import { paymentMethodLabels } from '../../transactions/model/paymentMethods'
 import type { PaymentMethod } from '../../transactions/model/transactionTypes'
 import { invoicesApi } from '../api/invoicesApi'
+import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 
 type InvoicePaymentFormProps = {
   creditCardId: string
@@ -61,14 +62,14 @@ function InvoicePaymentForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6"
+      className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
     >
       <div>
         <p className="text-sm font-medium text-emerald-400">Pagamento</p>
 
         <h2 className="mt-1 text-lg font-semibold">Pagar fatura</h2>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           Selecione a conta de origem e a forma utilizada para o pagamento.
         </p>
       </div>
@@ -83,13 +84,13 @@ function InvoicePaymentForm({
         <>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <label>
-              <span className="text-sm text-slate-300">Conta financeira</span>
+              <span className="text-sm text-(--color-text)">Conta financeira</span>
 
               <select
                 required
                 value={accountId}
                 onChange={(event) => setAccountId(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+                className={fieldClassName}
               >
                 <option value="">Selecione uma conta</option>
 
@@ -102,13 +103,13 @@ function InvoicePaymentForm({
             </label>
 
             <label>
-              <span className="text-sm text-slate-300">Forma de pagamento</span>
+              <span className="text-sm text-(--color-text)">Forma de pagamento</span>
 
               <select
                 required
                 value={paymentMethod}
                 onChange={(event) => setPaymentMethod(event.target.value as PaymentMethod | '')}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+                className={fieldClassName}
               >
                 <option value="">Selecione uma forma</option>
 
@@ -121,15 +122,17 @@ function InvoicePaymentForm({
             </label>
           </div>
 
-          {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
+          <div className="mt-6 border-t border-(--color-border) pt-4">
+            {errorMessage && <p className="mb-4 text-sm text-red-400">{errorMessage}</p>}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-6 w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-          >
-            {isSubmitting ? 'Pagando...' : 'Pagar fatura'}
-          </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            >
+              {isSubmitting ? 'Pagando...' : 'Pagar fatura'}
+            </button>
+          </div>
         </>
       )}
     </form>

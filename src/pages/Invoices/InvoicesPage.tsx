@@ -128,12 +128,12 @@ function InvoicesPage() {
 
         <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Faturas</h1>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           Consulte os lançamentos e acompanhe a situação das suas faturas.
         </p>
       </div>
 
-      {isLoadingCards && <p className="mt-8 text-slate-400">Carregando cartões...</p>}
+      {isLoadingCards && <p className="mt-8 text-(--color-text-muted)">Carregando cartões...</p>}
 
       {cardsErrorMessage && (
         <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
