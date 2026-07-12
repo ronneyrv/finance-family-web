@@ -112,37 +112,37 @@ function DashboardPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Visão geral</p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-emerald-400">Visão geral</p>
 
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Dashboard</h1>
+          <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Dashboard</h1>
 
-        <p className="mt-2 text-sm text-slate-400">
-          Acompanhe sua posição financeira e a evolução das suas movimentações.
-        </p>
-      </div>
+          <p className="mt-2 text-sm text-slate-400">
+            Acompanhe sua posição financeira e a evolução das suas movimentações.
+          </p>
+        </div>
 
-      <div className="mt-6 flex items-center gap-3">
-        <label htmlFor="dashboard-year" className="text-sm text-slate-400">
-          Ano
-        </label>
+        <div className="flex items-center gap-3">
+          <label htmlFor="dashboard-year" className="text-sm font-medium text-(--color-text-muted)">
+            Ano
+          </label>
 
-        <select
-          id="dashboard-year"
-          value={selectedYear}
-          onChange={(event) => setSelectedYear(Number(event.target.value))}
-          className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm"
-        >
-          {Array.from({ length: 5 }, (_, index) => currentYear - index).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
+          <select
+            id="dashboard-year"
+            value={selectedYear}
+            onChange={(event) => setSelectedYear(Number(event.target.value))}
+            className="h-10 w-24 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
+          >
+            ...
+          </select>
+        </div>
       </div>
 
       <div className="mt-8">
-        {isOverviewLoading && <p className="text-slate-400">Carregando resumo financeiro...</p>}
+        {isOverviewLoading && (
+          <p className="text-(--color-text-muted)">Carregando resumo financeiro...</p>
+        )}
 
         {overviewError && (
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
@@ -161,7 +161,7 @@ function DashboardPage() {
         )}
 
         {isYearlyDataLoading && (
-          <p className="mt-6 text-slate-400">Carregando dados do período...</p>
+          <p className="mt-6 text-(--color-text-muted)">Carregando dados do período...</p>
         )}
 
         {yearlyDataError && (
