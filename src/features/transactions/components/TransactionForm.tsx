@@ -39,7 +39,7 @@ function TransactionForm({
   )
   const [accountId, setAccountId] = useState(transaction?.accountId ?? '')
   const [creditCardId, setCreditCardId] = useState('')
-  const [installments, setInstallments] = useState('1')
+  const [installments, setInstallments] = useState('')
 
   const [categoryId, setCategoryId] = useState(transaction?.categoryId ?? '')
   const [subCategoryId, setSubCategoryId] = useState(transaction?.subCategoryId ?? '')
@@ -89,6 +89,14 @@ function TransactionForm({
 
         if (!isCancelled) {
           setCategories(response)
+
+          if (type === 'INCOME') {
+            const incomeCategory = response.find((category) => category.type === 'INCOME')
+
+            if (incomeCategory) {
+              setCategoryId(incomeCategory.id)
+            }
+          }
         }
       } catch {
         if (!isCancelled) {
@@ -147,6 +155,14 @@ function TransactionForm({
 
   function handlePaymentMethodChange(nextPaymentMethod: PaymentMethod) {
     setPaymentMethod(nextPaymentMethod)
+
+    if (nextPaymentMethod === 'CASH') {
+      const cashAccount = financialAccounts.find((account) => account.accountType === 'CASH')
+
+      if (cashAccount) {
+        setAccountId(cashAccount.id)
+      }
+    }
 
     if (nextPaymentMethod === 'CREDIT_CARD') {
       setAccountId('')
@@ -232,6 +248,11 @@ function TransactionForm({
     }
   }
 
+  const availableAccounts =
+    paymentMethod === 'CASH'
+      ? financialAccounts.filter((account) => account.accountType === 'CASH')
+      : financialAccounts.filter((account) => account.accountType !== 'CASH')
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -268,7 +289,7 @@ function TransactionForm({
           </>
         ) : (
           <FinancialAccountSelector
-            accounts={financialAccounts}
+            accounts={availableAccounts}
             value={accountId}
             onChange={setAccountId}
           />
@@ -322,7 +343,10 @@ function TransactionForm({
                 required
                 value={categoryId}
                 onChange={(event) => handleCategoryChange(event.target.value)}
-                className={fieldClassName}
+                disabled={type === 'INCOME'}
+                className={`${fieldClassName} ${
+                  type === 'INCOME' ? 'cursor-not-allowed opacity-70' : ''
+                }`}
               >
                 <option value="">Selecione</option>
 
