@@ -21,10 +21,10 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
 
   if (transactions.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-8 text-center">
+      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
         <p className="font-medium">Nenhuma transação encontrada</p>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           Suas movimentações financeiras aparecerão aqui.
         </p>
       </div>
@@ -37,20 +37,20 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
         {transactions.map((transaction) => (
           <article
             key={transaction.id}
-            className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+            className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h2 className="truncate font-medium">{transaction.description}</h2>
 
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-(--color-text-muted)">
                   {getCategoryLabel(transaction)}
                   {transaction.transactionKind === 'REGULAR' && transaction.subCategory
                     ? ` · ${transaction.subCategory}`
                     : ''}
                 </p>
 
-                <p className="mt-2 text-xs text-slate-500">
+                <p className="mt-2 text-xs text-(--color-text-muted)">
                   {formatDate(transaction.transactionDate)}
                   {' · '}
                   {paymentMethodLabels[transaction.paymentMethod]}
@@ -95,57 +95,51 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
         ))}
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-slate-800 bg-slate-950 lg:block">
+      <div className="hidden overflow-hidden rounded-xl border border-(--color-border) bg-(--color-surface) lg:block">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="border-b border-slate-800 bg-slate-900/50">
-              <tr className="text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+            <thead className="border-b border-(--color-border) bg-(--color-surface-hover)">
+              <tr className="text-left text-xs font-medium uppercase tracking-wider text-(--color-text-muted)">
                 <th className="px-6 py-4">Data</th>
                 <th className="px-6 py-4">Descrição</th>
                 <th className="px-6 py-4">Categoria</th>
-                <th className="px-6 py-4">Tipo</th>
                 <th className="px-6 py-4">Pagamento</th>
                 <th className="px-6 py-4 text-right">Valor</th>
                 <th className="px-6 py-4 text-right">Ações</th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-(--color-border)">
               {transactions.map((transaction) => (
-                <tr key={transaction.id} className="transition-colors hover:bg-slate-900/50">
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
+                <tr
+                  key={transaction.id}
+                  className="transition-colors hover:bg-(--color-surface-hover)"
+                >
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-(--color-text-muted)">
                     {formatDate(transaction.transactionDate)}
                   </td>
 
-                  <td className="px-6 py-4 font-medium">{transaction.description}</td>
+                  <td className="px-6 py-4 font-medium text-(--color-text)">
+                    {transaction.description}
+                  </td>
 
                   <td className="px-6 py-4">
                     <p className="text-sm">{getCategoryLabel(transaction)}</p>
 
                     {transaction.transactionKind === 'CREDIT_CARD_PAYMENT' ? (
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-(--color-text-muted)">
                         Conta: {transaction.accountName}
                       </p>
                     ) : (
                       transaction.subCategory && (
-                        <p className="mt-1 text-xs text-slate-500">{transaction.subCategory}</p>
+                        <p className="mt-1 text-xs text-(--color-text-muted)">
+                          {transaction.subCategory}
+                        </p>
                       )
                     )}
                   </td>
 
-                  <td className="px-6 py-4">
-                    <span
-                      className={
-                        transaction.type === 'INCOME'
-                          ? 'rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400'
-                          : 'rounded-full bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400'
-                      }
-                    >
-                      {transaction.type === 'INCOME' ? 'Receita' : 'Despesa'}
-                    </span>
-                  </td>
-
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-(--color-text-muted)">
                     {paymentMethodLabels[transaction.paymentMethod]}
                   </td>
 
@@ -165,7 +159,7 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                         <button
                           type="button"
                           onClick={() => onEdit(transaction)}
-                          className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-emerald-500/10 hover:text-emerald-400"
+                          className="inline-flex rounded-lg p-2 text-(--color-text-muted) transition hover:bg-emerald-500/10 hover:text-emerald-400"
                           aria-label={`Editar ${transaction.description}`}
                           title="Editar transação"
                         >
@@ -175,7 +169,7 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                         <button
                           type="button"
                           onClick={() => onDelete(transaction)}
-                          className="inline-flex rounded-lg p-2 text-slate-400 transition hover:bg-red-500/10 hover:text-red-400"
+                          className="inline-flex rounded-lg p-2 text-(--color-text-muted) transition hover:bg-red-500/10 hover:text-red-400"
                           aria-label={`Excluir ${transaction.description}`}
                           title="Excluir transação"
                         >

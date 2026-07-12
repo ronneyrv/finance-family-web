@@ -7,6 +7,7 @@ import { ApiError } from '../../lib/api/apiError'
 import TransactionForm from '../../features/transactions/components/TransactionForm'
 import TransactionList from '../../features/transactions/components/TransactionList'
 import DeleteTransactionDialog from '../../features/transactions/components/DeleteTransactionDialog'
+import { fieldClassName } from '../../components/ui/forms/fieldClass'
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
@@ -174,36 +175,36 @@ function TransactionsPage() {
       {showFilters && (
         <form
           onSubmit={handleFilterSubmit}
-          className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6"
+          className="mt-6 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
         >
           <div>
-            <h2 className="font-semibold">Filtrar por período</h2>
+            <h2 className="text-lg font-semibold text-(--color-text)">Filtrar por período</h2>
 
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-(--color-text-muted)">
               Selecione uma data inicial e final para consultar as movimentações.
             </p>
           </div>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
             <label>
-              <span className="text-sm text-slate-300">Data inicial</span>
+              <span className="text-sm text-(--color-text)">Data inicial</span>
 
               <input
                 type="date"
                 value={startDate}
                 onChange={(event) => setStartDate(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+                className={fieldClassName}
               />
             </label>
 
             <label>
-              <span className="text-sm text-slate-300">Data final</span>
+              <span className="text-sm text-(--color-text)">Data final</span>
 
               <input
                 type="date"
                 value={endDate}
                 onChange={(event) => setEndDate(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+                className={fieldClassName}
               />
             </label>
 
