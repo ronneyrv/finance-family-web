@@ -11,12 +11,12 @@ type InvoiceInstallmentListProps = {
 function InvoiceInstallmentList({ installments }: InvoiceInstallmentListProps) {
   if (installments.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-8 text-center">
-        <ReceiptText className="mx-auto text-slate-500" size={32} />
+      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
+        <ReceiptText className="mx-auto text-(--color-text-muted)" size={32} />
 
         <p className="mt-4 font-medium">Nenhum lançamento nesta fatura</p>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           Não existem parcelas vinculadas ao período selecionado.
         </p>
       </div>
@@ -24,13 +24,13 @@ function InvoiceInstallmentList({ installments }: InvoiceInstallmentListProps) {
   }
 
   return (
-    <section className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6">
+    <section className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
         <p className="text-sm font-medium text-emerald-400">Lançamentos</p>
 
         <h2 className="mt-1 text-lg font-semibold">Parcelas da fatura</h2>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           {installments.length} {installments.length === 1 ? 'lançamento' : 'lançamentos'}
         </p>
       </div>
@@ -39,17 +39,19 @@ function InvoiceInstallmentList({ installments }: InvoiceInstallmentListProps) {
         {installments.map((installment, index) => (
           <article
             key={`${installment.description}-${installment.installment}-${index}`}
-            className="flex flex-col gap-4 rounded-lg border border-slate-800 bg-slate-900/50 p-4 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-4 rounded-lg border border-(--color-border) bg-(--color-surface-hover) p-4 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-slate-800 p-2 text-slate-400">
+              <div className="rounded-lg bg-(--color-background) p-2 text-(--color-text-muted)">
                 <ReceiptText size={18} />
               </div>
 
               <div>
                 <p className="font-medium">{installment.description}</p>
 
-                <p className="mt-1 text-sm text-slate-400">Parcela {installment.installment}</p>
+                <p className="mt-1 text-sm text-(--color-text-muted)">
+                  Parcela {installment.installment}
+                </p>
               </div>
             </div>
 

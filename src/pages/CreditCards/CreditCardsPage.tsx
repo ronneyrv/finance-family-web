@@ -85,7 +85,7 @@ function CreditCardsPage() {
 
         <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Cartões de crédito</h1>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           Gerencie seus cartões, limites e datas de fechamento e vencimento.
         </p>
       </div>
@@ -98,7 +98,7 @@ function CreditCardsPage() {
         onCancelEdit={() => setCreditCardToEdit(null)}
       />
 
-      {isLoading && <p className="mt-8 text-slate-400">Carregando cartões...</p>}
+      {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando cartões...</p>}
 
       {errorMessage && (
         <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">

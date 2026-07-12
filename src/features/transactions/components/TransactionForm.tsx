@@ -256,13 +256,13 @@ function TransactionForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6"
+      className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
     >
       <div>
         <h2 className="text-lg font-semibold">
           {transaction ? 'Editar transação' : 'Nova transação'}
         </h2>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-(--color-text-muted)">
           {transaction
             ? 'Atualize os dados da movimentação.'
             : 'Registre uma nova receita ou despesa.'}
@@ -296,7 +296,7 @@ function TransactionForm({
         )}
 
         <label>
-          <span className="text-sm text-slate-300">Descrição</span>
+          <span className="text-sm text-(--color-text)">Descrição</span>
 
           <input
             required
@@ -307,7 +307,7 @@ function TransactionForm({
         </label>
 
         <label>
-          <span className="text-sm text-slate-300">Valor</span>
+          <span className="text-sm text-(--color-text)">Valor</span>
 
           <input
             required
@@ -323,7 +323,7 @@ function TransactionForm({
         </label>
 
         <label>
-          <span className="text-sm text-slate-300">Data</span>
+          <span className="text-sm text-(--color-text)">Data</span>
 
           <input
             required
@@ -337,7 +337,7 @@ function TransactionForm({
         {paymentMethod !== 'CREDIT_CARD' && (
           <>
             <label>
-              <span className="text-sm text-slate-300">Categoria</span>
+              <span className="text-sm text-(--color-text)">Categoria</span>
 
               <select
                 required
@@ -359,7 +359,7 @@ function TransactionForm({
             </label>
 
             <label>
-              <span className="text-sm text-slate-300">Subcategoria</span>
+              <span className="text-sm text-(--color-text)">Subcategoria</span>
 
               <select
                 value={subCategoryId}
@@ -382,24 +382,26 @@ function TransactionForm({
 
       {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-6 w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {isSubmitting ? 'Salvando...' : transaction ? 'Salvar alterações' : 'Salvar transação'}
-      </button>
-
-      {transaction && (
+      <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
         <button
-          type="button"
-          onClick={onCancelEdit}
+          type="submit"
           disabled={isSubmitting}
-          className="mt-3 w-full rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 disabled:opacity-50 sm:mt-0 sm:ml-3 sm:w-auto"
+          className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
-          Cancelar edição
+          {isSubmitting ? 'Salvando...' : transaction ? 'Salvar alterações' : 'Salvar transação'}
         </button>
-      )}
+
+        {transaction && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            disabled={isSubmitting}
+            className="w-full rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50 sm:w-auto"
+          >
+            Cancelar edição
+          </button>
+        )}
+      </div>
     </form>
   )
 }

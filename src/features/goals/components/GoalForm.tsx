@@ -3,6 +3,7 @@ import { useState, type SubmitEvent } from 'react'
 import { ApiError } from '../../../lib/api/apiError'
 import { goalsApi } from '../api/goalsApi'
 import type { GoalResponse } from '../model/goalTypes'
+import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 
 type GoalFormProps = {
   goal?: GoalResponse
@@ -63,12 +64,12 @@ function GoalForm({ goal, onCreated, onUpdated, onCancelEdit }: GoalFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6"
+      className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
     >
       <div>
         <h2 className="text-lg font-semibold">{goal ? 'Editar meta' : 'Nova meta'}</h2>
 
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-(--color-text-muted)">
           {goal
             ? 'Atualize o objetivo financeiro e o prazo da meta.'
             : 'Defina um objetivo financeiro para acompanhar sua evolução.'}
@@ -77,19 +78,19 @@ function GoalForm({ goal, onCreated, onUpdated, onCancelEdit }: GoalFormProps) {
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="sm:col-span-2">
-          <span className="text-sm text-slate-300">Nome da meta</span>
+          <span className="text-sm text-(--color-text)">Nome da meta</span>
 
           <input
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Ex.: Viagem para Europa"
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className={fieldClassName}
           />
         </label>
 
         <label>
-          <span className="text-sm text-slate-300">Valor da meta</span>
+          <span className="text-sm text-(--color-text)">Valor da meta</span>
 
           <input
             required
@@ -100,42 +101,44 @@ function GoalForm({ goal, onCreated, onUpdated, onCancelEdit }: GoalFormProps) {
             value={targetAmount}
             onChange={(event) => setTargetAmount(event.target.value)}
             placeholder="0,00"
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
           />
         </label>
 
         <label>
-          <span className="text-sm text-slate-300">Data objetivo</span>
+          <span className="text-sm text-(--color-text)">Data objetivo</span>
 
           <input
             type="date"
             value={targetDate}
             onChange={(event) => setTargetDate(event.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5"
+            className={fieldClassName}
           />
         </label>
       </div>
 
       {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-6 w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {isSubmitting ? 'Salvando...' : goal ? 'Salvar alterações' : 'Cadastrar meta'}
-      </button>
-
-      {goal && (
+      <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
         <button
-          type="button"
-          onClick={onCancelEdit}
+          type="submit"
           disabled={isSubmitting}
-          className="mt-3 w-full rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 disabled:opacity-50 sm:mt-0 sm:ml-3 sm:w-auto"
+          className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
-          Cancelar edição
+          {isSubmitting ? 'Salvando...' : goal ? 'Salvar alterações' : 'Cadastrar meta'}
         </button>
-      )}
+
+        {goal && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            disabled={isSubmitting}
+            className="w-full rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50 sm:w-auto"
+          >
+            Cancelar edição
+          </button>
+        )}
+      </div>
     </form>
   )
 }

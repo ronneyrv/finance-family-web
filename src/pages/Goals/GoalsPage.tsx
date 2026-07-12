@@ -80,7 +80,7 @@ function GoalsPage() {
 
         <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Metas financeiras</h1>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-(--color-text-muted)">
           Defina objetivos financeiros e acompanhe o progresso de cada meta.
         </p>
       </div>
@@ -93,7 +93,7 @@ function GoalsPage() {
         onCancelEdit={() => setGoalToEdit(null)}
       />
 
-      {isLoading && <p className="mt-8 text-slate-400">Carregando metas...</p>}
+      {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando metas...</p>}
 
       {errorMessage && (
         <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">

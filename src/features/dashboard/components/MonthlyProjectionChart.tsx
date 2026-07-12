@@ -38,7 +38,7 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
   }))
 
   return (
-    <section className="rounded-xl border border-slate-800 bg-slate-950 p-4 sm:p-6">
+    <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
         <h2 className="text-lg font-semibold">Projeção financeira</h2>
 
@@ -48,25 +48,38 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
       </div>
 
       {chartData.length === 0 ? (
-        <p className="mt-6 text-sm text-slate-400">Nenhuma projeção encontrada para o período.</p>
+        <p className="mt-6 text-sm text-(--color-text-muted)">
+          Nenhuma projeção encontrada para o período.
+        </p>
       ) : (
-        <div className="mt-6 h-80">
+        <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid horizontal vertical={false} stroke="#1e293b" />
+            <BarChart data={chartData} barCategoryGap="28%">
+              <CartesianGrid
+                horizontal
+                vertical={false}
+                stroke="var(--color-border)"
+                strokeDasharray="4 4"
+              />
 
               <XAxis
                 dataKey="monthLabel"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#94a3b8', fontSize: 12 }}
+                tick={{
+                  fill: 'var(--color-text-muted)',
+                  fontSize: 12,
+                }}
                 dy={8}
               />
 
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#94a3b8', fontSize: 12 }}
+                tick={{
+                  fill: 'var(--color-text-muted)',
+                  fontSize: 12,
+                }}
                 width={55}
                 tickFormatter={(value: number) =>
                   new Intl.NumberFormat('pt-BR', {
@@ -79,14 +92,25 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
               <Tooltip
                 formatter={(value) => formatCurrency(Number(value))}
                 contentStyle={{
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #334155',
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
                   borderRadius: '12px',
+                  color: 'var(--color-text)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,.25)',
                 }}
-                labelStyle={{ color: '#cbd5e1' }}
+                labelStyle={{
+                  color: 'var(--color-text-muted)',
+                }}
               />
 
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ paddingTop: '20px' }} />
+              <Legend
+                iconType="circle"
+                iconSize={8}
+                wrapperStyle={{
+                  paddingTop: 12,
+                  fontSize: 12,
+                }}
+              />
 
               <Bar
                 dataKey="projectedIncome"
