@@ -51,14 +51,15 @@ function DeleteTransactionDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-transaction-title"
-        className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-950 p-6 shadow-xl"
+        className="w-full max-w-md rounded-xl border border-(--color-border) bg-(--color-surface) p-6 shadow-xl"
       >
         <h2 id="delete-transaction-title" className="text-lg font-semibold">
           Excluir transação?
         </h2>
 
-        <p className="mt-3 text-sm text-slate-400">
-          A transação <strong>{transaction.description}</strong> será excluída permanentemente.
+        <p className="mt-3 text-sm text-(--color-text-muted)">
+          <strong className="text-(--color-text)">{transaction.description}</strong>será excluída
+          permanentemente.
         </p>
 
         {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
@@ -68,7 +69,7 @@ function DeleteTransactionDialog({
             type="button"
             disabled={isDeleting}
             onClick={onCancel}
-            className="rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 disabled:opacity-50"
+            className="rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50"
           >
             Cancelar
           </button>
