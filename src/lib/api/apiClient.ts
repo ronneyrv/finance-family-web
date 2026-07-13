@@ -1,52 +1,50 @@
+import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
+
 import { authStorage } from '../../features/auth/storage/authStorage'
 import { ApiError, type ApiErrorResponse } from './apiError'
 import type { RequestOptions } from './types'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    Accept: 'application/json',
+  },
+})
+
+api.interceptors.request.use((config) => {
+  const accessToken = authStorage.getAccessToken()
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`
+  }
+
+  return config
+})
 
 async function request<TResponse, TBody = unknown>(
   path: string,
   options: RequestOptions<TBody> = {},
 ): Promise<TResponse> {
-  const { body, headers, ...requestInit } = options
-  const accessToken = authStorage.getAccessToken()
+  const { body, ...requestOptions } = options
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...requestInit,
-    headers: {
-      Accept: 'application/json',
-      ...(body !== undefined && {
-        'Content-Type': 'application/json',
-      }),
-      ...(accessToken && {
-        Authorization: `Bearer ${accessToken}`,
-      }),
-      ...headers,
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  })
+  try {
+    const response = await api.request<TResponse>({
+      url: path,
+      data: body,
+      ...(requestOptions as AxiosRequestConfig),
+    })
 
-  if (!response.ok) {
-    let details: ApiErrorResponse | undefined
+    return response.data
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const details = error.response?.data as ApiErrorResponse | undefined
 
-    try {
-      details = (await response.json()) as ApiErrorResponse
-    } catch {
-      details = undefined
+      throw new ApiError(error.response?.status ?? 500, details?.message ?? error.message, details)
     }
 
-    throw new ApiError(
-      response.status,
-      details?.message ?? `Request failed with status ${response.status}`,
-      details,
-    )
+    throw error
   }
-
-  if (response.status === 204) {
-    return undefined as TResponse
-  }
-
-  return (await response.json()) as TResponse
 }
 
 export const apiClient = {
