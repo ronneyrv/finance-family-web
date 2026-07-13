@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 
 import { authApi } from '../../features/auth/api/authApi'
 import { AuthContext } from '../../features/auth/context/authContext'
-import type { LoginRequest } from '../../features/auth/model/authTypes'
+import type { LoginRequest, RegisterRequest } from '../../features/auth/model/authTypes'
 import { authStorage } from '../../features/auth/storage/authStorage'
 
 type AuthProviderProps = {
@@ -28,11 +28,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsAuthenticated(false)
   }
 
+  async function register(request: RegisterRequest) {
+    await authApi.register(request)
+  }
+
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
         login,
+        register,
         logout,
       }}
     >
