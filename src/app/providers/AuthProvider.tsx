@@ -18,11 +18,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const response = await authApi.login(credentials)
 
     authStorage.setAccessToken(response.accessToken)
+    authStorage.setRefreshToken(response.refreshToken)
+
     setIsAuthenticated(true)
   }
 
   function logout() {
-    authStorage.removeAccessToken()
+    authStorage.clear()
     setIsAuthenticated(false)
   }
 
