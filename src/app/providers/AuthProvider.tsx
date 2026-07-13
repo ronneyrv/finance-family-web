@@ -1,7 +1,8 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import { authApi } from '../../features/auth/api/authApi'
 import { AuthContext } from '../../features/auth/context/authContext'
+import { setUnauthorizedHandler } from '../../features/auth/services/sessionEvents'
 import type { LoginRequest, RegisterRequest } from '../../features/auth/model/authTypes'
 import { authStorage } from '../../features/auth/storage/authStorage'
 
@@ -27,6 +28,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     authStorage.clear()
     setIsAuthenticated(false)
   }
+
+  useEffect(() => {
+    setUnauthorizedHandler(logout)
+
+    return () => {
+      setUnauthorizedHandler(() => {})
+    }
+  }, [])
 
   async function register(request: RegisterRequest) {
     await authApi.register(request)
