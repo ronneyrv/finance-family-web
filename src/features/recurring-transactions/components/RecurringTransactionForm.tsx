@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
 
 import { categoriesApi } from '../../categories/api/categoriesApi'
-import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { ApiError } from '../../../lib/api/apiError'
+import { recurringTransactionsApi } from '../api/recurringTransactionsApi'
+import { Button } from '../../../components/ui/button'
+import { Card } from '../../../components/ui/card'
+import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
 import type { PaymentMethod, TransactionType } from '../../transactions/model/transactionTypes'
 import type {
   RecurringTransactionRequest,
   RecurringTransactionResponse,
 } from '../model/recurringTransactionTypes'
-import { ApiError } from '../../../lib/api/apiError'
-import { recurringTransactionsApi } from '../api/recurringTransactionsApi'
 
 type RecurringTransactionFormProps = {
   recurringTransaction?: RecurringTransactionResponse
@@ -185,177 +187,173 @@ function RecurringTransactionForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
-    >
-      <div>
-        <h2 className="text-lg font-semibold">
-          {recurringTransaction ? 'Editar recorrência' : 'Nova recorrência'}
-        </h2>
+    <Card className="mt-8">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <h2 className="text-lg font-semibold">
+            {recurringTransaction ? 'Editar recorrência' : 'Nova recorrência'}
+          </h2>
 
-        <p className="mt-1 text-sm text-(--color-text-muted)">
-          Configure uma receita ou despesa recorrente.
-        </p>
-      </div>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <label className="sm:col-span-2">
-          <span className="text-sm">Descrição</span>
+          <p className="mt-1 text-sm text-(--color-text-muted)">
+            Configure uma receita ou despesa recorrente.
+          </p>
+        </div>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <label className="sm:col-span-2">
+            <span className="text-sm">Descrição</span>
 
-          <input
-            required
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className={fieldClassName}
-          />
-        </label>
+            <input
+              required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={fieldClassName}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm">Valor</span>
+          <label>
+            <span className="text-sm">Valor</span>
 
-          <input
-            required
-            type="number"
-            min="0.01"
-            step="0.01"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-          />
-        </label>
+            <input
+              required
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm">Tipo</span>
+          <label>
+            <span className="text-sm">Tipo</span>
 
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as TransactionType)}
-            className={fieldClassName}
-          >
-            <option value="EXPENSE">Despesa</option>
-            <option value="INCOME">Receita</option>
-          </select>
-        </label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value as TransactionType)}
+              className={fieldClassName}
+            >
+              <option value="EXPENSE">Despesa</option>
+              <option value="INCOME">Receita</option>
+            </select>
+          </label>
 
-        <label>
-          <span className="text-sm">Pagamento</span>
+          <label>
+            <span className="text-sm">Pagamento</span>
 
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-            className={fieldClassName}
-          >
-            <option value="PIX">PIX</option>
-            <option value="CASH">Dinheiro</option>
-            <option value="DEBIT_CARD">Débito</option>
-            <option value="BANK_TRANSFER">Transferência</option>
-          </select>
-        </label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+              className={fieldClassName}
+            >
+              <option value="PIX">PIX</option>
+              <option value="CASH">Dinheiro</option>
+              <option value="DEBIT_CARD">Débito</option>
+              <option value="BANK_TRANSFER">Transferência</option>
+            </select>
+          </label>
 
-        <label>
-          <span className="text-sm">Dia do mês</span>
+          <label>
+            <span className="text-sm">Dia do mês</span>
 
-          <input
-            required
-            type="number"
-            min="1"
-            max="31"
-            value={dayOfMonth}
-            onChange={(e) => setDayOfMonth(e.target.value)}
-            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-          />
-        </label>
+            <input
+              required
+              type="number"
+              min="1"
+              max="31"
+              value={dayOfMonth}
+              onChange={(e) => setDayOfMonth(e.target.value)}
+              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm">Início</span>
+          <label>
+            <span className="text-sm">Início</span>
 
-          <input
-            required
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className={fieldClassName}
-          />
-        </label>
+            <input
+              required
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className={fieldClassName}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm">Fim (opcional)</span>
+          <label>
+            <span className="text-sm">Fim (opcional)</span>
 
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className={fieldClassName}
-          />
-        </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className={fieldClassName}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm">Categoria</span>
+          <label>
+            <span className="text-sm">Categoria</span>
 
-          <select
-            required
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className={fieldClassName}
-          >
-            <option value="">Selecione</option>
+            <select
+              required
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">Selecione</option>
 
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label>
-          <span className="text-sm">Subcategoria</span>
+          <label>
+            <span className="text-sm">Subcategoria</span>
 
-          <select
-            value={subCategoryId}
-            onChange={(e) => setSubCategoryId(e.target.value)}
-            className={fieldClassName}
-          >
-            <option value="">Nenhuma</option>
+            <select
+              value={subCategoryId}
+              onChange={(e) => setSubCategoryId(e.target.value)}
+              className={fieldClassName}
+            >
+              <option value="">Nenhuma</option>
 
-            {subCategories.map((subcategory) => (
-              <option key={subcategory.id} value={subcategory.id}>
-                {subcategory.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
+              {subCategories.map((subcategory) => (
+                <option key={subcategory.id} value={subcategory.id}>
+                  {subcategory.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
-      <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        >
-          {isSubmitting
-            ? 'Salvando...'
-            : recurringTransaction
-              ? 'Salvar alterações'
-              : 'Cadastrar recorrência'}
-        </button>
+        <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+            {isSubmitting
+              ? 'Salvando...'
+              : recurringTransaction
+                ? 'Salvar alterações'
+                : 'Cadastrar recorrência'}
+          </Button>
 
-        {recurringTransaction && (
-          <button
-            type="button"
-            onClick={() => {
-              resetForm()
-              onCancelEdit?.()
-            }}
-            disabled={isSubmitting}
-            className="w-full rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50 sm:w-auto"
-          >
-            Cancelar edição
-          </button>
-        )}
-      </div>
-    </form>
+          {recurringTransaction && (
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={isSubmitting}
+              onClick={() => {
+                resetForm()
+                onCancelEdit?.()
+              }}
+              className="w-full sm:w-auto"
+            >
+              Cancelar edição
+            </Button>
+          )}
+        </div>
+      </form>
+    </Card>
   )
 }
 

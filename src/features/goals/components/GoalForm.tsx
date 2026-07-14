@@ -4,6 +4,8 @@ import { ApiError } from '../../../lib/api/apiError'
 import { goalsApi } from '../api/goalsApi'
 import type { GoalResponse } from '../model/goalTypes'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { Button } from '../../../components/ui/button'
+import { Card } from '../../../components/ui/card'
 
 type GoalFormProps = {
   goal?: GoalResponse
@@ -62,84 +64,80 @@ function GoalForm({ goal, onCreated, onUpdated, onCancelEdit }: GoalFormProps) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
-    >
-      <div>
-        <h2 className="text-lg font-semibold">{goal ? 'Editar meta' : 'Nova meta'}</h2>
+    <Card className="mt-8">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <h2 className="text-lg font-semibold">{goal ? 'Editar meta' : 'Nova meta'}</h2>
 
-        <p className="mt-1 text-sm text-(--color-text-muted)">
-          {goal
-            ? 'Atualize o objetivo financeiro e o prazo da meta.'
-            : 'Defina um objetivo financeiro para acompanhar sua evolução.'}
-        </p>
-      </div>
+          <p className="mt-1 text-sm text-(--color-text-muted)">
+            {goal
+              ? 'Atualize o objetivo financeiro e o prazo da meta.'
+              : 'Defina um objetivo financeiro para acompanhar sua evolução.'}
+          </p>
+        </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <label className="sm:col-span-2">
-          <span className="text-sm text-(--color-text)">Nome da meta</span>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <label className="sm:col-span-2">
+            <span className="text-sm text-(--color-text)">Nome da meta</span>
 
-          <input
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Ex.: Viagem para Europa"
-            className={fieldClassName}
-          />
-        </label>
+            <input
+              required
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Ex.: Viagem para Europa"
+              className={fieldClassName}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm text-(--color-text)">Valor da meta</span>
+          <label>
+            <span className="text-sm text-(--color-text)">Valor da meta</span>
 
-          <input
-            required
-            type="number"
-            inputMode="decimal"
-            min="0.01"
-            step="0.01"
-            value={targetAmount}
-            onChange={(event) => setTargetAmount(event.target.value)}
-            placeholder="0,00"
-            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-          />
-        </label>
+            <input
+              required
+              type="number"
+              inputMode="decimal"
+              min="0.01"
+              step="0.01"
+              value={targetAmount}
+              onChange={(event) => setTargetAmount(event.target.value)}
+              placeholder="0,00"
+              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm text-(--color-text)">Data objetivo</span>
+          <label>
+            <span className="text-sm text-(--color-text)">Data objetivo</span>
 
-          <input
-            type="date"
-            value={targetDate}
-            onChange={(event) => setTargetDate(event.target.value)}
-            className={fieldClassName}
-          />
-        </label>
-      </div>
+            <input
+              type="date"
+              value={targetDate}
+              onChange={(event) => setTargetDate(event.target.value)}
+              className={fieldClassName}
+            />
+          </label>
+        </div>
 
-      {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
+        {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
-      <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        >
-          {isSubmitting ? 'Salvando...' : goal ? 'Salvar alterações' : 'Cadastrar meta'}
-        </button>
+        <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+            {isSubmitting ? 'Salvando...' : goal ? 'Salvar alterações' : 'Cadastrar meta'}
+          </Button>
 
-        {goal && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            disabled={isSubmitting}
-            className="w-full rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50 sm:w-auto"
-          >
-            Cancelar edição
-          </button>
-        )}
-      </div>
-    </form>
+          {goal && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onCancelEdit}
+              disabled={isSubmitting}
+              className="w-full sm:w-auto"
+            >
+              Cancelar edição
+            </Button>
+          )}
+        </div>
+      </form>
+    </Card>
   )
 }
 
