@@ -69,6 +69,9 @@ function RegisterPage() {
             />
 
             <input
+              autoComplete="name"
+              autoFocus
+              disabled={isSubmitting}
               id="name"
               type="text"
               required
@@ -93,12 +96,14 @@ function RegisterPage() {
             />
 
             <input
+              autoComplete="organization"
+              disabled={isSubmitting}
               id="householdName"
               type="text"
               required
               value={householdName}
               onChange={(event) => setHouseholdName(event.target.value)}
-              placeholder="Ex.: Família Rocha"
+              placeholder="Ex.: Família Vieira"
               className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
             />
           </div>
@@ -117,6 +122,8 @@ function RegisterPage() {
             />
 
             <input
+              autoComplete="email"
+              disabled={isSubmitting}
               id="email"
               type="email"
               required

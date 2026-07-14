@@ -71,7 +71,9 @@ function LoginPage() {
 
             <input
               autoComplete="email"
+              autoFocus
               className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+              disabled={isSubmitting}
               id="email"
               onChange={(event) => setEmail(event.target.value)}
               placeholder="seu@email.com"
@@ -97,6 +99,7 @@ function LoginPage() {
             <input
               autoComplete="current-password"
               className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+              disabled={isSubmitting}
               id="password"
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Sua senha"
