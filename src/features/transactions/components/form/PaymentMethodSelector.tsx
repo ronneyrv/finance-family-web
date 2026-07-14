@@ -1,6 +1,6 @@
 import { CreditCard, Landmark, Wallet, Zap } from 'lucide-react'
 
-import SegmentedButton from '../../../../components/ui/buttons/SegmentedButton'
+import { SegmentedButton } from '../../../../components/ui/button'
 import { paymentMethodLabels } from '../../model/paymentMethods'
 import type { PaymentMethod } from '../../model/transactionTypes'
 

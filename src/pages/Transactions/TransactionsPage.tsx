@@ -6,8 +6,9 @@ import type { TransactionResponse } from '../../features/transactions/model/tran
 import { ApiError } from '../../lib/api/apiError'
 import TransactionForm from '../../features/transactions/components/TransactionForm'
 import TransactionList from '../../features/transactions/components/TransactionList'
-import DeleteTransactionDialog from '../../features/transactions/components/DeleteTransactionDialog'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
+import { Card } from '../../components/ui/card'
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
@@ -15,6 +16,8 @@ function TransactionsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [transactionToDelete, setTransactionToDelete] = useState<TransactionResponse | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
   const [transactionToEdit, setTransactionToEdit] = useState<TransactionResponse | null>(null)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
@@ -90,31 +93,51 @@ function TransactionsPage() {
     }
   }
 
-  function handleTransactionDeleted(transactionId: string) {
-    const nextTotalElements = Math.max(totalElements - 1, 0)
-    const nextTotalPages = Math.ceil(nextTotalElements / 20)
-
-    setTransactionToDelete(null)
-    setTotalElements(nextTotalElements)
-    setTotalPages(nextTotalPages)
-
-    const isOnlyItemOnCurrentPage = transactions.length === 1 && page > 0
-
-    if (isOnlyItemOnCurrentPage) {
-      setPage((currentPage) => currentPage - 1)
+  async function handleDeleteTransaction() {
+    if (!transactionToDelete) {
       return
     }
 
-    const hasItemsAfterCurrentPage = totalElements > (page + 1) * 20
+    try {
+      setIsDeleting(true)
+      setDeleteErrorMessage(null)
 
-    if (hasItemsAfterCurrentPage) {
-      setReloadKey((currentKey) => currentKey + 1)
-      return
+      await transactionsApi.delete(transactionToDelete.id)
+
+      const nextTotalElements = Math.max(totalElements - 1, 0)
+      const nextTotalPages = Math.ceil(nextTotalElements / 20)
+
+      setTransactionToDelete(null)
+
+      setTotalElements(nextTotalElements)
+      setTotalPages(nextTotalPages)
+
+      const isOnlyItemOnCurrentPage = transactions.length === 1 && page > 0
+
+      if (isOnlyItemOnCurrentPage) {
+        setPage((currentPage) => currentPage - 1)
+        return
+      }
+
+      const hasItemsAfterCurrentPage = totalElements > (page + 1) * 20
+
+      if (hasItemsAfterCurrentPage) {
+        setReloadKey((currentKey) => currentKey + 1)
+        return
+      }
+
+      setTransactions((currentTransactions) =>
+        currentTransactions.filter((transaction) => transaction.id !== transactionToDelete.id),
+      )
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setDeleteErrorMessage(error.message)
+      } else {
+        setDeleteErrorMessage('Não foi possível excluir a transação.')
+      }
+    } finally {
+      setIsDeleting(false)
     }
-
-    setTransactions((currentTransactions) =>
-      currentTransactions.filter((transaction) => transaction.id !== transactionId),
-    )
   }
 
   function handleTransactionUpdated(updatedTransaction: TransactionResponse) {
@@ -173,59 +196,58 @@ function TransactionsPage() {
       </button>
 
       {showFilters && (
-        <form
-          onSubmit={handleFilterSubmit}
-          className="mt-6 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
-        >
-          <div>
-            <h2 className="text-lg font-semibold text-(--color-text)">Filtrar por período</h2>
+        <Card className="mt-6">
+          <form onSubmit={handleFilterSubmit}>
+            <div>
+              <h2 className="text-lg font-semibold text-(--color-text)">Filtrar por período</h2>
 
-            <p className="mt-1 text-sm text-(--color-text-muted)">
-              Selecione uma data inicial e final para consultar as movimentações.
-            </p>
-          </div>
-
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
-            <label>
-              <span className="text-sm text-(--color-text)">Data inicial</span>
-
-              <input
-                type="date"
-                value={startDate}
-                onChange={(event) => setStartDate(event.target.value)}
-                className={fieldClassName}
-              />
-            </label>
-
-            <label>
-              <span className="text-sm text-(--color-text)">Data final</span>
-
-              <input
-                type="date"
-                value={endDate}
-                onChange={(event) => setEndDate(event.target.value)}
-                className={fieldClassName}
-              />
-            </label>
-
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                className="flex-1 rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 lg:flex-none"
-              >
-                Filtrar
-              </button>
-
-              <button
-                type="button"
-                onClick={handleClearFilters}
-                className="flex-1 rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 lg:flex-none"
-              >
-                Limpar
-              </button>
+              <p className="mt-1 text-sm text-(--color-text-muted)">
+                Selecione uma data inicial e final para consultar as movimentações.
+              </p>
             </div>
-          </div>
-        </form>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
+              <label>
+                <span className="text-sm text-(--color-text)">Data inicial</span>
+
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(event) => setStartDate(event.target.value)}
+                  className={fieldClassName}
+                />
+              </label>
+
+              <label>
+                <span className="text-sm text-(--color-text)">Data final</span>
+
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(event) => setEndDate(event.target.value)}
+                  className={fieldClassName}
+                />
+              </label>
+
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="flex-1 rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 lg:flex-none"
+                >
+                  Filtrar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  className="flex-1 rounded-lg border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-900 lg:flex-none"
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </form>
+        </Card>
       )}
 
       <TransactionList
@@ -260,13 +282,28 @@ function TransactionsPage() {
         </div>
       )}
 
-      {transactionToDelete && (
-        <DeleteTransactionDialog
-          transaction={transactionToDelete}
-          onDeleted={handleTransactionDeleted}
-          onCancel={() => setTransactionToDelete(null)}
-        />
-      )}
+      <ConfirmDialog
+        open={transactionToDelete !== null}
+        title="Excluir transação?"
+        description={
+          <>
+            <strong className="text-(--color-text)">{transactionToDelete?.description}</strong> será
+            excluída permanentemente.
+          </>
+        }
+        confirmLabel="Excluir"
+        confirmLoadingLabel="Excluindo..."
+        confirmVariant="danger"
+        isLoading={isDeleting}
+        errorMessage={deleteErrorMessage}
+        onCancel={() => {
+          if (!isDeleting) {
+            setDeleteErrorMessage(null)
+            setTransactionToDelete(null)
+          }
+        }}
+        onConfirm={() => void handleDeleteTransaction()}
+      />
     </section>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
-import DeleteFinancialAccountDialog from '../../features/financial-accounts/components/DeleteFinancialAccountDialog'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import FinancialAccountForm from '../../features/financial-accounts/components/FinancialAccountForm'
 import FinancialAccountList from '../../features/financial-accounts/components/FinancialAccountList'
 import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
@@ -17,6 +17,10 @@ function FinancialAccountsPage() {
 
   const [financialAccountToDelete, setFinancialAccountToDelete] =
     useState<FinancialAccountResponse | null>(null)
+
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -73,17 +77,36 @@ function FinancialAccountsPage() {
     setFinancialAccountToEdit(null)
   }
 
-  function handleFinancialAccountDeleted(financialAccountId: string) {
-    setFinancialAccounts((currentFinancialAccounts) =>
-      currentFinancialAccounts.filter(
-        (financialAccount) => financialAccount.id !== financialAccountId,
-      ),
-    )
+  async function handleDeleteFinancialAccount() {
+    if (!financialAccountToDelete) {
+      return
+    }
 
-    setFinancialAccountToDelete(null)
+    try {
+      setIsDeleting(true)
+      setDeleteErrorMessage(null)
 
-    if (financialAccountToEdit?.id === financialAccountId) {
-      setFinancialAccountToEdit(null)
+      await financialAccountsApi.delete(financialAccountToDelete.id)
+
+      setFinancialAccounts((currentFinancialAccounts) =>
+        currentFinancialAccounts.filter(
+          (financialAccount) => financialAccount.id !== financialAccountToDelete.id,
+        ),
+      )
+
+      if (financialAccountToEdit?.id === financialAccountToDelete.id) {
+        setFinancialAccountToEdit(null)
+      }
+
+      setFinancialAccountToDelete(null)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setDeleteErrorMessage(error.message)
+      } else {
+        setDeleteErrorMessage('Não foi possível excluir a conta financeira.')
+      }
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -125,13 +148,29 @@ function FinancialAccountsPage() {
         />
       )}
 
-      {financialAccountToDelete && (
-        <DeleteFinancialAccountDialog
-          financialAccount={financialAccountToDelete}
-          onDeleted={handleFinancialAccountDeleted}
-          onCancel={() => setFinancialAccountToDelete(null)}
-        />
-      )}
+      <ConfirmDialog
+        open={financialAccountToDelete !== null}
+        title="Excluir conta financeira"
+        description={
+          <>
+            Tem certeza que deseja excluir a conta{' '}
+            <strong className="text-(--color-text)">{financialAccountToDelete?.name}</strong>? Esta
+            ação não poderá ser desfeita.
+          </>
+        }
+        confirmLabel="Excluir conta"
+        confirmLoadingLabel="Excluindo..."
+        confirmVariant="danger"
+        isLoading={isDeleting}
+        errorMessage={deleteErrorMessage}
+        onCancel={() => {
+          if (!isDeleting) {
+            setDeleteErrorMessage(null)
+            setFinancialAccountToDelete(null)
+          }
+        }}
+        onConfirm={() => void handleDeleteFinancialAccount()}
+      />
     </section>
   )
 }

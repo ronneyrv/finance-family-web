@@ -1,6 +1,6 @@
 import { ArrowDownCircle, ArrowUpCircle } from 'lucide-react'
 
-import SegmentedButton from '../../../../components/ui/buttons/SegmentedButton'
+import { SegmentedButton } from '../../../../components/ui/button'
 import type { TransactionType } from '../../model/transactionTypes'
 
 type TransactionTypeSelectorProps = {

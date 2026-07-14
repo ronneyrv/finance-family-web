@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
 import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
 import CreditCardList from '../../features/credit-cards/components/CreditCardList'
-import DeleteCreditCardDialog from '../../features/credit-cards/components/DeleteCreditCardDialog'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
 import { ApiError } from '../../lib/api/apiError'
 
@@ -15,6 +15,10 @@ function CreditCardsPage() {
   const [creditCardToEdit, setCreditCardToEdit] = useState<CreditCardResponse | null>(null)
 
   const [creditCardToDelete, setCreditCardToDelete] = useState<CreditCardResponse | null>(null)
+
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -66,15 +70,34 @@ function CreditCardsPage() {
     setCreditCardToEdit(null)
   }
 
-  function handleCreditCardDeleted(creditCardId: string) {
-    setCreditCards((currentCreditCards) =>
-      currentCreditCards.filter((creditCard) => creditCard.id !== creditCardId),
-    )
+  async function handleDeleteCreditCard() {
+    if (!creditCardToDelete) {
+      return
+    }
 
-    setCreditCardToDelete(null)
+    try {
+      setIsDeleting(true)
+      setDeleteErrorMessage(null)
 
-    if (creditCardToEdit?.id === creditCardId) {
-      setCreditCardToEdit(null)
+      await creditCardsApi.delete(creditCardToDelete.id)
+
+      setCreditCards((currentCreditCards) =>
+        currentCreditCards.filter((creditCard) => creditCard.id !== creditCardToDelete.id),
+      )
+
+      if (creditCardToEdit?.id === creditCardToDelete.id) {
+        setCreditCardToEdit(null)
+      }
+
+      setCreditCardToDelete(null)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setDeleteErrorMessage(error.message)
+      } else {
+        setDeleteErrorMessage('Não foi possível excluir o cartão.')
+      }
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -114,13 +137,29 @@ function CreditCardsPage() {
         />
       )}
 
-      {creditCardToDelete && (
-        <DeleteCreditCardDialog
-          creditCard={creditCardToDelete}
-          onDeleted={handleCreditCardDeleted}
-          onCancel={() => setCreditCardToDelete(null)}
-        />
-      )}
+      <ConfirmDialog
+        open={creditCardToDelete !== null}
+        title="Excluir cartão"
+        description={
+          <>
+            Tem certeza que deseja excluir o cartão{' '}
+            <strong className="text-(--color-text)">{creditCardToDelete?.name}</strong>? Esta ação
+            não poderá ser desfeita.
+          </>
+        }
+        confirmLabel="Excluir cartão"
+        confirmLoadingLabel="Excluindo..."
+        confirmVariant="danger"
+        isLoading={isDeleting}
+        errorMessage={deleteErrorMessage}
+        onCancel={() => {
+          if (!isDeleting) {
+            setDeleteErrorMessage(null)
+            setCreditCardToDelete(null)
+          }
+        }}
+        onConfirm={() => void handleDeleteCreditCard()}
+      />
     </section>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { goalsApi } from '../../features/goals/api/goalsApi'
-import DeleteGoalDialog from '../../features/goals/components/DeleteGoalDialog'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import GoalForm from '../../features/goals/components/GoalForm'
 import GoalList from '../../features/goals/components/GoalList'
 import type { GoalResponse } from '../../features/goals/model/goalTypes'
@@ -14,6 +14,10 @@ function GoalsPage() {
 
   const [goalToEdit, setGoalToEdit] = useState<GoalResponse | null>(null)
   const [goalToDelete, setGoalToDelete] = useState<GoalResponse | null>(null)
+
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -63,13 +67,32 @@ function GoalsPage() {
     setGoalToEdit(null)
   }
 
-  function handleGoalDeleted(goalId: string) {
-    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== goalId))
+  async function handleDeleteGoal() {
+    if (!goalToDelete) {
+      return
+    }
 
-    setGoalToDelete(null)
+    try {
+      setIsDeleting(true)
+      setDeleteErrorMessage(null)
 
-    if (goalToEdit?.id === goalId) {
-      setGoalToEdit(null)
+      await goalsApi.delete(goalToDelete.id)
+
+      setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== goalToDelete.id))
+
+      if (goalToEdit?.id === goalToDelete.id) {
+        setGoalToEdit(null)
+      }
+
+      setGoalToDelete(null)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setDeleteErrorMessage(error.message)
+      } else {
+        setDeleteErrorMessage('Não foi possível excluir a meta.')
+      }
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -105,13 +128,29 @@ function GoalsPage() {
         <GoalList goals={goals} onEdit={setGoalToEdit} onDelete={setGoalToDelete} />
       )}
 
-      {goalToDelete && (
-        <DeleteGoalDialog
-          goal={goalToDelete}
-          onDeleted={handleGoalDeleted}
-          onCancel={() => setGoalToDelete(null)}
-        />
-      )}
+      <ConfirmDialog
+        open={goalToDelete !== null}
+        title="Excluir meta"
+        description={
+          <>
+            Tem certeza que deseja excluir a meta{' '}
+            <strong className="text-(--color-text)">{goalToDelete?.name}</strong>? Esta ação não
+            poderá ser desfeita.
+          </>
+        }
+        confirmLabel="Excluir meta"
+        confirmLoadingLabel="Excluindo..."
+        confirmVariant="danger"
+        isLoading={isDeleting}
+        errorMessage={deleteErrorMessage}
+        onCancel={() => {
+          if (!isDeleting) {
+            setDeleteErrorMessage(null)
+            setGoalToDelete(null)
+          }
+        }}
+        onConfirm={() => void handleDeleteGoal()}
+      />
     </section>
   )
 }
