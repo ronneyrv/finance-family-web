@@ -12,6 +12,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import InvoicesPage from '../../pages/Invoices/InvoicesPage'
 import FinancialAccountsPage from '../../pages/FinancialAccounts/FinancialAccountsPage'
 import RegisterPage from '../../pages/Register/RegisterPage'
+import RecurringTransactionsPage from '../../pages/RecurringTransactions/     RecurringTransactionsPage'
 
 function AppRouter() {
   return (
@@ -28,6 +29,7 @@ function AppRouter() {
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/recurring-transactions" element={<RecurringTransactionsPage />} />
             <Route path="/financial-accounts" element={<FinancialAccountsPage />} />
             <Route path="/credit-cards" element={<CreditCardsPage />} />
             <Route path="/invoices" element={<InvoicesPage />} />

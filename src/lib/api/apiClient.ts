@@ -53,6 +53,14 @@ export const apiClient = {
     })
   },
 
+  patch<TResponse, TBody = unknown>(path: string, body?: TBody, options?: RequestOptions) {
+    return request<TResponse, TBody>(path, {
+      ...options,
+      method: 'PATCH',
+      body,
+    })
+  },
+
   delete<TResponse = void>(path: string, options?: RequestOptions) {
     return request<TResponse>(path, {
       ...options,
