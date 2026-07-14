@@ -10,7 +10,10 @@ import type {
 
 export const authApi = {
   login(credentials: LoginRequest) {
-    return apiClient.post<LoginResponse, LoginRequest>('/api/v1/auth/login', credentials)
+    return apiClient.post<LoginResponse, LoginRequest>('/api/v1/auth/login', {
+      ...credentials,
+      email: credentials.email.trim(),
+    })
   },
 
   refresh(refreshToken: string) {
@@ -20,6 +23,11 @@ export const authApi = {
   },
 
   register(request: RegisterRequest) {
-    return apiClient.post<RegisterResponse, RegisterRequest>('/api/v1/auth/register', request)
+    return apiClient.post<RegisterResponse, RegisterRequest>('/api/v1/auth/register', {
+      ...request,
+      name: request.name.trim(),
+      householdName: request.householdName.trim(),
+      email: request.email.trim(),
+    })
   },
 }
