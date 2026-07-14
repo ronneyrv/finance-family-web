@@ -2,9 +2,10 @@ import {
   CreditCard,
   FileText,
   Goal,
+  Landmark,
   LayoutDashboard,
   ReceiptText,
-  Landmark,
+  Repeat,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -24,6 +25,11 @@ export const navigationItems: NavigationItem[] = [
     label: 'Transações',
     path: '/transactions',
     icon: ReceiptText,
+  },
+  {
+    label: 'Recorrências',
+    path: '/recurring-transactions',
+    icon: Repeat,
   },
   {
     label: 'Contas',
