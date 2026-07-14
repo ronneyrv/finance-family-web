@@ -11,6 +11,7 @@ import DashboardPage from '../../pages/Dashboard/DashboardPage'
 import AppLayout from '../../components/layout/AppLayout'
 import InvoicesPage from '../../pages/Invoices/InvoicesPage'
 import FinancialAccountsPage from '../../pages/FinancialAccounts/FinancialAccountsPage'
+import RegisterPage from '../../pages/Register/RegisterPage'
 
 function AppRouter() {
   return (
@@ -20,6 +21,7 @@ function AppRouter() {
 
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
