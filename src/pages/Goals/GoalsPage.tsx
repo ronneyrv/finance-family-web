@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/ui/alert'
+import { Loading } from '../../components/ui/loading'
 import { goalsApi } from '../../features/goals/api/goalsApi'
 import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
@@ -114,7 +115,7 @@ function GoalsPage() {
         onCancelEdit={() => setGoalToEdit(null)}
       />
 
-      {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando metas...</p>}
+      {isLoading && <Loading className="mt-8" message="Carregando metas..." />}
 
       {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 

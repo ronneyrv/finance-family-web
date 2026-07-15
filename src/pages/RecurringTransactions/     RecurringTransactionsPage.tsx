@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/ui/alert'
+import { Loading } from '../../components/ui/loading'
 import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
@@ -128,7 +129,7 @@ function RecurringTransactionsPage() {
         onCancelEdit={() => setEditingRecurringTransaction(null)}
       />
 
-      {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando recorrências...</p>}
+      {isLoading && <Loading className="mt-8" message="Carregando recorrências..." />}
 
       {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 

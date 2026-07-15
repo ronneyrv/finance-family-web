@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { Loading } from '../../components/ui/loading'
 import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { invoicesApi } from '../../features/invoices/api/invoicesApi'
@@ -131,7 +132,7 @@ function InvoicesPage() {
         description="Consulte os lançamentos e acompanhe a situação das suas faturas."
       />
 
-      {isLoadingCards && <p className="mt-8 text-(--color-text-muted)">Carregando cartões...</p>}
+      {isLoadingCards && <Loading className="mt-8" message="Carregando cartões..." />}
 
       {cardsErrorMessage && <Alert className="mt-8">{cardsErrorMessage}</Alert>}
 

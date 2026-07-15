@@ -1,16 +1,17 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 
-import { ChevronDown, ChevronRight, Filter } from 'lucide-react'
-import { transactionsApi } from '../../features/transactions/api/transactionsApi'
+import { Card } from '../../components/ui/card'
+import { Alert } from '../../components/ui/alert'
+import { Loading } from '../../components/ui/loading'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
-import { PageHeader } from '../../components/ui/page'
-import { Card } from '../../components/ui/card'
-import { ApiError } from '../../lib/api/apiError'
+import { transactionsApi } from '../../features/transactions/api/transactionsApi'
+import { ChevronDown, ChevronRight, Filter } from 'lucide-react'
 import type { TransactionResponse } from '../../features/transactions/model/transactionTypes'
 import TransactionForm from '../../features/transactions/components/TransactionForm'
 import TransactionList from '../../features/transactions/components/TransactionList'
-import { Alert } from '../../components/ui/alert'
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
@@ -76,7 +77,7 @@ function TransactionsPage() {
   }, [page, appliedStartDate, appliedEndDate, reloadKey])
 
   if (isLoading) {
-    return <p className="text-slate-400">Carregando transações...</p>
+    return <Loading message="Carregando transações..." />
   }
 
   if (errorMessage) {

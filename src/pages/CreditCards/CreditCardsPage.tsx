@@ -8,6 +8,7 @@ import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
 import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
 import CreditCardList from '../../features/credit-cards/components/CreditCardList'
+import { Loading } from '../../components/ui/loading'
 
 function CreditCardsPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -119,7 +120,7 @@ function CreditCardsPage() {
         onCancelEdit={() => setCreditCardToEdit(null)}
       />
 
-      {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando cartões...</p>}
+      {isLoading && <Loading className="mt-8" message="Carregando cartões..." />}
 
       {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 

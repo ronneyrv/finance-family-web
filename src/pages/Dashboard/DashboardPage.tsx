@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { Loading } from '../../components/ui/loading'
 import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
@@ -137,9 +138,7 @@ function DashboardPage() {
       </div>
 
       <div className="mt-8">
-        {isOverviewLoading && (
-          <p className="text-(--color-text-muted)">Carregando resumo financeiro...</p>
-        )}
+        {isOverviewLoading && <Loading message="Carregando resumo financeiro..." />}
 
         {overviewError && (
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
@@ -157,9 +156,7 @@ function DashboardPage() {
           </div>
         )}
 
-        {isYearlyDataLoading && (
-          <p className="mt-6 text-(--color-text-muted)">Carregando dados do período...</p>
-        )}
+        {isYearlyDataLoading && <Loading message="Carregando dados do período..." />}
 
         {yearlyDataError && (
           <div className="mt-6 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
