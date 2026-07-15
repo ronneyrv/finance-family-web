@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
-import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
+import { Alert } from '../../components/ui/alert'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
+import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
+import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
 import FinancialAccountForm from '../../features/financial-accounts/components/FinancialAccountForm'
 import FinancialAccountList from '../../features/financial-accounts/components/FinancialAccountList'
-import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
-import { ApiError } from '../../lib/api/apiError'
 
 function FinancialAccountsPage() {
   const [financialAccounts, setFinancialAccounts] = useState<FinancialAccountResponse[]>([])
@@ -112,15 +114,11 @@ function FinancialAccountsPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Contas e saldos</p>
-
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Contas financeiras</h1>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Gerencie suas contas, saldos disponíveis e fontes de pagamento.
-        </p>
-      </div>
+      <PageHeader
+        section="Contas e saldos"
+        title="Contas financeiras"
+        description="Gerencie suas contas, saldos disponíveis e fontes de pagamento."
+      />
 
       <FinancialAccountForm
         key={financialAccountToEdit?.id ?? 'new'}
@@ -134,11 +132,7 @@ function FinancialAccountsPage() {
         <p className="mt-8 text-(--color-text-muted)">Carregando contas financeiras...</p>
       )}
 
-      {errorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 
       {!isLoading && !errorMessage && (
         <FinancialAccountList

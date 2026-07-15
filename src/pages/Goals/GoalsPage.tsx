@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
+import { Alert } from '../../components/ui/alert'
 import { goalsApi } from '../../features/goals/api/goalsApi'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
+import type { GoalResponse } from '../../features/goals/model/goalTypes'
 import GoalForm from '../../features/goals/components/GoalForm'
 import GoalList from '../../features/goals/components/GoalList'
-import type { GoalResponse } from '../../features/goals/model/goalTypes'
-import { ApiError } from '../../lib/api/apiError'
 
 function GoalsPage() {
   const [goals, setGoals] = useState<GoalResponse[]>([])
@@ -98,15 +100,11 @@ function GoalsPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Planejamento financeiro</p>
-
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Metas financeiras</h1>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Defina objetivos financeiros e acompanhe o progresso de cada meta.
-        </p>
-      </div>
+      <PageHeader
+        section="Planejamento"
+        title="Metas financeiras"
+        description="Defina objetivos financeiros e acompanhe o progresso de cada meta."
+      />
 
       <GoalForm
         key={goalToEdit?.id ?? 'new'}
@@ -118,11 +116,7 @@ function GoalsPage() {
 
       {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando metas...</p>}
 
-      {errorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 
       {!isLoading && !errorMessage && (
         <GoalList goals={goals} onEdit={setGoalToEdit} onDelete={setGoalToDelete} />

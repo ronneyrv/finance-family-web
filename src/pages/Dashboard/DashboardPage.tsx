@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
 import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
 import CategoryExpenses from '../../features/dashboard/components/CategoryExpenses'
+import MonthlySummaryChart from '../../features/dashboard/components/MonthlySummaryChart'
 import DashboardSummaryCards from '../../features/dashboard/components/DashboardSummaryCards'
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
-import MonthlySummaryChart from '../../features/dashboard/components/MonthlySummaryChart'
 import type {
   CategoryExpenseResponse,
   DashboardSummaryResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
-import { ApiError } from '../../lib/api/apiError'
 
 function DashboardPage() {
   const currentYear = new Date().getFullYear()
@@ -113,15 +114,11 @@ function DashboardPage() {
   return (
     <section>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-emerald-400">Visão geral</p>
-
-          <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Dashboard</h1>
-
-          <p className="mt-2 text-sm text-slate-400">
-            Acompanhe sua posição financeira e a evolução das suas movimentações.
-          </p>
-        </div>
+        <PageHeader
+          section="Visão geral"
+          title="Dashboard"
+          description="Acompanhe sua posição financeira e a evolução das suas movimentações."
+        />
 
         <div className="flex items-center gap-3">
           <label htmlFor="dashboard-year" className="text-sm font-medium text-(--color-text-muted)">

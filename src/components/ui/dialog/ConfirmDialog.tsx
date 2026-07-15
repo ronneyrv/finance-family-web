@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 import Dialog from './Dialog'
-
+import { Alert } from '../alert'
 import { Button } from '../button'
 
 type ConfirmDialogProps = {
@@ -40,11 +40,7 @@ function ConfirmDialog({
       <div className="space-y-4">
         <div className="text-sm text-(--color-text-muted)">{description}</div>
 
-        {errorMessage && (
-          <p className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">
-            {errorMessage}
-          </p>
-        )}
+        {errorMessage && <Alert>{errorMessage}</Alert>}
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" disabled={isLoading} onClick={onCancel}>

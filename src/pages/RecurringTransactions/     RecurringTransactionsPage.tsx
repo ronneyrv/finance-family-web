@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
+import { Alert } from '../../components/ui/alert'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import { recurringTransactionsApi } from '../../features/recurring-transactions/api/recurringTransactionsApi'
+import type { RecurringTransactionResponse } from '../../features/recurring-transactions/model/recurringTransactionTypes'
 import RecurringTransactionForm from '../../features/recurring-transactions/components/RecurringTransactionForm'
 import RecurringTransactionList from '../../features/recurring-transactions/components/RecurringTransactionList'
-import type { RecurringTransactionResponse } from '../../features/recurring-transactions/model/recurringTransactionTypes'
-import { ApiError } from '../../lib/api/apiError'
-import { ConfirmDialog } from '../../components/ui/dialog'
 
 function RecurringTransactionsPage() {
   const [recurringTransactions, setRecurringTransactions] = useState<
@@ -105,15 +107,11 @@ function RecurringTransactionsPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Planejamento financeiro</p>
-
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Transações recorrentes</h1>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Gerencie receitas e despesas recorrentes.
-        </p>
-      </div>
+      <PageHeader
+        section="Planejamento financeiro"
+        title="Transações recorrentes"
+        description="Gerencie receitas e despesas recorrentes."
+      />
 
       <RecurringTransactionForm
         recurringTransaction={editingRecurringTransaction ?? undefined}
@@ -132,11 +130,7 @@ function RecurringTransactionsPage() {
 
       {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando recorrências...</p>}
 
-      {errorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 
       {!isLoading && !errorMessage && (
         <RecurringTransactionList

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
+import { Alert } from '../../components/ui/alert'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
+import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
 import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
 import CreditCardList from '../../features/credit-cards/components/CreditCardList'
-import { ConfirmDialog } from '../../components/ui/dialog'
-import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
-import { ApiError } from '../../lib/api/apiError'
 
 function CreditCardsPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -103,15 +105,11 @@ function CreditCardsPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Cartões e faturas</p>
-
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Cartões de crédito</h1>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Gerencie seus cartões, limites e datas de fechamento e vencimento.
-        </p>
-      </div>
+      <PageHeader
+        section="Cartões"
+        title="Cartões de crédito"
+        description="Gerencie cartões, limites e ciclos de faturamento."
+      />
 
       <CreditCardForm
         key={creditCardToEdit?.id ?? 'new'}
@@ -123,11 +121,7 @@ function CreditCardsPage() {
 
       {isLoading && <p className="mt-8 text-(--color-text-muted)">Carregando cartões...</p>}
 
-      {errorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 
       {!isLoading && !errorMessage && (
         <CreditCardList

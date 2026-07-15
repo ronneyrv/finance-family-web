@@ -2,13 +2,15 @@ import { useEffect, useState, type SubmitEvent } from 'react'
 
 import { ChevronDown, ChevronRight, Filter } from 'lucide-react'
 import { transactionsApi } from '../../features/transactions/api/transactionsApi'
-import type { TransactionResponse } from '../../features/transactions/model/transactionTypes'
-import { ApiError } from '../../lib/api/apiError'
-import TransactionForm from '../../features/transactions/components/TransactionForm'
-import TransactionList from '../../features/transactions/components/TransactionList'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
+import { PageHeader } from '../../components/ui/page'
 import { Card } from '../../components/ui/card'
+import { ApiError } from '../../lib/api/apiError'
+import type { TransactionResponse } from '../../features/transactions/model/transactionTypes'
+import TransactionForm from '../../features/transactions/components/TransactionForm'
+import TransactionList from '../../features/transactions/components/TransactionList'
+import { Alert } from '../../components/ui/alert'
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
@@ -78,11 +80,7 @@ function TransactionsPage() {
   }
 
   if (errorMessage) {
-    return (
-      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-        {errorMessage}
-      </div>
-    )
+    return <Alert>{errorMessage}</Alert>
   }
 
   function handleTransactionCreated() {
@@ -168,11 +166,11 @@ function TransactionsPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Movimentações</p>
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Transações</h1>
-        <p className="mt-2 text-sm text-slate-400">Acompanhe suas receitas e despesas.</p>
-      </div>
+      <PageHeader
+        section="Movimentações"
+        title="Transações"
+        description="Acompanhe suas receitas e despesas."
+      />
 
       <TransactionForm
         key={transactionToEdit?.id ?? 'new'}
