@@ -40,3 +40,10 @@ export type MonthlyProjectionResponse = {
   projectedTotalExpense: number
   projectedBalance: number
 }
+
+export type DashboardFiltersResponse = {
+  years: number[]
+  months: number[]
+  defaultYear: number
+  defaultMonth: number
+}

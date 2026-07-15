@@ -1,6 +1,7 @@
 import { apiClient } from '../../../lib/api/apiClient'
 import type {
   CategoryExpenseResponse,
+  DashboardFiltersResponse,
   DashboardSummaryResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
@@ -21,5 +22,9 @@ export const dashboardApi = {
 
   getProjection(year: number) {
     return apiClient.get<MonthlyProjectionResponse[]>(`/api/v1/dashboard/projection?year=${year}`)
+  },
+
+  getFilters() {
+    return apiClient.get<DashboardFiltersResponse>('/api/v1/dashboard/filters')
   },
 }

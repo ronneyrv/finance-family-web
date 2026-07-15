@@ -10,23 +10,25 @@ import DashboardSummaryCards from '../../features/dashboard/components/Dashboard
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
 import type {
   CategoryExpenseResponse,
+  DashboardFiltersResponse,
   DashboardSummaryResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
 
 function DashboardPage() {
-  const currentYear = new Date().getFullYear()
+  const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
+
+  const [selectedYear, setSelectedYear] = useState<number | null>(null)
 
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null)
   const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
 
-  const [selectedYear, setSelectedYear] = useState(currentYear)
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummaryResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
 
   const [isOverviewLoading, setIsOverviewLoading] = useState(true)
-  const [isYearlyDataLoading, setIsYearlyDataLoading] = useState(true)
+  const [isYearlyDataLoading, setIsYearlyDataLoading] = useState(false)
 
   const [overviewError, setOverviewError] = useState<string | null>(null)
   const [yearlyDataError, setYearlyDataError] = useState<string | null>(null)
@@ -38,14 +40,17 @@ function DashboardPage() {
       try {
         setOverviewError(null)
 
-        const [summaryResponse, categoryExpensesResponse] = await Promise.all([
+        const [summaryResponse, categoryExpensesResponse, filtersResponse] = await Promise.all([
           dashboardApi.getSummary(),
           dashboardApi.getExpensesByCategory(),
+          dashboardApi.getFilters(),
         ])
 
         if (!isCancelled) {
           setSummary(summaryResponse)
           setCategoryExpenses(categoryExpensesResponse)
+          setFilters(filtersResponse)
+          setSelectedYear(filtersResponse.defaultYear)
         }
       } catch (error) {
         if (isCancelled) {
@@ -72,6 +77,11 @@ function DashboardPage() {
   }, [])
 
   useEffect(() => {
+    if (selectedYear === null) {
+      return
+    }
+
+    const year = selectedYear
     let isCancelled = false
 
     async function loadYearlyData() {
@@ -80,8 +90,8 @@ function DashboardPage() {
 
       try {
         const [monthlySummaryResponse, monthlyProjectionResponse] = await Promise.all([
-          dashboardApi.getMonthlySummary(selectedYear),
-          dashboardApi.getProjection(selectedYear),
+          dashboardApi.getMonthlySummary(year),
+          dashboardApi.getProjection(year),
         ])
 
         if (!isCancelled) {
@@ -121,18 +131,27 @@ function DashboardPage() {
           description="Acompanhe sua posição financeira e a evolução das suas movimentações."
         />
 
-        <div className="flex items-center gap-3">
-          <label htmlFor="dashboard-year" className="text-sm font-medium text-(--color-text-muted)">
+        <div className="flex flex-col items-start gap-2 sm:items-end">
+          <label
+            htmlFor="dashboard-year"
+            className="text-xs font-medium uppercase tracking-wide text-(--color-text-muted)"
+          >
             Ano
           </label>
 
           <select
             id="dashboard-year"
-            value={selectedYear}
+            value={selectedYear ?? ''}
             onChange={(event) => setSelectedYear(Number(event.target.value))}
-            className="h-10 min-w-28 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
+            disabled={!filters}
+            className="h-10 w-32 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
           >
-            ...
+            {filters &&
+              filters.years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
           </select>
         </div>
       </div>
@@ -147,13 +166,13 @@ function DashboardPage() {
         )}
 
         {!isOverviewLoading && !overviewError && summary && (
-          <DashboardSummaryCards summary={summary} />
-        )}
+          <>
+            <DashboardSummaryCards summary={summary} />
 
-        {!isOverviewLoading && !overviewError && (
-          <div className="mt-6">
-            <CategoryExpenses expenses={categoryExpenses} />
-          </div>
+            <div className="mt-6">
+              <CategoryExpenses expenses={categoryExpenses} />
+            </div>
+          </>
         )}
 
         {isYearlyDataLoading && <Loading message="Carregando dados do período..." />}
@@ -164,7 +183,7 @@ function DashboardPage() {
           </div>
         )}
 
-        {!isYearlyDataLoading && !yearlyDataError && (
+        {selectedYear !== null && !isYearlyDataLoading && !yearlyDataError && (
           <>
             <div className="mt-6">
               <MonthlySummaryChart data={monthlySummary} />
