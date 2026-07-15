@@ -1,14 +1,22 @@
+import type { ReactNode } from 'react'
+
 import Dialog from './Dialog'
+import { Alert } from '../alert'
+import { Button } from '../button'
 
 type ConfirmDialogProps = {
   open: boolean
   title: string
-  description: string
+  description: ReactNode
 
   confirmLabel?: string
+  confirmLoadingLabel?: string
   cancelLabel?: string
 
   confirmVariant?: 'danger' | 'primary'
+
+  isLoading?: boolean
+  errorMessage?: string | null
 
   onConfirm: () => void
   onCancel: () => void
@@ -19,36 +27,30 @@ function ConfirmDialog({
   title,
   description,
   confirmLabel = 'Confirmar',
+  confirmLoadingLabel = 'Processando...',
   cancelLabel = 'Cancelar',
   confirmVariant = 'danger',
+  isLoading = false,
+  errorMessage,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={open} title={title} onClose={onCancel}>
-      <p className="text-sm text-(--color-text-muted)">{description}</p>
+    <Dialog open={open} title={title} onClose={isLoading ? () => {} : onCancel}>
+      <div className="space-y-4">
+        <div className="text-sm text-(--color-text-muted)">{description}</div>
 
-      <div className="mt-6 flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-lg border border-(--color-border) px-4 py-2 text-sm font-medium transition hover:bg-(--color-surface-hover)"
-        >
-          {cancelLabel}
-        </button>
+        {errorMessage && <Alert>{errorMessage}</Alert>}
 
-        <button
-          type="button"
-          onClick={onConfirm}
-          className={[
-            'rounded-lg px-4 py-2 text-sm font-semibold text-white transition',
-            confirmVariant === 'danger'
-              ? 'bg-red-600 hover:bg-red-500'
-              : 'bg-emerald-500 hover:bg-emerald-400',
-          ].join(' ')}
-        >
-          {confirmLabel}
-        </button>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" disabled={isLoading} onClick={onCancel}>
+            {cancelLabel}
+          </Button>
+
+          <Button type="button" variant={confirmVariant} disabled={isLoading} onClick={onConfirm}>
+            {isLoading ? confirmLoadingLabel : confirmLabel}
+          </Button>
+        </div>
       </div>
     </Dialog>
   )

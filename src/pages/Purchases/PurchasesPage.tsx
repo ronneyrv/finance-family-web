@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
+import { Alert } from '../../components/ui/alert'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
+import type { InstallmentResponse } from '../../features/purchases/model/purchaseTypes'
 import InstallmentList from '../../features/purchases/components/InstallmentList'
 import PurchaseForm from '../../features/purchases/components/PurchaseForm'
-import type { InstallmentResponse } from '../../features/purchases/model/purchaseTypes'
-import { ApiError } from '../../lib/api/apiError'
 
 function PurchasesPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -56,23 +58,15 @@ function PurchasesPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Compras parceladas</p>
-
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Compras no cartão</h1>
-
-        <p className="mt-2 text-sm text-slate-400">
-          Registre compras à vista ou parceladas e acompanhe as faturas em que serão cobradas.
-        </p>
-      </div>
+      <PageHeader
+        section="Compras parceladas"
+        title="Compras no cartão"
+        description="Registre compras à vista ou parceladas e acompanhe as faturas em que serão cobradas."
+      />
 
       {isLoading && <p className="mt-8 text-slate-400">Carregando cartões...</p>}
 
-      {errorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <Alert className="mt-8">{errorMessage}</Alert>}
 
       {!isLoading && !errorMessage && (
         <PurchaseForm creditCards={creditCards} onCreated={handlePurchaseCreated} />

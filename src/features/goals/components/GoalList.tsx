@@ -1,7 +1,8 @@
 import { CalendarDays, Goal, Pencil, Trash2 } from 'lucide-react'
 
-import { formatCurrency } from '../../../lib/formatters/currency'
 import { formatDate } from '../../../lib/formatters/date'
+import { EmptyState } from '../../../components/ui/empty-state'
+import { formatCurrency } from '../../../lib/formatters/currency'
 import type { GoalResponse } from '../model/goalTypes'
 
 type GoalListProps = {
@@ -13,15 +14,10 @@ type GoalListProps = {
 function GoalList({ goals, onEdit, onDelete }: GoalListProps) {
   if (goals.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
-        <Goal className="mx-auto text-(--color-text-muted)" size={32} />
-
-        <p className="mt-4 font-medium">Nenhuma meta cadastrada</p>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Cadastre uma meta para acompanhar a evolução dos seus objetivos financeiros.
-        </p>
-      </div>
+      <EmptyState
+        title="Nenhuma meta cadastrada"
+        description="Cadastre uma meta para acompanhar a evolução dos seus objetivos financeiros."
+      />
     )
   }
 

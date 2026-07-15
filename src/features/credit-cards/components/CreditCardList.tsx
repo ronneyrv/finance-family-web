@@ -1,5 +1,6 @@
 import { CreditCard, Pencil, Trash2 } from 'lucide-react'
 
+import { EmptyState } from '../../../components/ui/empty-state'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { CreditCardResponse } from '../model/creditCardTypes'
 
@@ -12,15 +13,10 @@ type CreditCardListProps = {
 function CreditCardList({ creditCards, onEdit, onDelete }: CreditCardListProps) {
   if (creditCards.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
-        <CreditCard className="mx-auto text-(--color-text-muted)" size={32} />
-
-        <p className="mt-4 font-medium">Nenhum cartão cadastrado</p>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Cadastre um cartão para registrar compras e acompanhar suas faturas.
-        </p>
-      </div>
+      <EmptyState
+        title="Nenhum cartão cadastrado"
+        description="Cadastre um cartão para registrar compras e acompanhar suas faturas."
+      />
     )
   }
 

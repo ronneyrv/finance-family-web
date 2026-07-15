@@ -1,8 +1,9 @@
-import { formatCurrency } from '../../../lib/formatters/currency'
 import { formatDate } from '../../../lib/formatters/date'
-import type { TransactionResponse } from '../model/transactionTypes'
+import { EmptyState } from '../../../components/ui/empty-state'
+import { formatCurrency } from '../../../lib/formatters/currency'
 import { Pencil, Trash2 } from 'lucide-react'
 import { paymentMethodLabels } from '../model/paymentMethods'
+import type { TransactionResponse } from '../model/transactionTypes'
 
 type TransactionListProps = {
   transactions: TransactionResponse[]
@@ -21,13 +22,10 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
 
   if (transactions.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
-        <p className="font-medium">Nenhuma transação encontrada</p>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Suas movimentações financeiras aparecerão aqui.
-        </p>
-      </div>
+      <EmptyState
+        title="Nenhuma transação encontrada"
+        description="Suas movimentações financeiras aparecerão aqui."
+      />
     )
   }
 

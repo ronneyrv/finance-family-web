@@ -1,7 +1,8 @@
 import { CheckCircle2, Clock3, ReceiptText } from 'lucide-react'
 
-import { formatCurrency } from '../../../lib/formatters/currency'
 import { formatDate } from '../../../lib/formatters/date'
+import { EmptyState } from '../../../components/ui/empty-state'
+import { formatCurrency } from '../../../lib/formatters/currency'
 import type { InvoiceInstallmentResponse } from '../model/invoiceTypes'
 
 type InvoiceInstallmentListProps = {
@@ -11,15 +12,10 @@ type InvoiceInstallmentListProps = {
 function InvoiceInstallmentList({ installments }: InvoiceInstallmentListProps) {
   if (installments.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
-        <ReceiptText className="mx-auto text-(--color-text-muted)" size={32} />
-
-        <p className="mt-4 font-medium">Nenhum lançamento nesta fatura</p>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Não existem parcelas vinculadas ao período selecionado.
-        </p>
-      </div>
+      <EmptyState
+        title="Nenhum lançamento nesta fatura"
+        description="Não existem parcelas vinculadas ao período selecionado."
+      />
     )
   }
 

@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 
-import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
-import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
+import { Loading } from '../../components/ui/loading'
+import { ApiError } from '../../lib/api/apiError'
+import { PageHeader } from '../../components/ui/page'
 import { invoicesApi } from '../../features/invoices/api/invoicesApi'
+import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
+import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
+import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
+import type { InvoiceResponse } from '../../features/invoices/model/invoiceTypes'
+import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
+import InvoicePaymentForm from '../../features/invoices/components/InvoicePaymentForm'
 import InvoiceFilter from '../../features/invoices/components/InvoiceFilter'
 import InvoiceInstallmentList from '../../features/invoices/components/InvoiceInstallmentList'
 import InvoiceSummary from '../../features/invoices/components/InvoiceSummary'
-import type { InvoiceResponse } from '../../features/invoices/model/invoiceTypes'
-import { ApiError } from '../../lib/api/apiError'
-import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
-import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
-import InvoicePaymentForm from '../../features/invoices/components/InvoicePaymentForm'
+import { Alert } from '../../components/ui/alert'
 
 function InvoicesPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -123,23 +126,15 @@ function InvoicesPage() {
 
   return (
     <section>
-      <div>
-        <p className="text-sm font-medium text-emerald-400">Cartões e faturas</p>
+      <PageHeader
+        section="Cartões e faturas"
+        title="Faturas"
+        description="Consulte os lançamentos e acompanhe a situação das suas faturas."
+      />
 
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Faturas</h1>
+      {isLoadingCards && <Loading className="mt-8" message="Carregando cartões..." />}
 
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Consulte os lançamentos e acompanhe a situação das suas faturas.
-        </p>
-      </div>
-
-      {isLoadingCards && <p className="mt-8 text-(--color-text-muted)">Carregando cartões...</p>}
-
-      {cardsErrorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {cardsErrorMessage}
-        </div>
-      )}
+      {cardsErrorMessage && <Alert className="mt-8">{cardsErrorMessage}</Alert>}
 
       {!isLoadingCards && !cardsErrorMessage && (
         <InvoiceFilter
@@ -149,22 +144,14 @@ function InvoicesPage() {
         />
       )}
 
-      {invoiceErrorMessage && (
-        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-          {invoiceErrorMessage}
-        </div>
-      )}
+      {invoiceErrorMessage && <Alert className="mt-8">{invoiceErrorMessage}</Alert>}
 
       {invoice && (
         <>
           <InvoiceSummary invoice={invoice} />
 
           <InvoiceInstallmentList installments={invoice.installments} />
-          {accountsErrorMessage && (
-            <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-              {accountsErrorMessage}
-            </div>
-          )}
+          {accountsErrorMessage && <Alert className="mt-8">{accountsErrorMessage}</Alert>}
 
           {selectedCreditCardId &&
             !invoice.installments.every((installment) => installment.paid) &&

@@ -1,5 +1,6 @@
 import { Banknote, Landmark, Pencil, PiggyBank, Trash2, WalletCards } from 'lucide-react'
 
+import { EmptyState } from '../../../components/ui/empty-state'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { AccountType, FinancialAccountResponse } from '../model/financialAccountTypes'
 
@@ -26,15 +27,10 @@ const accountTypeIcons = {
 function FinancialAccountList({ financialAccounts, onEdit, onDelete }: FinancialAccountListProps) {
   if (financialAccounts.length === 0) {
     return (
-      <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center">
-        <WalletCards className="mx-auto text-(--color-text-muted)" size={32} />
-
-        <p className="mt-4 font-medium">Nenhuma conta financeira cadastrada</p>
-
-        <p className="mt-2 text-sm text-(--color-text-muted)">
-          Cadastre uma conta para acompanhar seus saldos e realizar pagamentos.
-        </p>
-      </div>
+      <EmptyState
+        title="Nenhuma conta financeira cadastrada"
+        description="Cadastre uma conta para acompanhar seus saldos e realizar pagamentos."
+      />
     )
   }
 

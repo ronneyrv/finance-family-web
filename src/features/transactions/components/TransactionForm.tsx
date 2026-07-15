@@ -16,6 +16,7 @@ import InstallmentSelector from './form/InstallmentSelector'
 import CreditCardSelector from './form/CreditCardSelector'
 import FinancialAccountSelector from './form/FinancialAccountSelector'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { Card } from '../../../components/ui/card'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -254,155 +255,154 @@ function TransactionForm({
       : financialAccounts.filter((account) => account.accountType !== 'CASH')
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4"
-    >
-      <div>
-        <h2 className="text-lg font-semibold">
-          {transaction ? 'Editar transação' : 'Nova transação'}
-        </h2>
-        <p className="mt-1 text-sm text-(--color-text-muted)">
-          {transaction
-            ? 'Atualize os dados da movimentação.'
-            : 'Registre uma nova receita ou despesa.'}
-        </p>
-      </div>
+    <Card className="mt-8">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <h2 className="text-lg font-semibold">
+            {transaction ? 'Editar transação' : 'Nova transação'}
+          </h2>
+          <p className="mt-1 text-sm text-(--color-text-muted)">
+            {transaction
+              ? 'Atualize os dados da movimentação.'
+              : 'Registre uma nova receita ou despesa.'}
+          </p>
+        </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <TransactionTypeSelector value={type} onChange={handleTypeChange} />
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <TransactionTypeSelector value={type} onChange={handleTypeChange} />
 
-        <PaymentMethodSelector
-          methods={paymentMethodsByType[type]}
-          value={paymentMethod}
-          onChange={handlePaymentMethodChange}
-        />
+          <PaymentMethodSelector
+            methods={paymentMethodsByType[type]}
+            value={paymentMethod}
+            onChange={handlePaymentMethodChange}
+          />
 
-        {paymentMethod === 'CREDIT_CARD' ? (
-          <>
-            <CreditCardSelector
-              creditCards={creditCards}
-              value={creditCardId}
-              onChange={setCreditCardId}
+          {paymentMethod === 'CREDIT_CARD' ? (
+            <>
+              <CreditCardSelector
+                creditCards={creditCards}
+                value={creditCardId}
+                onChange={setCreditCardId}
+              />
+              <InstallmentSelector value={installments} onChange={setInstallments} />
+            </>
+          ) : (
+            <FinancialAccountSelector
+              accounts={availableAccounts}
+              value={accountId}
+              onChange={setAccountId}
             />
-            <InstallmentSelector value={installments} onChange={setInstallments} />
-          </>
-        ) : (
-          <FinancialAccountSelector
-            accounts={availableAccounts}
-            value={accountId}
-            onChange={setAccountId}
-          />
-        )}
+          )}
 
-        <label>
-          <span className="text-sm text-(--color-text)">Descrição</span>
+          <label>
+            <span className="text-sm text-(--color-text)">Descrição</span>
 
-          <input
-            required
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            className={fieldClassName}
-          />
-        </label>
+            <input
+              required
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              className={fieldClassName}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm text-(--color-text)">Valor</span>
+          <label>
+            <span className="text-sm text-(--color-text)">Valor</span>
 
-          <input
-            required
-            min="0.10"
-            step="0.10"
-            type="number"
-            inputMode="decimal"
-            placeholder="0,00"
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-            className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-          />
-        </label>
+            <input
+              required
+              min="0.10"
+              step="0.10"
+              type="number"
+              inputMode="decimal"
+              placeholder="0,00"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+            />
+          </label>
 
-        <label>
-          <span className="text-sm text-(--color-text)">Data</span>
+          <label>
+            <span className="text-sm text-(--color-text)">Data</span>
 
-          <input
-            required
-            type="date"
-            value={transactionDate}
-            onChange={(event) => setTransactionDate(event.target.value)}
-            className={fieldClassName}
-          />
-        </label>
+            <input
+              required
+              type="date"
+              value={transactionDate}
+              onChange={(event) => setTransactionDate(event.target.value)}
+              className={fieldClassName}
+            />
+          </label>
 
-        {paymentMethod !== 'CREDIT_CARD' && (
-          <>
-            <label>
-              <span className="text-sm text-(--color-text)">Categoria</span>
+          {paymentMethod !== 'CREDIT_CARD' && (
+            <>
+              <label>
+                <span className="text-sm text-(--color-text)">Categoria</span>
 
-              <select
-                required
-                value={categoryId}
-                onChange={(event) => handleCategoryChange(event.target.value)}
-                disabled={type === 'INCOME'}
-                className={`${fieldClassName} ${
-                  type === 'INCOME' ? 'cursor-not-allowed opacity-70' : ''
-                }`}
-              >
-                <option value="">Selecione</option>
+                <select
+                  required
+                  value={categoryId}
+                  onChange={(event) => handleCategoryChange(event.target.value)}
+                  disabled={type === 'INCOME'}
+                  className={`${fieldClassName} ${
+                    type === 'INCOME' ? 'cursor-not-allowed opacity-70' : ''
+                  }`}
+                >
+                  <option value="">Selecione</option>
 
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <label>
-              <span className="text-sm text-(--color-text)">Subcategoria</span>
+              <label>
+                <span className="text-sm text-(--color-text)">Subcategoria</span>
 
-              <select
-                value={subCategoryId}
-                disabled={!categoryId}
-                onChange={(event) => setSubCategoryId(event.target.value)}
-                className={fieldClassName}
-              >
-                <option value="">Sem subcategoria</option>
+                <select
+                  value={subCategoryId}
+                  disabled={!categoryId}
+                  onChange={(event) => setSubCategoryId(event.target.value)}
+                  className={fieldClassName}
+                >
+                  <option value="">Sem subcategoria</option>
 
-                {subCategories.map((subCategory) => (
-                  <option key={subCategory.id} value={subCategory.id}>
-                    {subCategory.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </>
-        )}
-      </div>
+                  {subCategories.map((subCategory) => (
+                    <option key={subCategory.id} value={subCategory.id}>
+                      {subCategory.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </>
+          )}
+        </div>
 
-      {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
+        {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
-      <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        >
-          {isSubmitting ? 'Salvando...' : transaction ? 'Salvar alterações' : 'Salvar transação'}
-        </button>
-
-        {transaction && (
+        <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
           <button
-            type="button"
-            onClick={onCancelEdit}
+            type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50 sm:w-auto"
+            className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
-            Cancelar edição
+            {isSubmitting ? 'Salvando...' : transaction ? 'Salvar alterações' : 'Salvar transação'}
           </button>
-        )}
-      </div>
-    </form>
+
+          {transaction && (
+            <button
+              type="button"
+              onClick={onCancelEdit}
+              disabled={isSubmitting}
+              className="w-full rounded-lg border border-(--color-border) px-4 py-2.5 font-medium text-(--color-text) transition hover:bg-(--color-surface-hover) disabled:opacity-50 sm:w-auto"
+            >
+              Cancelar edição
+            </button>
+          )}
+        </div>
+      </form>
+    </Card>
   )
 }
 
