@@ -1,7 +1,7 @@
 import { Banknote, Landmark, Pencil, PiggyBank, Trash2, WalletCards } from 'lucide-react'
 
+import { Money } from '../../../components/ui/money'
 import { EmptyState } from '../../../components/ui/empty-state'
-import { formatCurrency } from '../../../lib/formatters/currency'
 import type { AccountType, FinancialAccountResponse } from '../model/financialAccountTypes'
 
 type FinancialAccountListProps = {
@@ -88,7 +88,7 @@ function FinancialAccountList({ financialAccounts, onEdit, onDelete }: Financial
               </p>
 
               <p className="mt-1 text-xl font-semibold">
-                {formatCurrency(financialAccount.currentBalance)}
+                <Money value={financialAccount.currentBalance} />
               </p>
             </div>
 
@@ -96,7 +96,7 @@ function FinancialAccountList({ financialAccounts, onEdit, onDelete }: Financial
               <p className="text-xs text-(--color-text-muted)">Saldo inicial</p>
 
               <p className="mt-1 text-sm font-medium">
-                {formatCurrency(financialAccount.initialBalance)}
+                <Money value={financialAccount.initialBalance} />
               </p>
             </div>
           </article>

@@ -130,7 +130,7 @@ function DashboardPage() {
             id="dashboard-year"
             value={selectedYear}
             onChange={(event) => setSelectedYear(Number(event.target.value))}
-            className="h-10 w-24 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
+            className="h-10 min-w-28 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
           >
             ...
           </select>

@@ -1,7 +1,7 @@
 import { CreditCard, Pencil, Trash2 } from 'lucide-react'
 
+import { Money } from '../../../components/ui/money'
 import { EmptyState } from '../../../components/ui/empty-state'
-import { formatCurrency } from '../../../lib/formatters/currency'
 import type { CreditCardResponse } from '../model/creditCardTypes'
 
 type CreditCardListProps = {
@@ -68,7 +68,9 @@ function CreditCardList({ creditCards, onEdit, onDelete }: CreditCardListProps) 
               Limite de crédito
             </p>
 
-            <p className="mt-1 text-xl font-semibold">{formatCurrency(creditCard.creditLimit)}</p>
+            <p className="mt-1 text-xl font-semibold">
+              <Money value={creditCard.creditLimit} />
+            </p>
           </div>
 
           <div className="mt-5 grid grid-cols-2 gap-4 border-t border-(--color-border) pt-4">

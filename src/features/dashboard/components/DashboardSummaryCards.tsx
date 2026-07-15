@@ -1,6 +1,6 @@
 import { Banknote, Landmark, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 
-import { formatCurrency } from '../../../lib/formatters/currency'
+import { Money } from '../../../components/ui/money'
 import type { DashboardSummaryResponse } from '../model/dashboardTypes'
 
 type DashboardSummaryCardsProps = {
@@ -69,7 +69,7 @@ function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
                 </p>
 
                 <p className="mt-2 text-xl font-bold text-(--color-text)">
-                  {formatCurrency(summary[card.key])}
+                  {<Money value={summary[card.key]} />}
                 </p>
               </div>
 

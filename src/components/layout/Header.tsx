@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../../features/auth/hooks/useAuth'
+import { BalanceVisibilityButton } from '../ui/balance-visibility'
 
 function Header() {
   const { logout } = useAuth()
@@ -18,15 +19,19 @@ function Header() {
         <p className="text-sm text-slate-400">Visão geral das suas finanças</p>
       </div>
 
-      <button
-        type="button"
-        onClick={handleLogout}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-900 hover:text-slate-100"
-        aria-label="Sair da conta"
-      >
-        <LogOut size={18} />
-        <span className="hidden sm:inline">Sair</span>
-      </button>
+      <div className="flex items-center">
+        <BalanceVisibilityButton />
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-900 hover:text-slate-100"
+          aria-label="Sair da conta"
+        >
+          <LogOut size={18} />
+          <span className="hidden sm:inline">Sair</span>
+        </button>
+      </div>
     </header>
   )
 }
