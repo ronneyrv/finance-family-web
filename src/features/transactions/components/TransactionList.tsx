@@ -1,9 +1,10 @@
 import { formatDate } from '../../../lib/formatters/date'
 import { EmptyState } from '../../../components/ui/empty-state'
+import { ActionButton } from '../../../components/ui/action-button'
 import { formatCurrency } from '../../../lib/formatters/currency'
-import { Pencil, Trash2 } from 'lucide-react'
 import { paymentMethodLabels } from '../model/paymentMethods'
 import type { TransactionResponse } from '../model/transactionTypes'
+import { Pencil, Trash2 } from 'lucide-react'
 
 type TransactionListProps = {
   transactions: TransactionResponse[]
@@ -154,25 +155,17 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                   <td className="whitespace-nowrap px-6 py-4 text-right">
                     {transaction.transactionKind === 'REGULAR' && (
                       <>
-                        <button
-                          type="button"
+                        <ActionButton
+                          variant="edit"
+                          label={`Editar ${transaction.description}`}
                           onClick={() => onEdit(transaction)}
-                          className="inline-flex rounded-lg p-2 text-(--color-text-muted) transition hover:bg-emerald-500/10 hover:text-emerald-400"
-                          aria-label={`Editar ${transaction.description}`}
-                          title="Editar transação"
-                        >
-                          <Pencil size={18} />
-                        </button>
+                        />
 
-                        <button
-                          type="button"
+                        <ActionButton
+                          variant="delete"
+                          label={`Excluir ${transaction.description}`}
                           onClick={() => onDelete(transaction)}
-                          className="inline-flex rounded-lg p-2 text-(--color-text-muted) transition hover:bg-red-500/10 hover:text-red-400"
-                          aria-label={`Excluir ${transaction.description}`}
-                          title="Excluir transação"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        />
                       </>
                     )}
                   </td>
