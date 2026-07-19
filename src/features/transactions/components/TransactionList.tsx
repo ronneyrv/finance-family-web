@@ -1,7 +1,7 @@
 import { formatDate } from '../../../lib/formatters/date'
 import { EmptyState } from '../../../components/ui/empty-state'
+import { ActionButton } from '../../../components/ui/action-button'
 import { formatCurrency } from '../../../lib/formatters/currency'
-import { Pencil, Trash2 } from 'lucide-react'
 import { paymentMethodLabels } from '../model/paymentMethods'
 import type { TransactionResponse } from '../model/transactionTypes'
 
@@ -68,25 +68,19 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
 
             {transaction.transactionKind === 'REGULAR' && (
               <div className="mt-4 flex items-center gap-4">
-                <button
-                  type="button"
+                <ActionButton
+                  variant="edit"
+                  showText
+                  label={`Editar ${transaction.description}`}
                   onClick={() => onEdit(transaction)}
-                  className="flex items-center gap-2 text-sm font-medium text-emerald-400 transition hover:text-emerald-300"
-                  aria-label={`Editar ${transaction.description}`}
-                >
-                  <Pencil size={16} />
-                  Editar
-                </button>
+                />
 
-                <button
-                  type="button"
+                <ActionButton
+                  variant="delete"
+                  showText
+                  label={`Excluir ${transaction.description}`}
                   onClick={() => onDelete(transaction)}
-                  className="flex items-center gap-2 text-sm font-medium text-red-400 transition hover:text-red-300"
-                  aria-label={`Excluir ${transaction.description}`}
-                >
-                  <Trash2 size={16} />
-                  Excluir
-                </button>
+                />
               </div>
             )}
           </article>
@@ -154,25 +148,17 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
                   <td className="whitespace-nowrap px-6 py-4 text-right">
                     {transaction.transactionKind === 'REGULAR' && (
                       <>
-                        <button
-                          type="button"
+                        <ActionButton
+                          variant="edit"
+                          label={`Editar ${transaction.description}`}
                           onClick={() => onEdit(transaction)}
-                          className="inline-flex rounded-lg p-2 text-(--color-text-muted) transition hover:bg-emerald-500/10 hover:text-emerald-400"
-                          aria-label={`Editar ${transaction.description}`}
-                          title="Editar transação"
-                        >
-                          <Pencil size={18} />
-                        </button>
+                        />
 
-                        <button
-                          type="button"
+                        <ActionButton
+                          variant="delete"
+                          label={`Excluir ${transaction.description}`}
                           onClick={() => onDelete(transaction)}
-                          className="inline-flex rounded-lg p-2 text-(--color-text-muted) transition hover:bg-red-500/10 hover:text-red-400"
-                          aria-label={`Excluir ${transaction.description}`}
-                          title="Excluir transação"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        />
                       </>
                     )}
                   </td>

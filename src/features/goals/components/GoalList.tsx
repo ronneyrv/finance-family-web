@@ -1,9 +1,10 @@
-import { CalendarDays, Goal, Pencil, Trash2 } from 'lucide-react'
+import { CalendarDays, Goal } from 'lucide-react'
 
 import { formatDate } from '../../../lib/formatters/date'
 import { EmptyState } from '../../../components/ui/empty-state'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { GoalResponse } from '../model/goalTypes'
+import { ActionButton } from '../../../components/ui/action-button'
 
 type GoalListProps = {
   goals: GoalResponse[]
@@ -42,25 +43,17 @@ function GoalList({ goals, onEdit, onDelete }: GoalListProps) {
             </div>
 
             <div className="flex shrink-0 gap-1">
-              <button
-                type="button"
+              <ActionButton
+                variant="edit"
+                label={`Editar ${goal.name}`}
                 onClick={() => onEdit(goal)}
-                className="rounded-lg p-2 text-(--color-text-muted) transition hover:bg-emerald-500/10 hover:text-emerald-400"
-                aria-label={`Editar ${goal.name}`}
-                title="Editar meta"
-              >
-                <Pencil size={17} />
-              </button>
+              />
 
-              <button
-                type="button"
+              <ActionButton
+                variant="delete"
+                label={`Excluir ${goal.name}`}
                 onClick={() => onDelete(goal)}
-                className="rounded-lg p-2 text-(--color-text-muted) transition hover:bg-red-500/10 hover:text-red-400"
-                aria-label={`Excluir ${goal.name}`}
-                title="Excluir meta"
-              >
-                <Trash2 size={17} />
-              </button>
+              />
             </div>
           </div>
 

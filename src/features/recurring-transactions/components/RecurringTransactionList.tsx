@@ -1,3 +1,4 @@
+import { ActionButton } from '../../../components/ui/action-button'
 import type { RecurringTransactionResponse } from '../model/recurringTransactionTypes'
 
 type RecurringTransactionListProps = {
@@ -71,29 +72,30 @@ function RecurringTransactionList({
 
               <td className="px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <button
-                    type="button"
+                  <ActionButton
+                    variant="edit"
+                    showText
+                    label={`Editar ${transaction.description}`}
                     onClick={() => onEdit(transaction)}
-                    className="text-sm font-medium text-emerald-400 transition hover:text-emerald-300"
-                  >
-                    Editar
-                  </button>
+                  />
 
-                  <button
-                    type="button"
+                  <ActionButton
+                    variant={transaction.active ? 'deactivate' : 'activate'}
+                    showText
+                    label={
+                      transaction.active
+                        ? `Desativar ${transaction.description}`
+                        : `Ativar ${transaction.description}`
+                    }
                     onClick={() => onToggleStatus(transaction.id, !transaction.active)}
-                    className="text-sm font-medium text-amber-400 transition hover:text-amber-300"
-                  >
-                    {transaction.active ? 'Desativar' : 'Ativar'}
-                  </button>
+                  />
 
-                  <button
-                    type="button"
+                  <ActionButton
+                    variant="delete"
+                    showText
+                    label={`Excluir ${transaction.description}`}
                     onClick={() => onDelete(transaction.id)}
-                    className="text-sm font-medium text-red-400 transition hover:text-red-300"
-                  >
-                    Excluir
-                  </button>
+                  />
                 </div>
               </td>
             </tr>

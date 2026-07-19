@@ -1,7 +1,8 @@
-import { CreditCard, Pencil, Trash2 } from 'lucide-react'
+import { CreditCard } from 'lucide-react'
 
 import { Money } from '../../../components/ui/money'
 import { EmptyState } from '../../../components/ui/empty-state'
+import { ActionButton } from '../../../components/ui/action-button'
 import type { CreditCardResponse } from '../model/creditCardTypes'
 
 type CreditCardListProps = {
@@ -41,25 +42,17 @@ function CreditCardList({ creditCards, onEdit, onDelete }: CreditCardListProps) 
             </div>
 
             <div className="flex shrink-0 gap-1">
-              <button
-                type="button"
+              <ActionButton
+                variant="edit"
+                label={`Editar ${creditCard.name}`}
                 onClick={() => onEdit(creditCard)}
-                className="rounded-lg p-2 text-(--color-text-muted) transition hover:bg-emerald-500/10 hover:text-emerald-400"
-                aria-label={`Editar ${creditCard.name}`}
-                title="Editar cartão"
-              >
-                <Pencil size={17} />
-              </button>
+              />
 
-              <button
-                type="button"
+              <ActionButton
+                variant="delete"
+                label={`Excluir ${creditCard.name}`}
                 onClick={() => onDelete(creditCard)}
-                className="rounded-lg p-2 text-(--color-text-muted) transition hover:bg-red-500/10 hover:text-red-400"
-                aria-label={`Excluir ${creditCard.name}`}
-                title="Excluir cartão"
-              >
-                <Trash2 size={17} />
-              </button>
+              />
             </div>
           </div>
 

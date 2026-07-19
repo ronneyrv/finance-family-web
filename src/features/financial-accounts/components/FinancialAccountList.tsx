@@ -1,8 +1,9 @@
-import { Banknote, Landmark, Pencil, PiggyBank, Trash2, WalletCards } from 'lucide-react'
+import { Banknote, Landmark, PiggyBank, WalletCards } from 'lucide-react'
 
 import { Money } from '../../../components/ui/money'
 import { EmptyState } from '../../../components/ui/empty-state'
 import type { AccountType, FinancialAccountResponse } from '../model/financialAccountTypes'
+import { ActionButton } from '../../../components/ui/action-button'
 
 type FinancialAccountListProps = {
   financialAccounts: FinancialAccountResponse[]
@@ -60,25 +61,17 @@ function FinancialAccountList({ financialAccounts, onEdit, onDelete }: Financial
               </div>
 
               <div className="flex shrink-0 gap-1">
-                <button
-                  type="button"
+                <ActionButton
+                  variant="edit"
+                  label={`Editar ${financialAccount.name}`}
                   onClick={() => onEdit(financialAccount)}
-                  className="rounded-lg p-2 text-(--color-text-muted) transition hover:bg-emerald-500/10 hover:text-emerald-400"
-                  aria-label={`Editar ${financialAccount.name}`}
-                  title="Editar conta"
-                >
-                  <Pencil size={17} />
-                </button>
+                />
 
-                <button
-                  type="button"
+                <ActionButton
+                  variant="delete"
+                  label={`Excluir ${financialAccount.name}`}
                   onClick={() => onDelete(financialAccount)}
-                  className="rounded-lg p-2 text-(--color-text-muted) transition hover:bg-red-500/10 hover:text-red-400"
-                  aria-label={`Excluir ${financialAccount.name}`}
-                  title="Excluir conta"
-                >
-                  <Trash2 size={17} />
-                </button>
+                />
               </div>
             </div>
 
