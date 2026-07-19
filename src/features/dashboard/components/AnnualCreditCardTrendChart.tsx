@@ -1,8 +1,10 @@
 import {
   Bar,
-  BarChart,
   CartesianGrid,
+  ComposedChart,
+  LabelList,
   Legend,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -10,10 +12,10 @@ import {
 } from 'recharts'
 
 import { formatCurrency } from '../../../lib/formatters/currency'
-import type { Month, MonthlyProjectionResponse } from '../model/dashboardTypes'
+import type { CreditCardExpenseTrendResponse, Month } from '../model/dashboardTypes'
 
-type MonthlyProjectionChartProps = {
-  data: MonthlyProjectionResponse[]
+type AnnualCreditCardTrendChartProps = {
+  data: CreditCardExpenseTrendResponse[]
 }
 
 const monthLabels: Record<Month, string> = {
@@ -31,30 +33,76 @@ const monthLabels: Record<Month, string> = {
   DECEMBER: 'Dez',
 }
 
-function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
-  const chartData = data.map((item) => ({
-    ...item,
-    monthLabel: monthLabels[item.month],
-  }))
+const COLORS = [
+  '#3b82f6',
+  '#10b981',
+  '#f59e0b',
+  '#8b5cf6',
+  '#ef4444',
+  '#06b6d4',
+  '#84cc16',
+  '#f97316',
+]
+
+type CustomLabelProps = {
+  x?: number
+  y?: number
+  value?: number | string
+}
+
+function CustomLineLabel({ x, y, value }: CustomLabelProps) {
+  if (x == null || y == null || value == null) {
+    return null
+  }
+
+  return (
+    <text
+      x={x}
+      y={y - 12}
+      fill="var(--color-text)"
+      fontSize={9}
+      fontWeight={600}
+      textAnchor="middle"
+      transform={`rotate(-35 ${x - 12} ${y - 12})`}
+    >
+      {formatCurrency(Number(value))}
+    </text>
+  )
+}
+
+function AnnualCreditCardTrendChart({ data }: AnnualCreditCardTrendChartProps) {
+  const cardNames = Array.from(
+    new Set(data.flatMap((month) => month.cards.map((card) => card.cardName))),
+  )
+
+  const chartData = data.map((month) => {
+    const cardValues = Object.fromEntries(month.cards.map((card) => [card.cardName, card.amount]))
+
+    return {
+      monthLabel: monthLabels[month.month],
+      total: month.total,
+      ...cardValues,
+    }
+  })
 
   return (
     <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
-        <h2 className="text-lg font-semibold">Projeção financeira</h2>
+        <h2 className="text-lg font-semibold">Projeção das faturas</h2>
 
         <p className="mt-1 text-sm text-slate-400">
-          Previsão mensal baseada em receitas e despesas recorrentes e parcelas futuras do cartão.
+          Comparativo mensal entre as despesas de cada cartão de crédito e o total consolidado.
         </p>
       </div>
 
       {chartData.length === 0 ? (
         <p className="mt-6 text-sm text-(--color-text-muted)">
-          Nenhuma projeção encontrada para o período.
+          Nenhuma movimentação encontrada para o período.
         </p>
       ) : (
         <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} barCategoryGap="28%">
+            <ComposedChart data={chartData}>
               <CartesianGrid
                 horizontal
                 vertical={false}
@@ -76,11 +124,11 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
               <YAxis
                 axisLine={false}
                 tickLine={false}
+                width={55}
                 tick={{
                   fill: 'var(--color-text-muted)',
                   fontSize: 12,
                 }}
-                width={55}
                 tickFormatter={(value: number) =>
                   new Intl.NumberFormat('pt-BR', {
                     notation: 'compact',
@@ -88,6 +136,18 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
                   }).format(value)
                 }
               />
+
+              <Line
+                type="monotone"
+                dataKey="total"
+                name="Total"
+                stroke="#ffffff"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              >
+                <LabelList dataKey="total" content={<CustomLineLabel />} />
+              </Line>
 
               <Tooltip
                 formatter={(value) => formatCurrency(Number(value))}
@@ -112,27 +172,16 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
                 }}
               />
 
-              <Bar
-                dataKey="projectedTotalExpense"
-                name="Despesas previstas"
-                fill="#fb7185"
-                radius={[4, 4, 0, 0]}
-              />
-
-              <Bar
-                dataKey="projectedIncome"
-                name="Receitas previstas"
-                fill="#34d399"
-                radius={[4, 4, 0, 0]}
-              />
-
-              <Bar
-                dataKey="projectedBalance"
-                name="Saldo projetado"
-                fill="#38bdf8"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
+              {cardNames.map((cardName, index) => (
+                <Bar
+                  key={cardName}
+                  dataKey={cardName}
+                  name={cardName}
+                  fill={COLORS[index % COLORS.length]}
+                  radius={[4, 4, 0, 0]}
+                />
+              ))}
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       )}
@@ -140,4 +189,4 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
   )
 }
 
-export default MonthlyProjectionChart
+export default AnnualCreditCardTrendChart

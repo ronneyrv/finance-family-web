@@ -1,6 +1,8 @@
 import { apiClient } from '../../../lib/api/apiClient'
 import type {
   CategoryExpenseResponse,
+  CreditCardExpenseTrendResponse,
+  CreditCardInvoiceSummaryResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
   MonthlyProjectionResponse,
@@ -26,5 +28,15 @@ export const dashboardApi = {
 
   getFilters() {
     return apiClient.get<DashboardFiltersResponse>('/api/v1/dashboard/filters')
+  },
+
+  getCreditCardInvoices() {
+    return apiClient.get<CreditCardInvoiceSummaryResponse[]>('/api/v1/dashboard/credit-cards')
+  },
+
+  getCreditCardTrend(year: number) {
+    return apiClient.get<CreditCardExpenseTrendResponse[]>(
+      `/api/v1/dashboard/credit-cards/trend?year=${year}`,
+    )
   },
 }
