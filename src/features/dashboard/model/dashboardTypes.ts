@@ -47,3 +47,23 @@ export type DashboardFiltersResponse = {
   defaultYear: number
   defaultMonth: number
 }
+
+export type CreditCardInvoiceSummaryResponse = {
+  creditCardId: string
+  cardName: string
+  invoiceAmount: number
+  installmentCount: number
+  dueDay: number
+  hasOpenInvoice: boolean
+}
+
+export type CreditCardTrendItemResponse = {
+  cardName: string
+  amount: number
+}
+
+export type CreditCardExpenseTrendResponse = {
+  month: Month
+  total: number
+  cards: CreditCardTrendItemResponse[]
+}

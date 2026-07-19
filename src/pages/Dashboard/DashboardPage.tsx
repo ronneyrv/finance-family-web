@@ -10,11 +10,15 @@ import DashboardSummaryCards from '../../features/dashboard/components/Dashboard
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
 import type {
   CategoryExpenseResponse,
+  CreditCardExpenseTrendResponse,
+  CreditCardInvoiceSummaryResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
+import CreditCardInvoices from '../../features/dashboard/components/CreditCardInvoices'
+import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
@@ -24,8 +28,14 @@ function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null)
   const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
 
+  const [creditCardInvoices, setCreditCardInvoices] = useState<CreditCardInvoiceSummaryResponse[]>(
+    [],
+  )
+
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummaryResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
+
+  const [creditCardTrend, setCreditCardTrend] = useState<CreditCardExpenseTrendResponse[]>([])
 
   const [isOverviewLoading, setIsOverviewLoading] = useState(true)
   const [isYearlyDataLoading, setIsYearlyDataLoading] = useState(false)
@@ -40,10 +50,16 @@ function DashboardPage() {
       try {
         setOverviewError(null)
 
-        const [summaryResponse, categoryExpensesResponse, filtersResponse] = await Promise.all([
+        const [
+          summaryResponse,
+          categoryExpensesResponse,
+          filtersResponse,
+          creditCardInvoicesResponse,
+        ] = await Promise.all([
           dashboardApi.getSummary(),
           dashboardApi.getExpensesByCategory(),
           dashboardApi.getFilters(),
+          dashboardApi.getCreditCardInvoices(),
         ])
 
         if (!isCancelled) {
@@ -51,6 +67,7 @@ function DashboardPage() {
           setCategoryExpenses(categoryExpensesResponse)
           setFilters(filtersResponse)
           setSelectedYear(filtersResponse.defaultYear)
+          setCreditCardInvoices(creditCardInvoicesResponse)
         }
       } catch (error) {
         if (isCancelled) {
@@ -89,14 +106,17 @@ function DashboardPage() {
       setYearlyDataError(null)
 
       try {
-        const [monthlySummaryResponse, monthlyProjectionResponse] = await Promise.all([
-          dashboardApi.getMonthlySummary(year),
-          dashboardApi.getProjection(year),
-        ])
+        const [monthlySummaryResponse, monthlyProjectionResponse, creditCardTrendResponse] =
+          await Promise.all([
+            dashboardApi.getMonthlySummary(year),
+            dashboardApi.getProjection(year),
+            dashboardApi.getCreditCardTrend(year),
+          ])
 
         if (!isCancelled) {
           setMonthlySummary(monthlySummaryResponse)
           setMonthlyProjection(monthlyProjectionResponse)
+          setCreditCardTrend(creditCardTrendResponse)
         }
       } catch (error) {
         if (isCancelled) {
@@ -169,7 +189,9 @@ function DashboardPage() {
           <>
             <DashboardSummaryCards summary={summary} />
 
-            <div className="mt-6">
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              <CreditCardInvoices invoices={creditCardInvoices} />
+
               <CategoryExpenses expenses={categoryExpenses} />
             </div>
           </>
@@ -189,7 +211,9 @@ function DashboardPage() {
               <MonthlySummaryChart data={monthlySummary} />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              <AnnualCreditCardTrendChart data={creditCardTrend} />
+
               <MonthlyProjectionChart data={monthlyProjection} />
             </div>
           </>
