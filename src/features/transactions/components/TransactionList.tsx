@@ -4,7 +4,6 @@ import { ActionButton } from '../../../components/ui/action-button'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import { paymentMethodLabels } from '../model/paymentMethods'
 import type { TransactionResponse } from '../model/transactionTypes'
-import { Pencil, Trash2 } from 'lucide-react'
 
 type TransactionListProps = {
   transactions: TransactionResponse[]
@@ -69,25 +68,19 @@ function TransactionList({ transactions, onEdit, onDelete }: TransactionListProp
 
             {transaction.transactionKind === 'REGULAR' && (
               <div className="mt-4 flex items-center gap-4">
-                <button
-                  type="button"
+                <ActionButton
+                  variant="edit"
+                  showText
+                  label={`Editar ${transaction.description}`}
                   onClick={() => onEdit(transaction)}
-                  className="flex items-center gap-2 text-sm font-medium text-emerald-400 transition hover:text-emerald-300"
-                  aria-label={`Editar ${transaction.description}`}
-                >
-                  <Pencil size={16} />
-                  Editar
-                </button>
+                />
 
-                <button
-                  type="button"
+                <ActionButton
+                  variant="delete"
+                  showText
+                  label={`Excluir ${transaction.description}`}
                   onClick={() => onDelete(transaction)}
-                  className="flex items-center gap-2 text-sm font-medium text-red-400 transition hover:text-red-300"
-                  aria-label={`Excluir ${transaction.description}`}
-                >
-                  <Trash2 size={16} />
-                  Excluir
-                </button>
+                />
               </div>
             )}
           </article>
