@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   ReceiptText,
   Repeat,
+  User,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -50,5 +51,10 @@ export const navigationItems: NavigationItem[] = [
     label: 'Metas',
     path: '/goals',
     icon: Goal,
+  },
+  {
+    label: 'Meu Perfil',
+    path: '/profile',
+    icon: User,
   },
 ]
