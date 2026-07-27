@@ -8,17 +8,21 @@ import { PageHeader } from '../../components/ui/page'
 
 import UserAvatar from '../../features/users/components/UserAvatar'
 import type { CurrentUserResponse } from '../../features/users/model/currentUserTypes'
+import { Button } from '../../components/ui/button'
+import { fieldClassName } from '../../components/ui/forms/fieldClass'
 
 function ProfilePage() {
   const [user, setUser] = useState<CurrentUserResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [name, setName] = useState('')
 
   useEffect(() => {
     async function loadUser() {
       try {
         const response = await usersApi.getCurrentUser()
         setUser(response)
+        setName(response.name)
       } catch {
         setError(true)
       } finally {
@@ -49,11 +53,26 @@ function ProfilePage() {
         <div className="flex flex-col items-center gap-4">
           <UserAvatar name={user.name} avatarUrl={user.avatarUrl} />
 
-          <div className="text-center">
-            <h2 className="text-xl font-semibold">{user.name}</h2>
+          <label>
+            <span className="text-sm text-(--color-text)">Nome</span>
 
-            <p className="text-(--color-text-muted)">{user.email}</p>
-          </div>
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className={fieldClassName}
+            />
+          </label>
+
+<label>
+            <span className="text-sm text-(--color-text)">E-mail</span>
+
+            <input value={user.email} readOnly className={fieldClassName} />
+          </label>
+          
+
+          <Button type="button" disabled>
+            Salvar alterações
+          </Button>
         </div>
       </Card>
     </>
