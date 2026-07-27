@@ -1,22 +1,23 @@
-import { useEffect, useState } from 'react'
-import type { SubmitEvent } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import type { SubmitEvent, ChangeEvent } from 'react'
 
-import Alert from '../../components/ui/alert/Alert'
-import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
-import { fieldClassName } from '../../components/ui/forms/fieldClass'
-import Loading from '../../components/ui/loading/Loading'
-import { PageHeader } from '../../components/ui/page'
-
+import { Button } from '../../components/ui/button'
 import { usersApi } from '../../features/users/api/usersApi'
-import UserAvatar from '../../features/users/components/UserAvatar'
+import { PageHeader } from '../../components/ui/page'
+import { fieldClassName } from '../../components/ui/forms/fieldClass'
 import type { CurrentUserResponse } from '../../features/users/model/currentUserTypes'
+import Alert from '../../components/ui/alert/Alert'
+import Loading from '../../components/ui/loading/Loading'
+import UserAvatar from '../../features/users/components/UserAvatar'
 
 function ProfilePage() {
   const [user, setUser] = useState<CurrentUserResponse | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [name, setName] = useState('')
 
+  const [isUploading, setIsUploading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -76,6 +77,60 @@ function ProfilePage() {
     }
   }
 
+  async function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+
+    if (!file || !user) {
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setFeedback({
+        type: 'error',
+        message: 'Selecione um arquivo de imagem válido.',
+      })
+
+      event.target.value = ''
+
+      return
+    }
+
+    setIsUploading(true)
+    setFeedback(null)
+
+    try {
+      const formData = new FormData()
+
+      formData.append('file', file)
+
+      const updatedUser = await usersApi.uploadAvatar(formData)
+
+      setUser(updatedUser)
+      setName(updatedUser.name)
+
+      setFeedback({
+        type: 'success',
+        message: 'Avatar atualizado com sucesso.',
+      })
+    } catch {
+      setFeedback({
+        type: 'error',
+        message: 'Não foi possível atualizar o avatar.',
+      })
+    } finally {
+      setIsUploading(false)
+
+      // permite selecionar novamente o mesmo arquivo
+      event.target.value = ''
+    }
+  }
+
+  function handleAvatarClick() {
+    if (!isUploading) {
+      fileInputRef.current?.click()
+    }
+  }
+
   if (loading) {
     return <Loading message="Carregando perfil..." />
   }
@@ -95,7 +150,20 @@ function ProfilePage() {
       <Card className="mt-8">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col items-center">
-            <UserAvatar name={user.name} avatarUrl={user.avatarUrl} />
+            <input
+              ref={fileInputRef}
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+            />
+
+            <UserAvatar
+              name={user.name}
+              avatarUrl={user.avatarUrl}
+              editable={!isUploading}
+              onClick={handleAvatarClick}
+            />
 
             <h2 className="mt-4 text-lg font-semibold">{user.name}</h2>
           </div>

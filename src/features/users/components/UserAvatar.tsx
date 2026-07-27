@@ -2,6 +2,8 @@ type UserAvatarProps = {
   name: string
   avatarUrl?: string | null
   size?: 'sm' | 'md' | 'lg'
+  editable?: boolean
+  onClick?: () => void
 }
 
 const sizes = {
@@ -19,20 +21,29 @@ function getInitials(name: string) {
     .join('')
 }
 
-function UserAvatar({ name, avatarUrl, size = 'lg' }: UserAvatarProps) {
+function UserAvatar({ name, avatarUrl, size = 'lg', editable = false, onClick }: UserAvatarProps) {
   if (avatarUrl) {
     return (
       <img
         src={avatarUrl}
         alt={name}
-        className={`${sizes[size]} rounded-full object-cover border border-(--color-border)`}
+        onClick={onClick}
+        className={`
+                    ${sizes[size]}
+                    rounded-full
+                    object-cover
+                    border
+                    border-(--color-border)
+                    ${editable ? 'cursor-pointer hover:opacity-80 transition' : ''}
+                `}
       />
     )
   }
 
   return (
     <div
-      className={`${sizes[size]} flex items-center justify-center rounded-full bg-emerald-600 font-semibold text-white`}
+      onClick={onClick}
+      className={`${sizes[size]} flex items-center justify-center rounded-full bg-emerald-600 font-semibold text-white ${editable ? 'cursor-pointer hover:opacity-80 transition' : ''}`}
     >
       {getInitials(name)}
     </div>
