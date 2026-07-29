@@ -1,11 +1,14 @@
 import { LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+import UserAvatar from '../../features/users/components/UserAvatar'
 import { useAuth } from '../../features/auth/hooks/useAuth'
+import { useCurrentUser } from '../../features/users/hooks/useCurrentUser'
 import { BalanceVisibilityButton } from '../ui/balance-visibility'
 
 function Header() {
   const { logout } = useAuth()
+  const { user } = useCurrentUser()
   const navigate = useNavigate()
 
   function handleLogout() {
@@ -19,8 +22,16 @@ function Header() {
         <p className="text-sm text-slate-400">Visão geral das suas finanças</p>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
         <BalanceVisibilityButton />
+
+        {user && (
+          <div className="hidden items-center gap-3 sm:flex">
+            <UserAvatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />
+
+            <span className="text-sm font-medium text-slate-200">{user.name}</span>
+          </div>
+        )}
 
         <button
           type="button"

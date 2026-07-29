@@ -12,6 +12,7 @@ import InvoicesPage from '../../pages/Invoices/InvoicesPage'
 import FinancialAccountsPage from '../../pages/FinancialAccounts/FinancialAccountsPage'
 import RegisterPage from '../../pages/Register/RegisterPage'
 import RecurringTransactionsPage from '../../pages/RecurringTransactions/     RecurringTransactionsPage'
+import ProfilePage from '../../pages/Profile/ProfilePage'
 
 function AppRouter() {
   return (
@@ -33,6 +34,7 @@ function AppRouter() {
             <Route path="/credit-cards" element={<CreditCardsPage />} />
             <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/goals" element={<GoalsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
 
