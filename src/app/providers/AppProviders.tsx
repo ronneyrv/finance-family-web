@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import { AuthProvider } from './AuthProvider'
 import BalanceVisibilityProvider from './BalanceVisibilityProvider'
+import { CurrentUserProvider } from '../../features/users/context/CurrentUserProvider'
 
 type AppProvidersProps = {
   children: ReactNode
@@ -10,7 +11,9 @@ type AppProvidersProps = {
 function AppProviders({ children }: AppProvidersProps) {
   return (
     <AuthProvider>
-      <BalanceVisibilityProvider>{children}</BalanceVisibilityProvider>
+      <CurrentUserProvider>
+        <BalanceVisibilityProvider>{children}</BalanceVisibilityProvider>
+      </CurrentUserProvider>
     </AuthProvider>
   )
 }

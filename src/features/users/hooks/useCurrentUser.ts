@@ -1,9 +1,13 @@
-import { usersApi } from '../api/usersApi'
+import { useContext } from 'react'
+
+import { CurrentUserContext } from '../context/currentUserContext'
 
 export function useCurrentUser() {
-  return {
-    getCurrentUser: usersApi.getCurrentUser,
-    updateCurrentUser: usersApi.updateCurrentUser,
-    uploadAvatar: usersApi.uploadAvatar,
+  const context = useContext(CurrentUserContext)
+
+  if (context === undefined) {
+    throw new Error('useCurrentUser must be used within a CurrentUserProvider')
   }
+
+  return context
 }

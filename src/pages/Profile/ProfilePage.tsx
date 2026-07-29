@@ -6,20 +6,18 @@ import { Button } from '../../components/ui/button'
 import { usersApi } from '../../features/users/api/usersApi'
 import { PageHeader } from '../../components/ui/page'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
-import type { CurrentUserResponse } from '../../features/users/model/currentUserTypes'
 import Alert from '../../components/ui/alert/Alert'
 import Loading from '../../components/ui/loading/Loading'
 import UserAvatar from '../../features/users/components/UserAvatar'
+import { useCurrentUser } from '../../features/users/hooks/useCurrentUser'
 
 function ProfilePage() {
-  const [user, setUser] = useState<CurrentUserResponse | null>(null)
+  const { user, loading, updateUser } = useCurrentUser()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [name, setName] = useState('')
 
   const [isUploading, setIsUploading] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -29,21 +27,10 @@ function ProfilePage() {
   } | null>(null)
 
   useEffect(() => {
-    async function loadUser() {
-      try {
-        const response = await usersApi.getCurrentUser()
-
-        setUser(response)
-        setName(response.name)
-      } catch {
-        setError(true)
-      } finally {
-        setLoading(false)
-      }
+    if (user) {
+      setName(user.name)
     }
-
-    void loadUser()
-  }, [])
+  }, [user])
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -60,7 +47,7 @@ function ProfilePage() {
         name,
       })
 
-      setUser(updatedUser)
+      updateUser(updatedUser)
       setName(updatedUser.name)
 
       setFeedback({
@@ -105,7 +92,7 @@ function ProfilePage() {
 
       const updatedUser = await usersApi.uploadAvatar(formData)
 
-      setUser(updatedUser)
+      updateUser(updatedUser)
       setName(updatedUser.name)
 
       setFeedback({
@@ -135,7 +122,7 @@ function ProfilePage() {
     return <Loading message="Carregando perfil..." />
   }
 
-  if (error || !user) {
+  if (!user) {
     return <Alert variant="error">Não foi possível carregar o perfil.</Alert>
   }
 
