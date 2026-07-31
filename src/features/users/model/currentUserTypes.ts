@@ -8,3 +8,9 @@ export type CurrentUserResponse = {
 export type UpdateCurrentUserRequest = {
   name: string
 }
+
+export type ChangePasswordRequest = {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}

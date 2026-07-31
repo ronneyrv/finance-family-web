@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { LockKeyhole, Mail, User, Users } from 'lucide-react'
+import { Mail, User, Users } from 'lucide-react'
 
 import { AuthLayout } from '../../components/auth/AuthLayout'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { ApiError } from '../../lib/api/apiError'
+import PasswordField from '../../components/ui/forms/PasswordField'
 
 function RegisterPage() {
   const { register } = useAuth()
@@ -136,27 +137,14 @@ function RegisterPage() {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium" htmlFor="password">
-            Senha
-          </label>
-
-          <div className="relative">
-            <LockKeyhole
-              aria-hidden="true"
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-              size={18}
-            />
-
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Sua senha"
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-            />
-          </div>
+          <PasswordField
+            label="Senha"
+            required
+            id="password"
+            value={password}
+            autoComplete="new-password"
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </div>
 
         {errorMessage && (
