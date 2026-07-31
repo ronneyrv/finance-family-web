@@ -6,10 +6,11 @@ import { Button } from '../../components/ui/button'
 import { usersApi } from '../../features/users/api/usersApi'
 import { PageHeader } from '../../components/ui/page'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
+import { useCurrentUser } from '../../features/users/hooks/useCurrentUser'
 import Alert from '../../components/ui/alert/Alert'
 import Loading from '../../components/ui/loading/Loading'
 import UserAvatar from '../../features/users/components/UserAvatar'
-import { useCurrentUser } from '../../features/users/hooks/useCurrentUser'
+import ChangePasswordForm from '../../features/users/components/ChangePasswordForm'
 
 function ProfilePage() {
   const { user, loading, updateUser } = useCurrentUser()
@@ -107,7 +108,6 @@ function ProfilePage() {
     } finally {
       setIsUploading(false)
 
-      // permite selecionar novamente o mesmo arquivo
       event.target.value = ''
     }
   }
@@ -191,6 +191,8 @@ function ProfilePage() {
           </div>
         </form>
       </Card>
+
+      <ChangePasswordForm />
     </>
   )
 }

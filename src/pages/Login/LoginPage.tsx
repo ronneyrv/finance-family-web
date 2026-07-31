@@ -1,9 +1,11 @@
 import { useState, type SubmitEvent } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LockKeyhole, Mail } from 'lucide-react'
-import { AuthLayout } from '../../components/auth/AuthLayout'
+
+import { Mail } from 'lucide-react'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { ApiError } from '../../lib/api/apiError'
+import { AuthLayout } from '../../components/auth/AuthLayout'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import PasswordField from '../../components/ui/forms/PasswordField'
 
 type LocationState = {
   from?: {
@@ -85,29 +87,14 @@ function LoginPage() {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium" htmlFor="password">
-            Senha
-          </label>
-
-          <div className="relative">
-            <LockKeyhole
-              aria-hidden="true"
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-              size={18}
-            />
-
-            <input
-              autoComplete="current-password"
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-              disabled={isSubmitting}
-              id="password"
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Sua senha"
-              required
-              type="password"
-              value={password}
-            />
-          </div>
+          <PasswordField
+            label="Senha"
+            required
+            id="password"
+            value={password}
+            autoComplete="current-password"
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </div>
 
         {registered && (
