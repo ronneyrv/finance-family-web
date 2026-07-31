@@ -42,7 +42,11 @@ api.interceptors.response.use(
         })
       | undefined
 
-    if (error.response?.status !== 401 || !originalRequest || originalRequest._retry) {
+    const status = error.response?.status
+
+    const unauthorized = status === 401 || status === 403
+
+    if (!unauthorized || !originalRequest || originalRequest._retry) {
       return Promise.reject(error)
     }
 
