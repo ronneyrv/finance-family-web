@@ -9,6 +9,7 @@ type ActionButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant: ActionButtonVariant
   label: string
   showText?: boolean
+  hideTextOnMobile?: boolean
 }
 
 const config = {
@@ -45,6 +46,7 @@ function ActionButton({
   variant,
   label,
   showText = false,
+  hideTextOnMobile = false,
   className,
   ...props
 }: ActionButtonProps) {
@@ -63,7 +65,7 @@ function ActionButton({
       )}
     >
       <Icon size={16} />
-      {showText && <span>{text}</span>}
+      {showText && <span className={hideTextOnMobile ? 'hidden sm:inline' : ''}>{text}</span>}
     </button>
   )
 }
