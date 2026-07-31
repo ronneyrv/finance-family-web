@@ -26,17 +26,17 @@ function RecurringTransactionList({
   }
 
   return (
-    <div className="mt-8 overflow-hidden rounded-xl border border-(--color-border)">
-      <table className="min-w-full">
+    <div className="mt-8 overflow-x-auto rounded-xl border border-(--color-border)">
+      <table className="min-w-225 w-full">
         <thead className="bg-(--color-surface)">
           <tr className="text-left text-sm text-(--color-text-muted)">
-            <th className="px-4 py-3">Descrição</th>
-            <th className="px-4 py-3">Tipo</th>
-            <th className="px-4 py-3">Valor</th>
-            <th className="px-4 py-3">Dia</th>
-            <th className="px-4 py-3">Categoria</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Ações</th>
+            <th className="w-[28%] px-4 py-3">Descrição</th>
+            <th className="w-[12%] px-4 py-3">Tipo</th>
+            <th className="w-[14%] px-4 py-3">Valor</th>
+            <th className="w-[14%] px-4 py-3">Dia</th>
+            <th className="w-[16%] px-4 py-3">Categoria</th>
+            <th className="w-[8%] px-4 py-3">Status</th>
+            <th className="w-[8%] px-4 py-3">Ações</th>
           </tr>
         </thead>
 
@@ -54,7 +54,7 @@ function RecurringTransactionList({
                 })}
               </td>
 
-              <td className="px-4 py-3">Todo dia {transaction.dayOfMonth}</td>
+              <td className="px-4 py-3">Dia {transaction.dayOfMonth}</td>
 
               <td className="px-4 py-3">{transaction.category}</td>
 
@@ -70,11 +70,12 @@ function RecurringTransactionList({
                 </span>
               </td>
 
-              <td className="px-4 py-3">
+              <td className="whitespace-nowrap px-4 py-3">
                 <div className="flex items-center gap-3">
                   <ActionButton
                     variant="edit"
                     showText
+                    hideTextOnMobile
                     label={`Editar ${transaction.description}`}
                     onClick={() => onEdit(transaction)}
                   />
@@ -82,6 +83,7 @@ function RecurringTransactionList({
                   <ActionButton
                     variant={transaction.active ? 'deactivate' : 'activate'}
                     showText
+                    hideTextOnMobile
                     label={
                       transaction.active
                         ? `Desativar ${transaction.description}`
@@ -93,6 +95,7 @@ function RecurringTransactionList({
                   <ActionButton
                     variant="delete"
                     showText
+                    hideTextOnMobile
                     label={`Excluir ${transaction.description}`}
                     onClick={() => onDelete(transaction.id)}
                   />
