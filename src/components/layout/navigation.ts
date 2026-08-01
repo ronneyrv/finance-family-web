@@ -1,7 +1,6 @@
 import {
   CreditCard,
   FileText,
-  Goal,
   Landmark,
   LayoutDashboard,
   ReceiptText,
@@ -45,10 +44,5 @@ export const navigationItems: NavigationItem[] = [
     label: 'Faturas',
     path: '/invoices',
     icon: FileText,
-  },
-  {
-    label: 'Metas',
-    path: '/goals',
-    icon: Goal,
   },
 ]

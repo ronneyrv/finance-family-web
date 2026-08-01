@@ -3,7 +3,6 @@ import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
 import { ProtectedRoute } from '../../components/auth/ProtectedRoute'
 import LoginPage from '../../pages/Login/LoginPage'
 import NotFoundPage from '../../pages/NotFound/NotFoundPage'
-import GoalsPage from '../../pages/Goals/GoalsPage'
 import CreditCardsPage from '../../pages/CreditCards/CreditCardsPage'
 import TransactionsPage from '../../pages/Transactions/TransactionsPage'
 import DashboardPage from '../../pages/Dashboard/DashboardPage'
@@ -33,7 +32,6 @@ function AppRouter() {
             <Route path="/financial-accounts" element={<FinancialAccountsPage />} />
             <Route path="/credit-cards" element={<CreditCardsPage />} />
             <Route path="/invoices" element={<InvoicesPage />} />
-            <Route path="/goals" element={<GoalsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
