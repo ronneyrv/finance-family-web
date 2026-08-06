@@ -9,6 +9,7 @@ type DialogProps = {
 
 function Dialog({ open, title, children, onClose }: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
+  const previousFocusedElement = useRef<HTMLElement | null>(null)
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Escape') {
@@ -21,7 +22,14 @@ function Dialog({ open, title, children, onClose }: DialogProps) {
       return
     }
 
+    previousFocusedElement.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null
+
     dialogRef.current?.focus()
+
+    return () => {
+      previousFocusedElement.current?.focus()
+    }
   }, [open])
 
   return (
