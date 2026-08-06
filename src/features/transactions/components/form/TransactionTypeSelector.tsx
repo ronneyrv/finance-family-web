@@ -10,8 +10,8 @@ type TransactionTypeSelectorProps = {
 
 function TransactionTypeSelector({ value, onChange }: TransactionTypeSelectorProps) {
   return (
-    <div className="sm:col-span-2">
-      <span className="text-sm font-medium text-(--color-text)">Tipo</span>
+    <fieldset className="sm:col-span-2">
+      <legend className="text-sm font-medium text-(--color-text)">Tipo</legend>
 
       <div className="mt-2 grid grid-cols-2 gap-3">
         <SegmentedButton
@@ -30,7 +30,7 @@ function TransactionTypeSelector({ value, onChange }: TransactionTypeSelectorPro
           Despesa
         </SegmentedButton>
       </div>
-    </div>
+    </fieldset>
   )
 }
 
