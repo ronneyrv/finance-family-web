@@ -20,8 +20,8 @@ const paymentMethodIcons = {
 
 function PaymentMethodSelector({ methods, value, onChange }: PaymentMethodSelectorProps) {
   return (
-    <div className="sm:col-span-2">
-      <span className="text-sm font-medium text-(--color-text)">Forma de pagamento</span>
+    <fieldset className="sm:col-span-2">
+      <legend className="text-sm font-medium text-(--color-text)">Forma de pagamento</legend>
 
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-flow-col sm:auto-cols-fr">
         {methods.map((method) => (
@@ -35,7 +35,7 @@ function PaymentMethodSelector({ methods, value, onChange }: PaymentMethodSelect
           </SegmentedButton>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
