@@ -7,10 +7,11 @@ type InstallmentSelectorProps = {
 
 function InstallmentSelector({ value, onChange }: InstallmentSelectorProps) {
   return (
-    <label>
-      <span className="text-sm text-slate-300">Parcelas</span>
+    <label htmlFor="installments">
+      <span className="text-sm text-(--color-text)">Parcelas</span>
 
       <input
+        id="installments"
         required
         type="number"
         inputMode="numeric"
