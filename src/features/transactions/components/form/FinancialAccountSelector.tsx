@@ -8,10 +8,11 @@ type FinancialAccountSelectorProps = {
 
 function FinancialAccountSelector({ accounts, value, onChange }: FinancialAccountSelectorProps) {
   return (
-    <label>
-      <span className="text-sm text-slate-300">Conta financeira</span>
+    <label htmlFor="financial-account">
+      <span className="text-sm text-(--color-text)">Conta financeira</span>
 
       <select
+        id="financial-account"
         required
         value={value}
         onChange={(event) => onChange(event.target.value)}
