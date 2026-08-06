@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 
 type DialogProps = {
   open: boolean
@@ -8,9 +8,21 @@ type DialogProps = {
 }
 
 function Dialog({ open, title, children, onClose }: DialogProps) {
-  if (!open) {
-    return null
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === 'Escape') {
+      onClose()
+    }
   }
+
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    dialogRef.current?.focus()
+  }, [open])
 
   return (
     <div
@@ -23,9 +35,12 @@ function Dialog({ open, title, children, onClose }: DialogProps) {
       }}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
+        onKeyDown={handleKeyDown}
         className="w-full max-w-md rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-2xl"
       >
         <h2 id="dialog-title" className="text-lg font-semibold text-(--color-text)">
