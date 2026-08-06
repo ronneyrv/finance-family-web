@@ -8,10 +8,11 @@ type CreditCardSelectorProps = {
 
 function CreditCardSelector({ creditCards, value, onChange }: CreditCardSelectorProps) {
   return (
-    <label>
-      <span className="text-sm text-slate-300">Cartão de crédito</span>
+    <label htmlFor="credit-card">
+      <span className="text-sm text-(--color-text)">Cartão de crédito</span>
 
       <select
+        id="credit-card"
         required
         value={value}
         onChange={(event) => onChange(event.target.value)}
