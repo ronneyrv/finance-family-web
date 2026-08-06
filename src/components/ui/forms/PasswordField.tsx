@@ -8,15 +8,16 @@ type PasswordFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string
 }
 
-function PasswordField({ label, className, ...props }: PasswordFieldProps) {
+function PasswordField({ label, id, className, ...props }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false)
 
   return (
-    <label>
+    <label htmlFor={id}>
       <span className="text-sm text-(--color-text)">{label}</span>
 
       <div className="relative mt-1">
         <input
+          id={id}
           {...props}
           type={visible ? 'text' : 'password'}
           className={`${fieldClassName} pr-10 ${className ?? ''}`}

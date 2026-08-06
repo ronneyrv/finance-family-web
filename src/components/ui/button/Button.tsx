@@ -29,7 +29,7 @@ function Button({
     <button
       {...props}
       className={cn(
-        'rounded-lg px-4 py-2.5 font-semibold transition disabled:cursor-not-allowed disabled:opacity-60',
+        'rounded-lg px-4 py-2.5 font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60',
         fullWidth && 'w-full',
         variantClasses[variant],
         className,

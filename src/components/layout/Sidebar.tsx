@@ -9,7 +9,7 @@ function Sidebar() {
         <span className="text-lg font-bold text-emerald-400">Finance Family</span>
       </div>
 
-      <nav className="space-y-1 p-4">
+      <nav aria-label="Navegação principal" className="space-y-1 p-4">
         {navigationItems.map(({ label, path, icon: Icon }) => (
           <NavLink
             key={path}
@@ -23,7 +23,7 @@ function Sidebar() {
               ].join(' ')
             }
           >
-            <Icon size={20} />
+            <Icon size={20} aria-hidden="true" />
             {label}
           </NavLink>
         ))}

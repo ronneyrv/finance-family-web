@@ -142,6 +142,7 @@ function ProfilePage() {
               hidden
               type="file"
               accept="image/*"
+              aria-label="Selecionar foto de perfil"
               onChange={handleAvatarChange}
             />
 
@@ -156,10 +157,11 @@ function ProfilePage() {
           </div>
 
           <div className="mt-6 grid gap-4">
-            <label>
+            <label htmlFor="name">
               <span className="text-sm text-(--color-text)">Nome</span>
 
               <input
+                id="name"
                 required
                 value={name}
                 onChange={(event) => setName(event.target.value)}
@@ -167,10 +169,11 @@ function ProfilePage() {
               />
             </label>
 
-            <label>
+            <label htmlFor="email">
               <span className="text-sm text-(--color-text)">E-mail</span>
 
               <input
+                id="email"
                 value={user.email}
                 readOnly
                 className={`${fieldClassName} cursor-not-allowed opacity-70`}

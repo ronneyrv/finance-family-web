@@ -4,7 +4,10 @@ import { navigationItems } from './navigation'
 
 function MobileNavigation() {
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-slate-800 bg-slate-950 lg:hidden">
+    <nav
+      aria-label="Navegação principal"
+      className="fixed right-0 bottom-0 left-0 z-50 border-t border-slate-800 bg-slate-950 lg:hidden"
+    >
       <div
         className="grid"
         style={{
@@ -22,7 +25,7 @@ function MobileNavigation() {
               ].join(' ')
             }
           >
-            <Icon size={20} />
+            <Icon size={20} aria-hidden="true" />
             <span>{label}</span>
           </NavLink>
         ))}
