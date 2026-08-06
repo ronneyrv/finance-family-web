@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from 'react'
 
 type DialogProps = {
   open: boolean
@@ -10,8 +10,9 @@ type DialogProps = {
 function Dialog({ open, title, children, onClose }: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const previousFocusedElement = useRef<HTMLElement | null>(null)
+  const titleId = useId()
 
-  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Escape') {
       onClose()
     }
@@ -32,6 +33,10 @@ function Dialog({ open, title, children, onClose }: DialogProps) {
     }
   }, [open])
 
+  if (!open) {
+    return null
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4"
@@ -47,11 +52,11 @@ function Dialog({ open, title, children, onClose }: DialogProps) {
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="dialog-title"
+        aria-labelledby={titleId}
         onKeyDown={handleKeyDown}
         className="w-full max-w-md rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-2xl"
       >
-        <h2 id="dialog-title" className="text-lg font-semibold text-(--color-text)">
+        <h2 id={titleId} className="text-lg font-semibold text-(--color-text)">
           {title}
         </h2>
 
