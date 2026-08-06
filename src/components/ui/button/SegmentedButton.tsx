@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+
 import { cn } from '../../../lib/utils/cn'
 
 type SegmentedButtonProps = {
@@ -22,6 +23,7 @@ function SegmentedButton({ selected, icon, children, onClick }: SegmentedButtonP
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={selected}
       className={cn(baseClass, selected ? activeClass : inactiveClass)}
     >
       {icon}
