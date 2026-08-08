@@ -12,25 +12,11 @@ import {
 } from 'recharts'
 
 import { formatCurrency } from '../../../lib/formatters/currency'
-import type { CreditCardExpenseTrendResponse, Month } from '../model/dashboardTypes'
+import { monthLabels } from '../utils/monthLabels'
+import type { CreditCardExpenseTrendResponse } from '../model/dashboardTypes'
 
 type AnnualCreditCardTrendChartProps = {
   data: CreditCardExpenseTrendResponse[]
-}
-
-const monthLabels: Record<Month, string> = {
-  JANUARY: 'Jan',
-  FEBRUARY: 'Fev',
-  MARCH: 'Mar',
-  APRIL: 'Abr',
-  MAY: 'Mai',
-  JUNE: 'Jun',
-  JULY: 'Jul',
-  AUGUST: 'Ago',
-  SEPTEMBER: 'Set',
-  OCTOBER: 'Out',
-  NOVEMBER: 'Nov',
-  DECEMBER: 'Dez',
 }
 
 const COLORS = [
@@ -102,7 +88,7 @@ function AnnualCreditCardTrendChart({ data }: AnnualCreditCardTrendChartProps) {
       ) : (
         <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={chartData}>
+            <ComposedChart data={chartData} margin={{ top: 30, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid
                 horizontal
                 vertical={false}
@@ -142,9 +128,9 @@ function AnnualCreditCardTrendChart({ data }: AnnualCreditCardTrendChartProps) {
                 dataKey="total"
                 name="Total"
                 stroke="#ffffff"
-                strokeWidth={3}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
               >
                 <LabelList dataKey="total" content={<CustomLineLabel />} />
               </Line>

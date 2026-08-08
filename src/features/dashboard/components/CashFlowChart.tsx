@@ -1,8 +1,8 @@
 import {
-  Bar,
-  BarChart,
   CartesianGrid,
   Legend,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -11,13 +11,13 @@ import {
 
 import { formatCurrency } from '../../../lib/formatters/currency'
 import { monthLabels } from '../utils/monthLabels'
-import type { MonthlyProjectionResponse } from '../model/dashboardTypes'
+import type { CashFlowResponse } from '../model/dashboardTypes'
 
-type MonthlyProjectionChartProps = {
-  data: MonthlyProjectionResponse[]
+type CashFlowChartProps = {
+  data: CashFlowResponse[]
 }
 
-function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
+function CashFlowChart({ data }: CashFlowChartProps) {
   const chartData = data.map((item) => ({
     ...item,
     monthLabel: monthLabels[item.month],
@@ -26,21 +26,21 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
   return (
     <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
-        <h2 className="text-lg font-semibold">Projeção financeira</h2>
+        <h2 className="text-lg font-semibold">Fluxo de caixa</h2>
 
         <p className="mt-1 text-sm text-slate-400">
-          Previsão mensal baseada em receitas e despesas recorrentes e parcelas futuras do cartão.
+          Comparativo mensal entre entradas e saídas realizadas ao longo do ano.
         </p>
       </div>
 
       {chartData.length === 0 ? (
         <p className="mt-6 text-sm text-(--color-text-muted)">
-          Nenhuma projeção encontrada para o período.
+          Nenhuma movimentação encontrada para o período.
         </p>
       ) : (
         <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} barCategoryGap="28%">
+            <LineChart data={chartData}>
               <CartesianGrid
                 horizontal
                 vertical={false}
@@ -62,11 +62,11 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
               <YAxis
                 axisLine={false}
                 tickLine={false}
+                width={55}
                 tick={{
                   fill: 'var(--color-text-muted)',
                   fontSize: 12,
                 }}
-                width={55}
                 tickFormatter={(value: number) =>
                   new Intl.NumberFormat('pt-BR', {
                     notation: 'compact',
@@ -98,27 +98,24 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
                 }}
               />
 
-              <Bar
-                dataKey="projectedTotalExpense"
-                name="Despesas previstas"
-                fill="#fb7185"
-                radius={[4, 4, 0, 0]}
+              <Line
+                type="monotone"
+                dataKey="income"
+                name="Entradas"
+                stroke="#34d399"
+                strokeWidth={2}
+                dot={{ r: 3 }}
               />
 
-              <Bar
-                dataKey="projectedIncome"
-                name="Receitas previstas"
-                fill="#34d399"
-                radius={[4, 4, 0, 0]}
+              <Line
+                type="monotone"
+                dataKey="expense"
+                name="Saídas"
+                stroke="#fb7185"
+                strokeWidth={2}
+                activeDot={{ r: 5 }}
               />
-
-              <Bar
-                dataKey="projectedBalance"
-                name="Saldo projetado"
-                fill="#38bdf8"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
       )}
@@ -126,4 +123,4 @@ function MonthlyProjectionChart({ data }: MonthlyProjectionChartProps) {
   )
 }
 
-export default MonthlyProjectionChart
+export default CashFlowChart

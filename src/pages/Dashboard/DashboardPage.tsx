@@ -4,11 +4,15 @@ import { Loading } from '../../components/ui/loading'
 import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
+import CashFlowChart from '../../features/dashboard/components/CashFlowChart'
 import CategoryExpenses from '../../features/dashboard/components/CategoryExpenses'
+import CreditCardInvoices from '../../features/dashboard/components/CreditCardInvoices'
 import MonthlySummaryChart from '../../features/dashboard/components/MonthlySummaryChart'
 import DashboardSummaryCards from '../../features/dashboard/components/DashboardSummaryCards'
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
+import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
 import type {
+  CashFlowResponse,
   CategoryExpenseResponse,
   CreditCardExpenseTrendResponse,
   CreditCardInvoiceSummaryResponse,
@@ -17,8 +21,6 @@ import type {
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
-import CreditCardInvoices from '../../features/dashboard/components/CreditCardInvoices'
-import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
@@ -33,6 +35,7 @@ function DashboardPage() {
   )
 
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummaryResponse[]>([])
+  const [cashFlow, setCashFlow] = useState<CashFlowResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
 
   const [creditCardTrend, setCreditCardTrend] = useState<CreditCardExpenseTrendResponse[]>([])
@@ -106,15 +109,21 @@ function DashboardPage() {
       setYearlyDataError(null)
 
       try {
-        const [monthlySummaryResponse, monthlyProjectionResponse, creditCardTrendResponse] =
-          await Promise.all([
-            dashboardApi.getMonthlySummary(year),
-            dashboardApi.getProjection(year),
-            dashboardApi.getCreditCardTrend(year),
-          ])
+        const [
+          monthlySummaryResponse,
+          cashFlowResponse,
+          monthlyProjectionResponse,
+          creditCardTrendResponse,
+        ] = await Promise.all([
+          dashboardApi.getMonthlySummary(year),
+          dashboardApi.getCashFlow(year),
+          dashboardApi.getProjection(year),
+          dashboardApi.getCreditCardTrend(year),
+        ])
 
         if (!isCancelled) {
           setMonthlySummary(monthlySummaryResponse)
+          setCashFlow(cashFlowResponse)
           setMonthlyProjection(monthlyProjectionResponse)
           setCreditCardTrend(creditCardTrendResponse)
         }
@@ -209,6 +218,10 @@ function DashboardPage() {
           <>
             <div className="mt-6">
               <MonthlySummaryChart data={monthlySummary} />
+            </div>
+
+            <div className="mt-6">
+              <CashFlowChart data={cashFlow} />
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
