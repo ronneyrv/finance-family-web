@@ -7,7 +7,7 @@ import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
 import CashFlowChart from '../../features/dashboard/components/CashFlowChart'
 import CategoryExpenses from '../../features/dashboard/components/CategoryExpenses'
 import CreditCardInvoices from '../../features/dashboard/components/CreditCardInvoices'
-import MonthlySummaryChart from '../../features/dashboard/components/MonthlySummaryChart'
+import MonthlyResultChart from '../../features/dashboard/components/MonthlyResultChart'
 import DashboardSummaryCards from '../../features/dashboard/components/DashboardSummaryCards'
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
 import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
@@ -217,7 +217,7 @@ function DashboardPage() {
         {selectedYear !== null && !isYearlyDataLoading && !yearlyDataError && (
           <>
             <div className="mt-6">
-              <MonthlySummaryChart data={monthlySummary} />
+              <MonthlyResultChart data={monthlySummary} />
             </div>
 
             <div className="mt-6">
