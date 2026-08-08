@@ -116,8 +116,8 @@ function MonthlySummaryChart({ data }: MonthlySummaryChartProps) {
                 dataKey="income"
                 name="Receitas"
                 stroke="#34d399"
-                strokeWidth={2.5}
-                dot={false}
+                strokeWidth={2}
+                dot={{ r: 3 }}
                 activeDot={{ r: 5 }}
               />
 
@@ -126,8 +126,8 @@ function MonthlySummaryChart({ data }: MonthlySummaryChartProps) {
                 dataKey="expense"
                 name="Despesas"
                 stroke="#fb7185"
-                strokeWidth={2.5}
-                dot={false}
+                strokeWidth={2}
+                dot={{ r: 3 }}
                 activeDot={{ r: 5 }}
               />
 
@@ -136,8 +136,8 @@ function MonthlySummaryChart({ data }: MonthlySummaryChartProps) {
                 dataKey="balance"
                 name="Saldo"
                 stroke="#38bdf8"
-                strokeWidth={2.5}
-                dot={false}
+                strokeWidth={2}
+                dot={{ r: 3 }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

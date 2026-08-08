@@ -1,5 +1,6 @@
 import { apiClient } from '../../../lib/api/apiClient'
 import type {
+  CashFlowResponse,
   CategoryExpenseResponse,
   CreditCardExpenseTrendResponse,
   CreditCardInvoiceSummaryResponse,
@@ -20,6 +21,10 @@ export const dashboardApi = {
 
   getMonthlySummary(year: number) {
     return apiClient.get<MonthlySummaryResponse[]>(`/api/v1/dashboard/monthly?year=${year}`)
+  },
+
+  getCashFlow(year: number) {
+    return apiClient.get<CashFlowResponse[]>(`/api/v1/dashboard/cash-flow?year=${year}`)
   },
 
   getProjection(year: number) {

@@ -32,6 +32,12 @@ export type MonthlySummaryResponse = {
   balance: number
 }
 
+export type CashFlowResponse = {
+  month: Month
+  income: number
+  expense: number
+}
+
 export type MonthlyProjectionResponse = {
   month: Month
   projectedIncome: number
