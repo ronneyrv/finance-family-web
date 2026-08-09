@@ -4,6 +4,7 @@ import type {
   CategoryExpenseResponse,
   CreditCardExpenseTrendResponse,
   CreditCardInvoiceSummaryResponse,
+  CumulativeResultResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
   IncomeCommitmentResponse,
@@ -26,6 +27,12 @@ export const dashboardApi = {
 
   getMonthlySummary(year: number) {
     return apiClient.get<MonthlySummaryResponse[]>(`/api/v1/dashboard/monthly?year=${year}`)
+  },
+
+  getCumulativeResult(year: number) {
+    return apiClient.get<CumulativeResultResponse[]>(
+      `/api/v1/dashboard/cumulative-result?year=${year}`,
+    )
   },
 
   getCashFlow(year: number) {

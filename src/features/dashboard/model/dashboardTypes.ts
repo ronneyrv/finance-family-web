@@ -44,6 +44,14 @@ export type MonthlySummaryResponse = {
   balance: number
 }
 
+export type CumulativeResultResponse = {
+  month: Month
+  income: number
+  expense: number
+  monthlyResult: number
+  accumulatedResult: number
+}
+
 export type CashFlowResponse = {
   month: Month
   income: number
