@@ -20,6 +20,18 @@ export type DashboardSummaryResponse = {
   bankBalance: number
 }
 
+export type CommitmentLevel = 'LOW' | 'MEDIUM' | 'HIGH'
+
+export type IncomeCommitmentResponse = {
+  monthlyIncome: number
+  recurringExpenses: number
+  unpaidCreditCardInstallments: number
+  monthlyCommitments: number
+  availableIncome: number
+  commitmentPercentage: number
+  commitmentLevel: CommitmentLevel
+}
+
 export type CategoryExpenseResponse = {
   category: string
   amount: number
