@@ -19,42 +19,39 @@ import type {
   CumulativeResultResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
+  FinancialHealthResponse,
   IncomeCommitmentResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
 import IncomeCommitmentChart from '../../features/dashboard/components/IncomeCommitmentChart'
 import FinancialHealthChart from '../../features/dashboard/components/FinancialHealthChart'
+import FinancialHealthCard from '../../features/dashboard/components/FinancialHealthCard'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
-
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
-
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null)
   const [incomeCommitment, setIncomeCommitment] = useState<IncomeCommitmentResponse | null>(null)
-  const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
+  const [financialHealth, setFinancialHealth] = useState<FinancialHealthResponse | null>(null)
+  const [overviewError, setOverviewError] = useState<string | null>(null)
+  const [yearlyDataError, setYearlyDataError] = useState<string | null>(null)
 
+  const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
   const [creditCardInvoices, setCreditCardInvoices] = useState<CreditCardInvoiceSummaryResponse[]>(
     [],
   )
-
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummaryResponse[]>([])
   const [familyCumulativeResult, setFamilyCumulativeResult] = useState<CumulativeResultResponse[]>(
     [],
   )
   const [myCumulativeResult, setMyCumulativeResult] = useState<CumulativeResultResponse[]>([])
-
   const [cashFlow, setCashFlow] = useState<CashFlowResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
-
   const [creditCardTrend, setCreditCardTrend] = useState<CreditCardExpenseTrendResponse[]>([])
 
   const [isOverviewLoading, setIsOverviewLoading] = useState(true)
   const [isYearlyDataLoading, setIsYearlyDataLoading] = useState(false)
-
-  const [overviewError, setOverviewError] = useState<string | null>(null)
-  const [yearlyDataError, setYearlyDataError] = useState<string | null>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -66,12 +63,14 @@ function DashboardPage() {
         const [
           summaryResponse,
           incomeCommitmentResponse,
+          financialHealthResponse,
           categoryExpensesResponse,
           filtersResponse,
           creditCardInvoicesResponse,
         ] = await Promise.all([
           dashboardApi.getSummary(),
           dashboardApi.getIncomeCommitment(),
+          dashboardApi.getFinancialHealth(),
           dashboardApi.getExpensesByCategory(),
           dashboardApi.getFilters(),
           dashboardApi.getCreditCardInvoices(),
@@ -80,6 +79,7 @@ function DashboardPage() {
         if (!isCancelled) {
           setSummary(summaryResponse)
           setIncomeCommitment(incomeCommitmentResponse)
+          setFinancialHealth(financialHealthResponse)
           setCategoryExpenses(categoryExpensesResponse)
           setFilters(filtersResponse)
           setSelectedYear(filtersResponse.defaultYear)
@@ -217,6 +217,11 @@ function DashboardPage() {
           <>
             <DashboardSummaryCards summary={summary} />
 
+            {financialHealth && (
+              <div className="mt-6">
+                <FinancialHealthCard data={financialHealth} />
+              </div>
+            )}
             <div className="mt-6 grid gap-6 lg:h-97.5 lg:grid-cols-3">
               <CreditCardInvoices invoices={creditCardInvoices} />
 
