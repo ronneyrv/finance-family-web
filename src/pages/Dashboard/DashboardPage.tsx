@@ -40,7 +40,11 @@ function DashboardPage() {
   )
 
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummaryResponse[]>([])
-  const [cumulativeResult, setCumulativeResult] = useState<CumulativeResultResponse[]>([])
+  const [familyCumulativeResult, setFamilyCumulativeResult] = useState<CumulativeResultResponse[]>(
+    [],
+  )
+  const [myCumulativeResult, setMyCumulativeResult] = useState<CumulativeResultResponse[]>([])
+
   const [cashFlow, setCashFlow] = useState<CashFlowResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
 
@@ -120,13 +124,15 @@ function DashboardPage() {
       try {
         const [
           monthlySummaryResponse,
-          cumulativeResultResponse,
+          familyCumulativeResultResponse,
+          myCumulativeResultResponse,
           cashFlowResponse,
           monthlyProjectionResponse,
           creditCardTrendResponse,
         ] = await Promise.all([
           dashboardApi.getMonthlySummary(year),
           dashboardApi.getCumulativeResult(year),
+          dashboardApi.getMyCumulativeResult(year),
           dashboardApi.getCashFlow(year),
           dashboardApi.getProjection(year),
           dashboardApi.getCreditCardTrend(year),
@@ -134,7 +140,8 @@ function DashboardPage() {
 
         if (!isCancelled) {
           setMonthlySummary(monthlySummaryResponse)
-          setCumulativeResult(cumulativeResultResponse)
+          setFamilyCumulativeResult(familyCumulativeResultResponse)
+          setMyCumulativeResult(myCumulativeResultResponse)
           setCashFlow(cashFlowResponse)
           setMonthlyProjection(monthlyProjectionResponse)
           setCreditCardTrend(creditCardTrendResponse)
@@ -239,7 +246,19 @@ function DashboardPage() {
             </div>
 
             <div className="mt-6">
-              <FinancialHealthChart data={cumulativeResult} />
+              <FinancialHealthChart
+                data={familyCumulativeResult}
+                title="Evolução financeira da família"
+                description="Entradas, despesas e evolução do resultado acumulado da família."
+              />
+            </div>
+
+            <div className="mt-6">
+              <FinancialHealthChart
+                data={myCumulativeResult}
+                title="Minha evolução financeira"
+                description="Entradas, despesas e evolução do resultado acumulado."
+              />
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-2">

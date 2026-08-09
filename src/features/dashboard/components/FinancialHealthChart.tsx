@@ -18,6 +18,8 @@ import { monthLabels } from '../utils/monthLabels'
 
 type FinancialHealthChartProps = {
   data: CumulativeResultResponse[]
+  title: string
+  description: string
 }
 
 type CustomLabelProps = {
@@ -46,7 +48,7 @@ function CustomLineLabel({ x, y, value }: CustomLabelProps) {
   )
 }
 
-function FinancialHealthChart({ data }: FinancialHealthChartProps) {
+function FinancialHealthChart({ data, title, description }: FinancialHealthChartProps) {
   const chartData = data.map((item) => ({
     ...item,
     monthLabel: monthLabels[item.month],
@@ -55,11 +57,9 @@ function FinancialHealthChart({ data }: FinancialHealthChartProps) {
   return (
     <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
-        <h2 className="text-lg font-semibold">Saúde financeira</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
 
-        <p className="mt-1 text-sm text-slate-400">
-          Entradas, despesas e evolução do resultado acumulado da família.
-        </p>
+        <p className="mt-1 text-sm text-slate-400">{description}</p>
       </div>
 
       {chartData.length === 0 ? (
@@ -69,7 +69,7 @@ function FinancialHealthChart({ data }: FinancialHealthChartProps) {
       ) : (
         <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={chartData} barCategoryGap="20%">
+            <ComposedChart data={chartData} barCategoryGap="20%" margin={{ top: 30 }}>
               <CartesianGrid
                 horizontal
                 vertical={false}
