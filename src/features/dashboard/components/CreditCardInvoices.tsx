@@ -9,7 +9,7 @@ type CreditCardInvoicesProps = {
 
 function CreditCardInvoices({ invoices }: CreditCardInvoicesProps) {
   return (
-    <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
+    <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4 lg:flex lg:h-full lg:min-h-0 lg:flex-col">
       <div>
         <h2 className="text-lg font-semibold">Faturas do mês</h2>
 
@@ -21,7 +21,7 @@ function CreditCardInvoices({ invoices }: CreditCardInvoicesProps) {
       {invoices.length === 0 ? (
         <p className="mt-6 text-sm text-(--color-text-muted)">Nenhum cartão cadastrado.</p>
       ) : (
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 space-y-4 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-2">
           {invoices.map((invoice) => (
             <div
               key={invoice.creditCardId}

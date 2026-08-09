@@ -10,7 +10,7 @@ function CategoryExpenses({ expenses }: CategoryExpensesProps) {
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0)
 
   return (
-    <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
+    <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4 lg:flex lg:h-full lg:min-h-0 lg:flex-col">
       <div>
         <h2 className="text-lg font-semibold">Despesas por categoria</h2>
 
@@ -24,7 +24,7 @@ function CategoryExpenses({ expenses }: CategoryExpensesProps) {
           Nenhuma despesa registrada para exibição.
         </p>
       ) : (
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 space-y-4 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-2">
           {expenses.map((expense) => {
             const percentage = highestAmount > 0 ? (expense.amount / highestAmount) * 100 : 0
             const share = totalAmount > 0 ? (expense.amount / totalAmount) * 100 : 0

@@ -6,6 +6,7 @@ import type {
   CreditCardInvoiceSummaryResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
+  IncomeCommitmentResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../model/dashboardTypes'
@@ -13,6 +14,10 @@ import type {
 export const dashboardApi = {
   getSummary() {
     return apiClient.get<DashboardSummaryResponse>('/api/v1/dashboard/summary')
+  },
+
+  getIncomeCommitment() {
+    return apiClient.get<IncomeCommitmentResponse>('/api/v1/dashboard/income-commitment')
   },
 
   getExpensesByCategory() {

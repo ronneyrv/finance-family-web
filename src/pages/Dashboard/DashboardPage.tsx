@@ -18,9 +18,11 @@ import type {
   CreditCardInvoiceSummaryResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
+  IncomeCommitmentResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
+import IncomeCommitmentChart from '../../features/dashboard/components/IncomeCommitmentChart'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
@@ -28,6 +30,7 @@ function DashboardPage() {
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
 
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null)
+  const [incomeCommitment, setIncomeCommitment] = useState<IncomeCommitmentResponse | null>(null)
   const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
 
   const [creditCardInvoices, setCreditCardInvoices] = useState<CreditCardInvoiceSummaryResponse[]>(
@@ -55,11 +58,13 @@ function DashboardPage() {
 
         const [
           summaryResponse,
+          incomeCommitmentResponse,
           categoryExpensesResponse,
           filtersResponse,
           creditCardInvoicesResponse,
         ] = await Promise.all([
           dashboardApi.getSummary(),
+          dashboardApi.getIncomeCommitment(),
           dashboardApi.getExpensesByCategory(),
           dashboardApi.getFilters(),
           dashboardApi.getCreditCardInvoices(),
@@ -67,6 +72,7 @@ function DashboardPage() {
 
         if (!isCancelled) {
           setSummary(summaryResponse)
+          setIncomeCommitment(incomeCommitmentResponse)
           setCategoryExpenses(categoryExpensesResponse)
           setFilters(filtersResponse)
           setSelectedYear(filtersResponse.defaultYear)
@@ -198,10 +204,12 @@ function DashboardPage() {
           <>
             <DashboardSummaryCards summary={summary} />
 
-            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            <div className="mt-6 grid gap-6 lg:h-[390px] lg:grid-cols-3">
               <CreditCardInvoices invoices={creditCardInvoices} />
 
               <CategoryExpenses expenses={categoryExpenses} />
+
+              {incomeCommitment && <IncomeCommitmentChart data={incomeCommitment} />}
             </div>
           </>
         )}
@@ -217,11 +225,11 @@ function DashboardPage() {
         {selectedYear !== null && !isYearlyDataLoading && !yearlyDataError && (
           <>
             <div className="mt-6">
-              <MonthlyResultChart data={monthlySummary} />
+              <CashFlowChart data={cashFlow} />
             </div>
 
             <div className="mt-6">
-              <CashFlowChart data={cashFlow} />
+              <MonthlyResultChart data={monthlySummary} />
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
