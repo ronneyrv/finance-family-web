@@ -7,6 +7,7 @@ import type {
   CumulativeResultResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
+  FinancialHealthResponse,
   IncomeCommitmentResponse,
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
@@ -15,6 +16,10 @@ import type {
 export const dashboardApi = {
   getSummary() {
     return apiClient.get<DashboardSummaryResponse>('/api/v1/dashboard/summary')
+  },
+
+  getFinancialHealth() {
+    return apiClient.get<FinancialHealthResponse>('/api/v1/dashboard/financial-health')
   },
 
   getIncomeCommitment() {

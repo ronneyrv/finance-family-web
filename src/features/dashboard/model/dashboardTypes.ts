@@ -12,12 +12,22 @@ export type Month =
   | 'NOVEMBER'
   | 'DECEMBER'
 
+export type FinancialHealthLevel = 'EXCELLENT' | 'GOOD' | 'MODERATE' | 'WEAK' | 'CRITICAL'
+
 export type DashboardSummaryResponse = {
   totalIncome: number
   totalExpense: number
   balance: number
   cashBalance: number
   bankBalance: number
+}
+
+export type FinancialHealthResponse = {
+  totalAssets: number
+  totalLiabilities: number
+  netWorth: number
+  healthScore: number
+  healthLevel: FinancialHealthLevel
 }
 
 export type CommitmentLevel = 'LOW' | 'MEDIUM' | 'HIGH'
