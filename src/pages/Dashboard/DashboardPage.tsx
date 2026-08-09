@@ -16,6 +16,7 @@ import type {
   CategoryExpenseResponse,
   CreditCardExpenseTrendResponse,
   CreditCardInvoiceSummaryResponse,
+  CumulativeResultResponse,
   DashboardFiltersResponse,
   DashboardSummaryResponse,
   IncomeCommitmentResponse,
@@ -23,6 +24,7 @@ import type {
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
 import IncomeCommitmentChart from '../../features/dashboard/components/IncomeCommitmentChart'
+import FinancialHealthChart from '../../features/dashboard/components/FinancialHealthChart'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
@@ -38,6 +40,7 @@ function DashboardPage() {
   )
 
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummaryResponse[]>([])
+  const [cumulativeResult, setCumulativeResult] = useState<CumulativeResultResponse[]>([])
   const [cashFlow, setCashFlow] = useState<CashFlowResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
 
@@ -117,11 +120,13 @@ function DashboardPage() {
       try {
         const [
           monthlySummaryResponse,
+          cumulativeResultResponse,
           cashFlowResponse,
           monthlyProjectionResponse,
           creditCardTrendResponse,
         ] = await Promise.all([
           dashboardApi.getMonthlySummary(year),
+          dashboardApi.getCumulativeResult(year),
           dashboardApi.getCashFlow(year),
           dashboardApi.getProjection(year),
           dashboardApi.getCreditCardTrend(year),
@@ -129,6 +134,7 @@ function DashboardPage() {
 
         if (!isCancelled) {
           setMonthlySummary(monthlySummaryResponse)
+          setCumulativeResult(cumulativeResultResponse)
           setCashFlow(cashFlowResponse)
           setMonthlyProjection(monthlyProjectionResponse)
           setCreditCardTrend(creditCardTrendResponse)
@@ -204,7 +210,7 @@ function DashboardPage() {
           <>
             <DashboardSummaryCards summary={summary} />
 
-            <div className="mt-6 grid gap-6 lg:h-[390px] lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 lg:h-97.5 lg:grid-cols-3">
               <CreditCardInvoices invoices={creditCardInvoices} />
 
               <CategoryExpenses expenses={categoryExpenses} />
@@ -225,11 +231,15 @@ function DashboardPage() {
         {selectedYear !== null && !isYearlyDataLoading && !yearlyDataError && (
           <>
             <div className="mt-6">
+              <MonthlyResultChart data={monthlySummary} />
+            </div>
+
+            <div className="mt-6">
               <CashFlowChart data={cashFlow} />
             </div>
 
             <div className="mt-6">
-              <MonthlyResultChart data={monthlySummary} />
+              <FinancialHealthChart data={cumulativeResult} />
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
