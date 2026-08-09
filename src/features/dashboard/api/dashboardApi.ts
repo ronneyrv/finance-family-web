@@ -35,6 +35,12 @@ export const dashboardApi = {
     )
   },
 
+  getMyCumulativeResult(year: number) {
+    return apiClient.get<CumulativeResultResponse[]>(
+      `/api/v1/dashboard/cumulative-result/me?year=${year}`,
+    )
+  },
+
   getCashFlow(year: number) {
     return apiClient.get<CashFlowResponse[]>(`/api/v1/dashboard/cash-flow?year=${year}`)
   },
