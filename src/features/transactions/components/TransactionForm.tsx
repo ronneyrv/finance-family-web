@@ -268,73 +268,82 @@ function TransactionForm({
           </p>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <TransactionTypeSelector value={type} onChange={handleTypeChange} />
+        <div className="mt-6 space-y-6">
+          <div className="mt-6 grid gap-4 sm:grid-cols-[2fr_1fr_1fr_2fr]">
+            <label className="sm:col-span-1">
+              <span className="text-sm text-(--color-text)">Descrição</span>
 
-          <PaymentMethodSelector
-            methods={paymentMethodsByType[type]}
-            value={paymentMethod}
-            onChange={handlePaymentMethodChange}
-          />
+              <input
+                required
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                className={fieldClassName}
+              />
+            </label>
+
+            <label className="sm:col-span-1">
+              <span className="text-sm text-(--color-text)">Valor</span>
+
+              <input
+                required
+                min="0.10"
+                step="0.10"
+                type="number"
+                inputMode="decimal"
+                placeholder="0,00"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+                className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+              />
+            </label>
+
+            <label className="sm:col-span-1">
+              <span className="text-sm text-(--color-text)">Data</span>
+
+              <input
+                required
+                type="date"
+                value={transactionDate}
+                onChange={(event) => setTransactionDate(event.target.value)}
+                className={fieldClassName}
+              />
+            </label>
+
+            <div className="sm:col-span-1">
+              <TransactionTypeSelector value={type} onChange={handleTypeChange} />
+            </div>
+          </div>
+
+          <div>
+            <PaymentMethodSelector
+              methods={paymentMethodsByType[type]}
+              value={paymentMethod}
+              onChange={handlePaymentMethodChange}
+            />
+          </div>
 
           {paymentMethod === 'CREDIT_CARD' ? (
-            <>
-              <CreditCardSelector
-                creditCards={creditCards}
-                value={creditCardId}
-                onChange={setCreditCardId}
-              />
-              <InstallmentSelector value={installments} onChange={setInstallments} />
-            </>
+            <div className="grid gap-4 sm:grid-cols-12">
+              <div className="sm:col-span-2">
+                <CreditCardSelector
+                  creditCards={creditCards}
+                  value={creditCardId}
+                  onChange={setCreditCardId}
+                />
+              </div>
+
+              <div className="sm:col-span-1">
+                <InstallmentSelector value={installments} onChange={setInstallments} />
+              </div>
+            </div>
           ) : (
-            <FinancialAccountSelector
-              accounts={availableAccounts}
-              value={accountId}
-              onChange={setAccountId}
-            />
-          )}
+            <div className="grid gap-4 sm:grid-cols-3">
+              <FinancialAccountSelector
+                accounts={availableAccounts}
+                value={accountId}
+                onChange={setAccountId}
+              />
 
-          <label>
-            <span className="text-sm text-(--color-text)">Descrição</span>
-
-            <input
-              required
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              className={fieldClassName}
-            />
-          </label>
-
-          <label>
-            <span className="text-sm text-(--color-text)">Valor</span>
-
-            <input
-              required
-              min="0.10"
-              step="0.10"
-              type="number"
-              inputMode="decimal"
-              placeholder="0,00"
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-            />
-          </label>
-
-          <label>
-            <span className="text-sm text-(--color-text)">Data</span>
-
-            <input
-              required
-              type="date"
-              value={transactionDate}
-              onChange={(event) => setTransactionDate(event.target.value)}
-              className={fieldClassName}
-            />
-          </label>
-
-          {paymentMethod !== 'CREDIT_CARD' && (
-            <>
               <label>
                 <span className="text-sm text-(--color-text)">Categoria</span>
 
@@ -375,7 +384,7 @@ function TransactionForm({
                   ))}
                 </select>
               </label>
-            </>
+            </div>
           )}
         </div>
 
