@@ -1,3 +1,5 @@
+import { UsersRound } from 'lucide-react'
+
 import { Card } from '../../../components/ui/card'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { CommitmentLevel, IncomeCommitmentResponse } from '../model/dashboardTypes'
@@ -32,11 +34,13 @@ function IncomeCommitmentChart({ data }: IncomeCommitmentChartProps) {
   return (
     <Card>
       <div>
-        <h2 className="text-lg font-semibold">Comprometimento da renda</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-lg font-semibold">Comprometimento da renda</h2>
 
-        <p className="mt-1 text-sm text-slate-400">
-          Acompanhe quanto da sua renda mensal está comprometida.
-        </p>
+          <UsersRound size={15} className="text-(--color-text-muted)" aria-label="Família" />
+        </div>
+
+        <p className="mt-1 text-sm text-slate-400">Quanto da renda mensal está comprometida.</p>
       </div>
 
       <div className="mt-6">

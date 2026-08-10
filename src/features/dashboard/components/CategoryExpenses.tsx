@@ -1,3 +1,5 @@
+import { UserRound } from 'lucide-react'
+
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { CategoryExpenseResponse } from '../model/dashboardTypes'
 
@@ -12,7 +14,11 @@ function CategoryExpenses({ expenses }: CategoryExpensesProps) {
   return (
     <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4 lg:flex lg:h-full lg:min-h-0 lg:flex-col">
       <div>
-        <h2 className="text-lg font-semibold">Despesas por categoria</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-lg font-semibold">Despesas por categoria</h2>
+
+          <UserRound size={15} className="text-(--color-text-muted)" aria-label="Individual" />
+        </div>
 
         <p className="mt-1 text-sm text-slate-400">
           Distribuição das despesas registradas por categoria.

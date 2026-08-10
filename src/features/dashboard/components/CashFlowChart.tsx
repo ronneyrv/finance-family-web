@@ -1,3 +1,5 @@
+import { UsersRound } from 'lucide-react'
+
 import {
   CartesianGrid,
   Legend,
@@ -26,7 +28,11 @@ function CashFlowChart({ data }: CashFlowChartProps) {
   return (
     <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
-        <h2 className="text-lg font-semibold">Fluxo de caixa</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-lg font-semibold">Fluxo de caixa</h2>
+
+          <UsersRound size={15} className="text-(--color-text-muted)" aria-label="Família" />
+        </div>
 
         <p className="mt-1 text-sm text-slate-400">
           Comparativo mensal entre entradas e saídas realizadas ao longo do ano.

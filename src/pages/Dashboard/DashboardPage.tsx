@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 
 import { Loading } from '../../components/ui/loading'
-import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
+import { ApiError } from '../../lib/api/apiError'
 import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
+import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
 import CashFlowChart from '../../features/dashboard/components/CashFlowChart'
 import CategoryExpenses from '../../features/dashboard/components/CategoryExpenses'
 import CreditCardInvoices from '../../features/dashboard/components/CreditCardInvoices'
-import MonthlyResultChart from '../../features/dashboard/components/MonthlyResultChart'
 import DashboardSummaryCards from '../../features/dashboard/components/DashboardSummaryCards'
+import FinancialHealthCard from '../../features/dashboard/components/FinancialHealthCard'
+import FinancialHealthChart from '../../features/dashboard/components/FinancialHealthChart'
+import IncomeCommitmentChart from '../../features/dashboard/components/IncomeCommitmentChart'
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
-import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
+import MonthlyResultChart from '../../features/dashboard/components/MonthlyResultChart'
 import type {
   CashFlowResponse,
   CategoryExpenseResponse,
@@ -24,9 +27,6 @@ import type {
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
-import IncomeCommitmentChart from '../../features/dashboard/components/IncomeCommitmentChart'
-import FinancialHealthChart from '../../features/dashboard/components/FinancialHealthChart'
-import FinancialHealthCard from '../../features/dashboard/components/FinancialHealthCard'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
@@ -172,37 +172,35 @@ function DashboardPage() {
 
   return (
     <section>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <PageHeader
-          section="Visão geral"
-          title="Dashboard"
-          description="Acompanhe sua posição financeira e a evolução das suas movimentações."
-        />
+      <PageHeader
+        section={
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <label
+              htmlFor="dashboard-year"
+              className="text-xs font-medium uppercase tracking-wide text-(--color-text-muted)"
+            >
+              Ano
+            </label>
 
-        <div className="flex flex-col items-start gap-2 sm:items-end">
-          <label
-            htmlFor="dashboard-year"
-            className="text-xs font-medium uppercase tracking-wide text-(--color-text-muted)"
-          >
-            Ano
-          </label>
-
-          <select
-            id="dashboard-year"
-            value={selectedYear ?? ''}
-            onChange={(event) => setSelectedYear(Number(event.target.value))}
-            disabled={!filters}
-            className="h-10 w-32 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
-          >
-            {filters &&
-              filters.years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-          </select>
-        </div>
-      </div>
+            <select
+              id="dashboard-year"
+              value={selectedYear ?? ''}
+              onChange={(event) => setSelectedYear(Number(event.target.value))}
+              disabled={!filters}
+              className="h-10 w-32 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
+            >
+              {filters &&
+                filters.years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+            </select>
+          </div>
+        }
+        title="Dashboard"
+        description="Acompanhe a evolução financeira da sua família."
+      />
 
       <div className="mt-8">
         {isOverviewLoading && <Loading message="Carregando resumo financeiro..." />}
@@ -217,17 +215,18 @@ function DashboardPage() {
           <>
             <DashboardSummaryCards summary={summary} />
 
-            {financialHealth && (
-              <div className="mt-6">
-                <FinancialHealthCard data={financialHealth} />
+            <div className="mt-6 grid gap-6 lg:h-100 lg:grid-cols-12">
+              <div className="lg:col-span-3 lg:min-h-0">
+                <CreditCardInvoices invoices={creditCardInvoices} />
               </div>
-            )}
-            <div className="mt-6 grid gap-6 lg:h-97.5 lg:grid-cols-3">
-              <CreditCardInvoices invoices={creditCardInvoices} />
 
-              <CategoryExpenses expenses={categoryExpenses} />
+              <div className="lg:col-span-3 lg:min-h-0">
+                <CategoryExpenses expenses={categoryExpenses} />
+              </div>
 
-              {incomeCommitment && <IncomeCommitmentChart data={incomeCommitment} />}
+              <div className="lg:col-span-6 lg:min-h-0">
+                <AnnualCreditCardTrendChart data={creditCardTrend} />
+              </div>
             </div>
           </>
         )}
@@ -247,7 +246,12 @@ function DashboardPage() {
             </div>
 
             <div className="mt-6">
-              <CashFlowChart data={cashFlow} />
+              <FinancialHealthChart
+                data={myCumulativeResult}
+                title="Minha evolução financeira"
+                description="Entradas, despesas e evolução do resultado acumulado."
+                scope="individual"
+              />
             </div>
 
             <div className="mt-6">
@@ -255,21 +259,30 @@ function DashboardPage() {
                 data={familyCumulativeResult}
                 title="Evolução financeira da família"
                 description="Entradas, despesas e evolução do resultado acumulado da família."
+                scope="family"
               />
             </div>
 
             <div className="mt-6">
-              <FinancialHealthChart
-                data={myCumulativeResult}
-                title="Minha evolução financeira"
-                description="Entradas, despesas e evolução do resultado acumulado."
-              />
+              <CashFlowChart data={cashFlow} />
             </div>
 
-            <div className="mt-6 grid gap-6 lg:grid-cols-2">
-              <AnnualCreditCardTrendChart data={creditCardTrend} />
+            <div className="mt-6 grid gap-6 lg:grid-cols-12 lg:items-stretch">
+              {financialHealth && (
+                <div className="lg:col-span-3 [&>div]:h-full">
+                  <FinancialHealthCard data={financialHealth} />
+                </div>
+              )}
 
-              <MonthlyProjectionChart data={monthlyProjection} />
+              {incomeCommitment && (
+                <div className="lg:col-span-3 [&>div]:h-full">
+                  <IncomeCommitmentChart data={incomeCommitment} />
+                </div>
+              )}
+
+              <div className="lg:col-span-6 [&>div]:h-full">
+                <MonthlyProjectionChart data={monthlyProjection} />
+              </div>
             </div>
           </>
         )}
