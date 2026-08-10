@@ -1,3 +1,5 @@
+import { UsersRound } from 'lucide-react'
+
 import { formatCurrency } from '../../../lib/formatters/currency'
 import { Card } from '../../../components/ui/card'
 import type { FinancialHealthLevel, FinancialHealthResponse } from '../model/dashboardTypes'
@@ -38,11 +40,13 @@ function FinancialHealthCard({ data }: FinancialHealthCardProps) {
   return (
     <Card>
       <div>
-        <h2 className="text-base font-semibold text-(--color-text)">Saúde financeira da família</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-lg font-semibold">Saúde financeira da família</h2>
 
-        <p className="mt-1 text-sm text-slate-400">
-          Acompanhe a situação patrimonial atual da família.
-        </p>
+          <UsersRound size={15} className="text-(--color-text-muted)" aria-label="Família" />
+        </div>
+
+        <p className="mt-1 text-sm text-slate-400">Situação patrimonial atual da família.</p>
       </div>
 
       <div className="mt-6">
@@ -82,7 +86,7 @@ function FinancialHealthCard({ data }: FinancialHealthCardProps) {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 border-t border-(--color-border) pt-5">
+      <div className="mt-6 grid grid-cols-1 gap-4 border-t border-(--color-border) pt-5">
         <div>
           <p className="text-xs text-(--color-text-muted)">Ativos</p>
 

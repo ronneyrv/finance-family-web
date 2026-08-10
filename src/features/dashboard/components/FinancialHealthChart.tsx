@@ -1,3 +1,4 @@
+import { UserRound, UsersRound } from 'lucide-react'
 import {
   Bar,
   CartesianGrid,
@@ -12,14 +13,16 @@ import {
   YAxis,
 } from 'recharts'
 
+import { Card } from '../../../components/ui/card'
+import { monthLabels } from '../utils/monthLabels'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { CumulativeResultResponse } from '../model/dashboardTypes'
-import { monthLabels } from '../utils/monthLabels'
 
 type FinancialHealthChartProps = {
   data: CumulativeResultResponse[]
   title: string
   description: string
+  scope: 'individual' | 'family'
 }
 
 type CustomLabelProps = {
@@ -48,16 +51,25 @@ function CustomLineLabel({ x, y, value }: CustomLabelProps) {
   )
 }
 
-function FinancialHealthChart({ data, title, description }: FinancialHealthChartProps) {
+function FinancialHealthChart({ data, title, description, scope }: FinancialHealthChartProps) {
   const chartData = data.map((item) => ({
     ...item,
     monthLabel: monthLabels[item.month],
   }))
+  const ScopeIcon = scope === 'individual' ? UserRound : UsersRound
 
   return (
-    <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
+    <Card>
       <div>
-        <h2 className="text-lg font-semibold">{title}</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-lg font-semibold">{title}</h2>
+
+          <ScopeIcon
+            size={15}
+            className="text-(--color-text-muted)"
+            aria-label={scope === 'individual' ? 'Individual' : 'Família'}
+          />
+        </div>
 
         <p className="mt-1 text-sm text-slate-400">{description}</p>
       </div>
@@ -157,7 +169,7 @@ function FinancialHealthChart({ data, title, description }: FinancialHealthChart
           </ResponsiveContainer>
         </div>
       )}
-    </section>
+    </Card>
   )
 }
 

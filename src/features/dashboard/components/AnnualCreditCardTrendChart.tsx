@@ -1,3 +1,5 @@
+import { UserRound } from 'lucide-react'
+
 import {
   Bar,
   CartesianGrid,
@@ -74,7 +76,11 @@ function AnnualCreditCardTrendChart({ data }: AnnualCreditCardTrendChartProps) {
   return (
     <section className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <div>
-        <h2 className="text-lg font-semibold">Projeção das faturas</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-lg font-semibold">Projeção das faturas</h2>
+
+          <UserRound size={15} className="text-(--color-text-muted)" aria-label="Individual" />
+        </div>
 
         <p className="mt-1 text-sm text-slate-400">
           Comparativo mensal entre as despesas de cada cartão de crédito e o total consolidado.
