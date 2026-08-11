@@ -1,11 +1,14 @@
 import { useState, type SubmitEvent } from 'react'
 
-import { ApiError } from '../../../lib/api/apiError'
-import { financialAccountsApi } from '../api/financialAccountsApi'
-import type { AccountType, FinancialAccountResponse } from '../model/financialAccountTypes'
-import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import MoneyInput from '../../../components/ui/money/MoneyInput'
 import { Card } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
+import { ApiError } from '../../../lib/api/apiError'
+import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { parseCurrencyInput } from '../../../lib/parsers/currency'
+import { financialAccountsApi } from '../api/financialAccountsApi'
+import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
+import type { AccountType, FinancialAccountResponse } from '../model/financialAccountTypes'
 
 type FinancialAccountFormProps = {
   financialAccount?: FinancialAccountResponse
@@ -32,7 +35,7 @@ function FinancialAccountForm({
     financialAccount?.accountType ?? 'CHECKING_ACCOUNT',
   )
   const [initialBalance, setInitialBalance] = useState(
-    financialAccount ? String(financialAccount.initialBalance) : '',
+    financialAccount ? formatCurrencyInputValue(financialAccount.initialBalance) : '',
   )
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -48,7 +51,7 @@ function FinancialAccountForm({
       const request = {
         name,
         accountType,
-        initialBalance: Number(initialBalance),
+        initialBalance: parseCurrencyInput(initialBalance),
       }
 
       if (financialAccount) {
@@ -129,15 +132,11 @@ function FinancialAccountForm({
           <label className="sm:col-span-2">
             <span className="text-sm text-(--color-text)">Saldo inicial</span>
 
-            <input
+            <MoneyInput
               required
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              value={initialBalance}
-              onChange={(event) => setInitialBalance(event.target.value)}
               placeholder="0,00"
-              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+              value={initialBalance}
+              onChange={setInitialBalance}
             />
           </label>
         </div>

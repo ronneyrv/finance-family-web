@@ -1,11 +1,14 @@
 import { useState, type SubmitEvent } from 'react'
 
+import MoneyInput from '../../../components/ui/money/MoneyInput'
+import { Card } from '../../../components/ui/card'
+import { Button } from '../../../components/ui/button'
 import { ApiError } from '../../../lib/api/apiError'
 import { creditCardsApi } from '../api/creditCardsApi'
-import type { CreditCardResponse } from '../model/creditCardTypes'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
-import { Button } from '../../../components/ui/button'
-import { Card } from '../../../components/ui/card'
+import { parseCurrencyInput } from '../../../lib/parsers/currency'
+import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
+import type { CreditCardResponse } from '../model/creditCardTypes'
 
 type CreditCardFormProps = {
   creditCard?: CreditCardResponse
@@ -17,7 +20,9 @@ type CreditCardFormProps = {
 function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: CreditCardFormProps) {
   const [name, setName] = useState(creditCard?.name ?? '')
 
-  const [creditLimit, setCreditLimit] = useState(creditCard ? String(creditCard.creditLimit) : '')
+  const [creditLimit, setCreditLimit] = useState(
+    creditCard ? formatCurrencyInputValue(creditCard.creditLimit) : '',
+  )
 
   const [closingDay, setClosingDay] = useState(creditCard ? String(creditCard.closingDay) : '')
 
@@ -35,7 +40,7 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
 
       const request = {
         name,
-        creditLimit: Number(creditLimit),
+        creditLimit: parseCurrencyInput(creditLimit),
         closingDay: Number(closingDay),
         dueDay: Number(dueDay),
       }
@@ -98,17 +103,7 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
           <label>
             <span className="text-sm text-(--color-text)">Limite de crédito</span>
 
-            <input
-              required
-              type="number"
-              inputMode="decimal"
-              min="0.01"
-              step="0.01"
-              value={creditLimit}
-              onChange={(event) => setCreditLimit(event.target.value)}
-              placeholder="0,00"
-              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-            />
+            <MoneyInput required placeholder="0,00" value={creditLimit} onChange={setCreditLimit} />
           </label>
 
           <div className="hidden sm:block" />

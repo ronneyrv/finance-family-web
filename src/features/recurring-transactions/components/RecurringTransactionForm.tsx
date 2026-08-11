@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
 
+import MoneyInput from '../../../components/ui/money/MoneyInput'
+import { Card } from '../../../components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { ApiError } from '../../../lib/api/apiError'
 import { categoriesApi } from '../../categories/api/categoriesApi'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
-import { ApiError } from '../../../lib/api/apiError'
+import { parseCurrencyInput } from '../../../lib/parsers/currency'
 import { recurringTransactionsApi } from '../api/recurringTransactionsApi'
-import { Button } from '../../../components/ui/button'
-import { Card } from '../../../components/ui/card'
-import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
+import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
 import type { PaymentMethod, TransactionType } from '../../transactions/model/transactionTypes'
+import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
 import type {
   RecurringTransactionRequest,
   RecurringTransactionResponse,
@@ -32,7 +35,7 @@ function RecurringTransactionForm({
   const [description, setDescription] = useState(recurringTransaction?.description ?? '')
 
   const [amount, setAmount] = useState(
-    recurringTransaction ? String(recurringTransaction.amount) : '',
+    recurringTransaction ? formatCurrencyInputValue(recurringTransaction.amount) : '',
   )
 
   const [type, setType] = useState<TransactionType>(recurringTransaction?.type ?? 'EXPENSE')
@@ -79,7 +82,7 @@ function RecurringTransactionForm({
     }
 
     setDescription(recurringTransaction.description)
-    setAmount(String(recurringTransaction.amount))
+    setAmount(formatCurrencyInputValue(recurringTransaction.amount))
     setType(recurringTransaction.type)
     setPaymentMethod(recurringTransaction.paymentMethod)
     setDayOfMonth(String(recurringTransaction.dayOfMonth))
@@ -150,7 +153,7 @@ function RecurringTransactionForm({
 
       const request: RecurringTransactionRequest = {
         description: description.trim(),
-        amount: Number(amount),
+        amount: parseCurrencyInput(amount),
         type,
         paymentMethod,
         dayOfMonth: Number(dayOfMonth),
@@ -213,15 +216,7 @@ function RecurringTransactionForm({
           <label>
             <span className="text-sm">Valor</span>
 
-            <input
-              required
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-            />
+            <MoneyInput required placeholder="0,00" value={amount} onChange={setAmount} />
           </label>
 
           <label>

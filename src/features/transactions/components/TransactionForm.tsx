@@ -1,22 +1,25 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 
-import { categoriesApi } from '../../categories/api/categoriesApi'
-import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
-import { transactionsApi } from '../api/transactionsApi'
-import { paymentMethodsByType } from '../model/paymentMethods'
-import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
-import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
-import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
-import { creditCardsApi } from '../../credit-cards/api/creditCardsApi'
-import type { CreditCardResponse } from '../../credit-cards/model/creditCardTypes'
-import { purchasesApi } from '../../purchases/api/purchasesApi'
-import TransactionTypeSelector from './form/TransactionTypeSelector'
-import PaymentMethodSelector from './form/PaymentMethodSelector'
-import InstallmentSelector from './form/InstallmentSelector'
+import MoneyInput from '../../../components/ui/money/MoneyInput'
 import CreditCardSelector from './form/CreditCardSelector'
+import InstallmentSelector from './form/InstallmentSelector'
+import PaymentMethodSelector from './form/PaymentMethodSelector'
+import TransactionTypeSelector from './form/TransactionTypeSelector'
 import FinancialAccountSelector from './form/FinancialAccountSelector'
-import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 import { Card } from '../../../components/ui/card'
+import { purchasesApi } from '../../purchases/api/purchasesApi'
+import { categoriesApi } from '../../categories/api/categoriesApi'
+import { creditCardsApi } from '../../credit-cards/api/creditCardsApi'
+import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { transactionsApi } from '../api/transactionsApi'
+import { parseCurrencyInput } from '../../../lib/parsers/currency'
+import { paymentMethodsByType } from '../model/paymentMethods'
+import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
+import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
+import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
+import type { CreditCardResponse } from '../../credit-cards/model/creditCardTypes'
+import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
+import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -32,7 +35,9 @@ function TransactionForm({
   onCancelEdit,
 }: TransactionFormProps) {
   const [description, setDescription] = useState(transaction?.description ?? '')
-  const [amount, setAmount] = useState(transaction ? String(transaction.amount) : '')
+  const [amount, setAmount] = useState(
+    transaction ? formatCurrencyInputValue(transaction.amount) : '',
+  )
   const [transactionDate, setTransactionDate] = useState(transaction?.transactionDate ?? '')
   const [type, setType] = useState<TransactionType>(transaction?.type ?? 'EXPENSE')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
@@ -192,7 +197,7 @@ function TransactionForm({
       if (paymentMethod === 'CREDIT_CARD') {
         await purchasesApi.create(creditCardId, {
           description,
-          totalAmount: Number(amount),
+          totalAmount: parseCurrencyInput(amount),
           installments: Number(installments),
           purchaseDate: transactionDate,
         })
@@ -211,7 +216,7 @@ function TransactionForm({
 
       const request = {
         description,
-        amount: Number(amount),
+        amount: parseCurrencyInput(amount),
         transactionDate,
         type,
         paymentMethod,
@@ -284,17 +289,7 @@ function TransactionForm({
             <label className="sm:col-span-1">
               <span className="text-sm text-(--color-text)">Valor</span>
 
-              <input
-                required
-                min="0.10"
-                step="0.10"
-                type="number"
-                inputMode="decimal"
-                placeholder="0,00"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-                className={`${fieldClassName} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-              />
+              <MoneyInput required placeholder="0,00" value={amount} onChange={setAmount} />
             </label>
 
             <label className="sm:col-span-1">
