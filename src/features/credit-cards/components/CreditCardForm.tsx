@@ -3,10 +3,11 @@ import { useState, type SubmitEvent } from 'react'
 import MoneyInput from '../../../components/ui/money/MoneyInput'
 import { Card } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
-import { ApiError } from '../../../lib/api/apiError'
 import { creditCardsApi } from '../api/creditCardsApi'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { useNotification } from '../../../app/providers/useNotification'
 import { parseCurrencyInput } from '../../../lib/parsers/currency'
+import { getApiErrorMessage } from '../../../lib/api/getApiErrorMessage'
 import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
 import type { CreditCardResponse } from '../model/creditCardTypes'
 
@@ -29,14 +30,13 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
   const [dueDay, setDueDay] = useState(creditCard ? String(creditCard.dueDay) : '')
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const { notify } = useNotification()
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
 
     try {
       setIsSubmitting(true)
-      setErrorMessage(null)
 
       const request = {
         name,
@@ -49,6 +49,8 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
         const updatedCreditCard = await creditCardsApi.update(creditCard.id, request)
 
         onUpdated?.(updatedCreditCard)
+
+        notify.success('Cartão atualizado com sucesso.')
       } else {
         const createdCreditCard = await creditCardsApi.create(request)
 
@@ -58,17 +60,18 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
         setCreditLimit('')
         setClosingDay('')
         setDueDay('')
+
+        notify.success('Cartão cadastrado com sucesso.')
       }
     } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message)
-      } else {
-        setErrorMessage(
+      notify.error(
+        getApiErrorMessage(
+          error,
           creditCard
             ? 'Não foi possível atualizar o cartão.'
             : 'Não foi possível cadastrar o cartão.',
-        )
-      }
+        ),
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -138,8 +141,6 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
             />
           </label>
         </div>
-
-        {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
         <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
           <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">

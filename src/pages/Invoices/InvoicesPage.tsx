@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 
 import { Loading } from '../../components/ui/loading'
-import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { invoicesApi } from '../../features/invoices/api/invoicesApi'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
 import type { InvoiceResponse } from '../../features/invoices/model/invoiceTypes'
@@ -46,11 +46,7 @@ function InvoicesPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setCardsErrorMessage(error.message)
-        } else {
-          setCardsErrorMessage('Não foi possível carregar os cartões.')
-        }
+        setCardsErrorMessage(getApiErrorMessage(error, 'Não foi possível carregar os cartões.'))
       } finally {
         if (!isCancelled) {
           setIsLoadingCards(false)
@@ -84,11 +80,7 @@ function InvoicesPage() {
         await loadFinancialAccounts()
       }
     } catch (error) {
-      if (error instanceof ApiError) {
-        setInvoiceErrorMessage(error.message)
-      } else {
-        setInvoiceErrorMessage('Não foi possível carregar a fatura.')
-      }
+      setInvoiceErrorMessage(getApiErrorMessage(error, 'Não foi possível carregar a fatura.'))
     } finally {
       setIsLoadingInvoice(false)
     }
@@ -102,11 +94,9 @@ function InvoicesPage() {
 
       setFinancialAccounts(response)
     } catch (error) {
-      if (error instanceof ApiError) {
-        setAccountsErrorMessage(error.message)
-      } else {
-        setAccountsErrorMessage('Não foi possível carregar as contas financeiras.')
-      }
+      setAccountsErrorMessage(
+        getApiErrorMessage(error, 'Não foi possível carregar as contas financeiras.'),
+      )
     }
   }
 

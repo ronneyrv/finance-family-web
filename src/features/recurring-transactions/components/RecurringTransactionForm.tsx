@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 import MoneyInput from '../../../components/ui/money/MoneyInput'
 import { Card } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
-import { ApiError } from '../../../lib/api/apiError'
 import { categoriesApi } from '../../categories/api/categoriesApi'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
+import { useNotification } from '../../../app/providers/useNotification'
 import { parseCurrencyInput } from '../../../lib/parsers/currency'
+import { getApiErrorMessage } from '../../../lib/api/getApiErrorMessage'
 import { recurringTransactionsApi } from '../api/recurringTransactionsApi'
 import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
 import type { PaymentMethod, TransactionType } from '../../transactions/model/transactionTypes'
@@ -60,9 +61,9 @@ function RecurringTransactionForm({
 
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { notify } = useNotification()
 
   function resetForm() {
     setDescription('')
@@ -102,9 +103,9 @@ function RecurringTransactionForm({
         if (!isCancelled) {
           setCategories(response)
         }
-      } catch {
+      } catch (error) {
         if (!isCancelled) {
-          setErrorMessage('Não foi possível carregar as categorias.')
+          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
         }
       }
     }
@@ -114,7 +115,7 @@ function RecurringTransactionForm({
     return () => {
       isCancelled = true
     }
-  }, [type])
+  }, [notify, type])
 
   useEffect(() => {
     if (!categoryId) {
@@ -130,9 +131,9 @@ function RecurringTransactionForm({
         if (!isCancelled) {
           setSubCategories(response)
         }
-      } catch {
+      } catch (error) {
         if (!isCancelled) {
-          setErrorMessage('Não foi possível carregar as subcategorias.')
+          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as subcategorias.'))
         }
       }
     }
@@ -142,14 +143,13 @@ function RecurringTransactionForm({
     return () => {
       isCancelled = true
     }
-  }, [categoryId])
+  }, [categoryId, notify])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     try {
       setIsSubmitting(true)
-      setErrorMessage(null)
 
       const request: RecurringTransactionRequest = {
         description: description.trim(),
@@ -167,25 +167,26 @@ function RecurringTransactionForm({
         const updated = await recurringTransactionsApi.update(recurringTransaction.id, request)
 
         onUpdated?.(updated)
+
+        notify.success('Recorrência atualizada com sucesso.')
       } else {
         const created = await recurringTransactionsApi.create(request)
 
         onCreated?.(created)
 
         resetForm()
+
+        notify.success('Recorrência cadastrada com sucesso.')
       }
     } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message)
-      } else {
-        setErrorMessage(
+      notify.error(
+        getApiErrorMessage(
+          error,
           recurringTransaction
             ? 'Não foi possível atualizar a recorrência.'
             : 'Não foi possível cadastrar a recorrência.',
-        )
-      }
-    } finally {
-      setIsSubmitting(false)
+        ),
+      )
     }
   }
 
@@ -321,7 +322,6 @@ function RecurringTransactionForm({
             </select>
           </label>
         </div>
-        {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
         <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
           <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">

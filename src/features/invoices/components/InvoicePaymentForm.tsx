@@ -2,9 +2,10 @@ import { useState, type SubmitEvent } from 'react'
 
 import type { FinancialAccountResponse } from '../../financial-accounts/model/financialAccountTypes'
 import { formatCurrency } from '../../../lib/formatters/currency'
-import { ApiError } from '../../../lib/api/apiError'
-import { paymentMethodLabels } from '../../transactions/model/paymentMethods'
+import { useNotification } from '../../../app/providers/useNotification'
+import { getApiErrorMessage } from '../../../lib/api/getApiErrorMessage'
 import type { PaymentMethod } from '../../transactions/model/transactionTypes'
+import { paymentMethodLabels } from '../../transactions/model/paymentMethods'
 import { invoicesApi } from '../api/invoicesApi'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 
@@ -29,7 +30,7 @@ function InvoicePaymentForm({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | ''>('')
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const { notify } = useNotification()
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -40,7 +41,6 @@ function InvoicePaymentForm({
 
     try {
       setIsSubmitting(true)
-      setErrorMessage(null)
 
       await invoicesApi.pay(creditCardId, month, year, {
         accountId,
@@ -48,12 +48,9 @@ function InvoicePaymentForm({
       })
 
       await onPaid()
+      notify.success('Fatura paga com sucesso.')
     } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message)
-      } else {
-        setErrorMessage('Não foi possível pagar a fatura.')
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível pagar a fatura.'))
     } finally {
       setIsSubmitting(false)
     }
@@ -123,8 +120,6 @@ function InvoicePaymentForm({
           </div>
 
           <div className="mt-6 border-t border-(--color-border) pt-4">
-            {errorMessage && <p className="mb-4 text-sm text-red-400">{errorMessage}</p>}
-
             <button
               type="submit"
               disabled={isSubmitting}

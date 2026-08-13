@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
-import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
+import { useNotification } from '../../app/providers/useNotification'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { recurringTransactionsApi } from '../../features/recurring-transactions/api/recurringTransactionsApi'
 import type { RecurringTransactionResponse } from '../../features/recurring-transactions/model/recurringTransactionTypes'
 import RecurringTransactionForm from '../../features/recurring-transactions/components/RecurringTransactionForm'
@@ -24,6 +25,8 @@ function RecurringTransactionsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  const { notify } = useNotification()
+
   useEffect(() => {
     let isCancelled = false
 
@@ -41,11 +44,7 @@ function RecurringTransactionsPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setErrorMessage(error.message)
-        } else {
-          setErrorMessage('Não foi possível carregar as recorrências.')
-        }
+        setErrorMessage(getApiErrorMessage(error, 'Não foi possível carregar as recorrências.'))
       } finally {
         if (!isCancelled) {
           setIsLoading(false)
@@ -71,12 +70,12 @@ function RecurringTransactionsPage() {
       if (editingRecurringTransaction?.id === updated.id) {
         setEditingRecurringTransaction(updated)
       }
+
+      notify.success(
+        active ? 'Recorrência ativada com sucesso.' : 'Recorrência desativada com sucesso.',
+      )
     } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message)
-      } else {
-        setErrorMessage('Não foi possível atualizar a recorrência.')
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível atualizar a recorrência.'))
     }
   }
 
@@ -88,6 +87,8 @@ function RecurringTransactionsPage() {
     try {
       await recurringTransactionsApi.delete(transactionToDelete.id)
 
+      notify.success('Recorrência excluída com sucesso.')
+
       setRecurringTransactions((current) =>
         current.filter((item) => item.id !== transactionToDelete.id),
       )
@@ -98,11 +99,7 @@ function RecurringTransactionsPage() {
 
       setTransactionToDelete(null)
     } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message)
-      } else {
-        setErrorMessage('Não foi possível excluir a recorrência.')
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível excluir a recorrência.'))
     }
   }
 
