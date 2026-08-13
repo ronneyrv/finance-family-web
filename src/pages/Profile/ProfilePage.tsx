@@ -7,15 +7,17 @@ import { usersApi } from '../../features/users/api/usersApi'
 import { PageHeader } from '../../components/ui/page'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
 import { useCurrentUser } from '../../features/users/hooks/useCurrentUser'
+import { useNotification } from '../../app/providers/useNotification'
 import Alert from '../../components/ui/alert/Alert'
 import Loading from '../../components/ui/loading/Loading'
 import UserAvatar from '../../features/users/components/UserAvatar'
 import ChangePasswordForm from '../../features/users/components/ChangePasswordForm'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 
 function ProfilePage() {
   const { user, loading, updateUser } = useCurrentUser()
   const fileInputRef = useRef<HTMLInputElement>(null)
-
+  const { notify } = useNotification()
   const [name, setName] = useState('')
 
   const [isUploading, setIsUploading] = useState(false)
@@ -51,15 +53,9 @@ function ProfilePage() {
       updateUser(updatedUser)
       setName(updatedUser.name)
 
-      setFeedback({
-        type: 'success',
-        message: 'Perfil atualizado com sucesso.',
-      })
-    } catch {
-      setFeedback({
-        type: 'error',
-        message: 'Não foi possível atualizar o perfil.',
-      })
+      notify.success('Perfil atualizado com sucesso.')
+    } catch (error) {
+      notify.error(getApiErrorMessage(error, 'Não foi possível atualizar o perfil.'))
     } finally {
       setIsSubmitting(false)
     }
@@ -96,15 +92,9 @@ function ProfilePage() {
       updateUser(updatedUser)
       setName(updatedUser.name)
 
-      setFeedback({
-        type: 'success',
-        message: 'Avatar atualizado com sucesso.',
-      })
-    } catch {
-      setFeedback({
-        type: 'error',
-        message: 'Não foi possível atualizar o avatar.',
-      })
+      notify.success('Avatar atualizado com sucesso.')
+    } catch (error) {
+      notify.error(getApiErrorMessage(error, 'Não foi possível atualizar o avatar.'))
     } finally {
       setIsUploading(false)
 

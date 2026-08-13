@@ -57,11 +57,6 @@ function ChangePasswordForm() {
       setConfirmPassword('')
 
       notify.success('Senha alterada com sucesso.')
-
-      setFeedback({
-        type: 'success',
-        message: 'Senha alterada com sucesso.',
-      })
     } catch (error) {
       notify.error(getApiErrorMessage(error, 'Não foi possível alterar a senha.'))
     } finally {
