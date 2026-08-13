@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
-import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
+import { useNotification } from '../../app/providers/useNotification'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
 import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
 import FinancialAccountForm from '../../features/financial-accounts/components/FinancialAccountForm'
@@ -23,7 +24,7 @@ function FinancialAccountsPage() {
 
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
+  const { notify } = useNotification()
 
   useEffect(() => {
     let isCancelled = false
@@ -42,11 +43,9 @@ function FinancialAccountsPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setErrorMessage(error.message)
-        } else {
-          setErrorMessage('Não foi possível carregar as contas financeiras.')
-        }
+        setErrorMessage(
+          getApiErrorMessage(error, 'Não foi possível carregar as contas financeiras.'),
+        )
       } finally {
         if (!isCancelled) {
           setIsLoading(false)
@@ -87,7 +86,6 @@ function FinancialAccountsPage() {
 
     try {
       setIsDeleting(true)
-      setDeleteErrorMessage(null)
 
       await financialAccountsApi.delete(financialAccountToDelete.id)
 
@@ -102,12 +100,10 @@ function FinancialAccountsPage() {
       }
 
       setFinancialAccountToDelete(null)
+
+      notify.success('Conta financeira excluída com sucesso.')
     } catch (error) {
-      if (error instanceof ApiError) {
-        setDeleteErrorMessage(error.message)
-      } else {
-        setDeleteErrorMessage('Não foi possível excluir a conta financeira.')
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível excluir a conta financeira.'))
     } finally {
       setIsDeleting(false)
     }
@@ -155,10 +151,8 @@ function FinancialAccountsPage() {
         confirmLoadingLabel="Excluindo..."
         confirmVariant="danger"
         isLoading={isDeleting}
-        errorMessage={deleteErrorMessage}
         onCancel={() => {
           if (!isDeleting) {
-            setDeleteErrorMessage(null)
             setFinancialAccountToDelete(null)
           }
         }}

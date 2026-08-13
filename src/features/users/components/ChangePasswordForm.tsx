@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { Card } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
 import { usersApi } from '../api/usersApi'
-import { ApiError } from '../../../lib/api/apiError'
+import { useNotification } from '../../../app/providers/useNotification'
+import { getApiErrorMessage } from '../../../lib/api/getApiErrorMessage'
 import type { SubmitEvent } from 'react'
 import Alert from '../../../components/ui/alert/Alert'
 import PasswordField from '../../../components/ui/forms/PasswordField'
@@ -12,9 +13,8 @@ function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-
   const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const { notify } = useNotification()
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error'
     message: string
@@ -56,22 +56,14 @@ function ChangePasswordForm() {
       setNewPassword('')
       setConfirmPassword('')
 
+      notify.success('Senha alterada com sucesso.')
+
       setFeedback({
         type: 'success',
         message: 'Senha alterada com sucesso.',
       })
     } catch (error) {
-      if (error instanceof ApiError) {
-        setFeedback({
-          type: 'error',
-          message: error.message,
-        })
-      } else {
-        setFeedback({
-          type: 'error',
-          message: 'Não foi possível alterar a senha.',
-        })
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível alterar a senha.'))
     } finally {
       setIsSubmitting(false)
     }

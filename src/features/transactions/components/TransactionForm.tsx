@@ -12,7 +12,9 @@ import { categoriesApi } from '../../categories/api/categoriesApi'
 import { creditCardsApi } from '../../credit-cards/api/creditCardsApi'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 import { transactionsApi } from '../api/transactionsApi'
+import { useNotification } from '../../../app/providers/useNotification'
 import { parseCurrencyInput } from '../../../lib/parsers/currency'
+import { getApiErrorMessage } from '../../../lib/api/getApiErrorMessage'
 import { paymentMethodsByType } from '../model/paymentMethods'
 import { financialAccountsApi } from '../../financial-accounts/api/financialAccountsApi'
 import { formatCurrencyInputValue } from '../../../lib/formatters/currencyInput'
@@ -56,7 +58,7 @@ function TransactionForm({
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const { notify } = useNotification()
 
   useEffect(() => {
     let isCancelled = false
@@ -72,9 +74,9 @@ function TransactionForm({
           setFinancialAccounts(financialAccountsResponse)
           setCreditCards(creditCardsResponse)
         }
-      } catch {
+      } catch (error) {
         if (!isCancelled) {
-          setErrorMessage('Não foi possível carregar as contas e cartões.')
+          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as contas e cartões.'))
         }
       }
     }
@@ -84,7 +86,7 @@ function TransactionForm({
     return () => {
       isCancelled = true
     }
-  }, [])
+  }, [notify])
 
   useEffect(() => {
     let isCancelled = false
@@ -104,9 +106,9 @@ function TransactionForm({
             }
           }
         }
-      } catch {
+      } catch (error) {
         if (!isCancelled) {
-          setErrorMessage('Não foi possível carregar as categorias.')
+          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
         }
       }
     }
@@ -116,7 +118,7 @@ function TransactionForm({
     return () => {
       isCancelled = true
     }
-  }, [type])
+  }, [notify, type])
 
   useEffect(() => {
     if (!categoryId) {
@@ -132,9 +134,9 @@ function TransactionForm({
         if (!isCancelled) {
           setSubCategories(response)
         }
-      } catch {
+      } catch (error) {
         if (!isCancelled) {
-          setErrorMessage('Não foi possível carregar as subcategorias.')
+          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as subcategorias.'))
         }
       }
     }
@@ -144,7 +146,7 @@ function TransactionForm({
     return () => {
       isCancelled = true
     }
-  }, [categoryId])
+  }, [notify, categoryId])
 
   function handleTypeChange(nextType: TransactionType) {
     setType(nextType)
@@ -192,7 +194,6 @@ function TransactionForm({
 
     try {
       setIsSubmitting(true)
-      setErrorMessage(null)
 
       if (paymentMethod === 'CREDIT_CARD') {
         await purchasesApi.create(creditCardId, {
@@ -207,9 +208,12 @@ function TransactionForm({
         setTransactionDate('')
         setCreditCardId('')
         setInstallments('')
+        setAccountId('')
         setCategoryId('')
         setSubCategoryId('')
         setSubCategories([])
+
+        notify.success('Compra no cartão registrada com sucesso.')
 
         return
       }
@@ -229,6 +233,7 @@ function TransactionForm({
         const updatedTransaction = await transactionsApi.update(transaction.id, request)
 
         onUpdated?.(updatedTransaction)
+        notify.success('Transação atualizada com sucesso.')
       } else {
         const createdTransaction = await transactionsApi.create(request)
 
@@ -240,14 +245,19 @@ function TransactionForm({
         setCategoryId('')
         setSubCategoryId('')
         setSubCategories([])
+
+        notify.success('Transação criada com sucesso.')
       }
-    } catch {
-      setErrorMessage(
-        paymentMethod === 'CREDIT_CARD'
-          ? 'Não foi possível registrar a compra no cartão.'
-          : transaction
-            ? 'Não foi possível atualizar a transação.'
-            : 'Não foi possível criar a transação.',
+    } catch (error) {
+      notify.error(
+        getApiErrorMessage(
+          error,
+          paymentMethod === 'CREDIT_CARD'
+            ? 'Não foi possível registrar a compra no cartão.'
+            : transaction
+              ? 'Não foi possível atualizar a transação.'
+              : 'Não foi possível criar a transação.',
+        ),
       )
     } finally {
       setIsSubmitting(false)
@@ -382,8 +392,6 @@ function TransactionForm({
             </div>
           )}
         </div>
-
-        {errorMessage && <p className="mt-4 text-sm text-red-400">{errorMessage}</p>}
 
         <div className="mt-6 flex flex-col gap-3 border-t border-(--color-border) pt-4 sm:flex-row">
           <button

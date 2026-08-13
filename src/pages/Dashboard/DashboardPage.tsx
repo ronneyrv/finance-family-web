@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
-import { ApiError } from '../../lib/api/apiError'
 import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
 import CashFlowChart from '../../features/dashboard/components/CashFlowChart'
 import CategoryExpenses from '../../features/dashboard/components/CategoryExpenses'
@@ -90,11 +90,9 @@ function DashboardPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setOverviewError(error.message)
-        } else {
-          setOverviewError('Não foi possível carregar os dados financeiros.')
-        }
+        setOverviewError(
+          getApiErrorMessage(error, 'Não foi possível carregar os dados financeiros.'),
+        )
       } finally {
         if (!isCancelled) {
           setIsOverviewLoading(false)
@@ -151,11 +149,9 @@ function DashboardPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setYearlyDataError(error.message)
-        } else {
-          setYearlyDataError('Não foi possível carregar os dados do período.')
-        }
+        setYearlyDataError(
+          getApiErrorMessage(error, 'Não foi possível carregar os dados do período.'),
+        )
       } finally {
         if (!isCancelled) {
           setIsYearlyDataLoading(false)

@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 
+import CreditCardList from '../../features/credit-cards/components/CreditCardList'
+import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
 import { Alert } from '../../components/ui/alert'
-import { ApiError } from '../../lib/api/apiError'
+import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
+import { useNotification } from '../../app/providers/useNotification'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
-import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
-import CreditCardList from '../../features/credit-cards/components/CreditCardList'
-import { Loading } from '../../components/ui/loading'
 
 function CreditCardsPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -21,7 +22,7 @@ function CreditCardsPage() {
 
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
+  const { notify } = useNotification()
 
   useEffect(() => {
     let isCancelled = false
@@ -40,11 +41,7 @@ function CreditCardsPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setErrorMessage(error.message)
-        } else {
-          setErrorMessage('Não foi possível carregar os cartões.')
-        }
+        setErrorMessage(getApiErrorMessage(error, 'Não foi possível carregar os cartões.'))
       } finally {
         if (!isCancelled) {
           setIsLoading(false)
@@ -80,7 +77,6 @@ function CreditCardsPage() {
 
     try {
       setIsDeleting(true)
-      setDeleteErrorMessage(null)
 
       await creditCardsApi.delete(creditCardToDelete.id)
 
@@ -93,12 +89,10 @@ function CreditCardsPage() {
       }
 
       setCreditCardToDelete(null)
+
+      notify.success('Cartão excluído com sucesso.')
     } catch (error) {
-      if (error instanceof ApiError) {
-        setDeleteErrorMessage(error.message)
-      } else {
-        setDeleteErrorMessage('Não foi possível excluir o cartão.')
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível excluir o cartão.'))
     } finally {
       setIsDeleting(false)
     }
@@ -146,10 +140,8 @@ function CreditCardsPage() {
         confirmLoadingLabel="Excluindo..."
         confirmVariant="danger"
         isLoading={isDeleting}
-        errorMessage={deleteErrorMessage}
         onCancel={() => {
           if (!isDeleting) {
-            setDeleteErrorMessage(null)
             setCreditCardToDelete(null)
           }
         }}

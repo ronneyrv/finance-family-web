@@ -3,11 +3,12 @@ import { useEffect, useState, type SubmitEvent } from 'react'
 import { Card } from '../../components/ui/card'
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
-import { ApiError } from '../../lib/api/apiError'
 import { PageHeader } from '../../components/ui/page'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
+import { useNotification } from '../../app/providers/useNotification'
 import { transactionsApi } from '../../features/transactions/api/transactionsApi'
+import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { ChevronDown, ChevronRight, Filter } from 'lucide-react'
 import type { TransactionResponse } from '../../features/transactions/model/transactionTypes'
 import TransactionForm from '../../features/transactions/components/TransactionForm'
@@ -20,7 +21,7 @@ function TransactionsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [transactionToDelete, setTransactionToDelete] = useState<TransactionResponse | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null)
+  const { notify } = useNotification()
   const [transactionToEdit, setTransactionToEdit] = useState<TransactionResponse | null>(null)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
@@ -57,11 +58,7 @@ function TransactionsPage() {
           return
         }
 
-        if (error instanceof ApiError) {
-          setErrorMessage(error.message)
-        } else {
-          setErrorMessage('Não foi possível carregar as transações.')
-        }
+        setErrorMessage(getApiErrorMessage(error, 'Não foi possível carregar as transações.'))
       } finally {
         if (!isCancelled) {
           setIsLoading(false)
@@ -99,9 +96,10 @@ function TransactionsPage() {
 
     try {
       setIsDeleting(true)
-      setDeleteErrorMessage(null)
 
       await transactionsApi.delete(transactionToDelete.id)
+
+      notify.success('Transação excluída com sucesso.')
 
       const nextTotalElements = Math.max(totalElements - 1, 0)
       const nextTotalPages = Math.ceil(nextTotalElements / 20)
@@ -129,11 +127,7 @@ function TransactionsPage() {
         currentTransactions.filter((transaction) => transaction.id !== transactionToDelete.id),
       )
     } catch (error) {
-      if (error instanceof ApiError) {
-        setDeleteErrorMessage(error.message)
-      } else {
-        setDeleteErrorMessage('Não foi possível excluir a transação.')
-      }
+      notify.error(getApiErrorMessage(error, 'Não foi possível excluir a transação.'))
     } finally {
       setIsDeleting(false)
     }
@@ -294,10 +288,8 @@ function TransactionsPage() {
         confirmLoadingLabel="Excluindo..."
         confirmVariant="danger"
         isLoading={isDeleting}
-        errorMessage={deleteErrorMessage}
         onCancel={() => {
           if (!isDeleting) {
-            setDeleteErrorMessage(null)
             setTransactionToDelete(null)
           }
         }}
