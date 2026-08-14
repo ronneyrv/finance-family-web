@@ -31,10 +31,10 @@ describe('Toast', () => {
   })
 
   it.each([
-    ['success', 'border-emerald-500/20'],
-    ['error', 'border-red-500/20'],
-    ['warning', 'border-yellow-500/20'],
-    ['info', 'border-sky-500/20'],
+    ['success', 'border-emerald-800'],
+    ['error', 'border-red-800'],
+    ['warning', 'border-yellow-800'],
+    ['info', 'border-sky-800'],
   ] as const)('applies %s variant', (variant, expectedClass) => {
     render(<Toast variant={variant}>Message</Toast>)
 

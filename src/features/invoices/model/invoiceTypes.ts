@@ -23,3 +23,13 @@ export type InvoiceResponse = {
   availableLimit: number
   installments: InvoiceInstallmentResponse[]
 }
+
+export type PendingPurchaseResponse = {
+  id: string
+  description: string
+  purchaseDate: string
+  totalAmount: number
+  installmentCount: number
+  creditCardId: string
+  creditCardName: string
+}
