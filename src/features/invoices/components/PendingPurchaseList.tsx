@@ -45,7 +45,7 @@ function PendingPurchaseList({ purchases, onDelete }: PendingPurchaseListProps) 
               </div>
 
               <div className="min-w-0">
-                <p className="truncate font-medium">{purchase.description}</p>
+                <p className="font-medium">{purchase.description}</p>
 
                 <p className="mt-1 text-sm text-(--color-text-muted)">{purchase.creditCardName}</p>
               </div>
