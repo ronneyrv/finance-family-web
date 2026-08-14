@@ -11,10 +11,10 @@ type ToastProps = {
 }
 
 const variants: Record<ToastVariant, string> = {
-  success: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300',
-  error: 'border-red-500/20 bg-red-500/10 text-red-300',
-  warning: 'border-yellow-500/20 bg-yellow-500/10 text-yellow-300',
-  info: 'border-sky-500/20 bg-sky-500/10 text-sky-300',
+  success: 'border-emerald-800 bg-emerald-950 text-emerald-300',
+  error: 'border-red-800 bg-red-950 text-red-300',
+  warning: 'border-yellow-800 bg-yellow-950 text-yellow-300',
+  info: 'border-sky-800 bg-sky-950 text-sky-300',
 }
 
 function Toast({ variant = 'info', children, onClose }: ToastProps) {
