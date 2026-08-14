@@ -1,5 +1,9 @@
 import { apiClient } from '../../../lib/api/apiClient'
-import type { InvoicePaymentRequest, InvoiceResponse } from '../model/invoiceTypes'
+import type {
+  InvoicePaymentRequest,
+  InvoiceResponse,
+  PendingPurchaseResponse,
+} from '../model/invoiceTypes'
 
 function buildInvoiceQuery(month: number, year: number) {
   return new URLSearchParams({
@@ -22,5 +26,13 @@ export const invoicesApi = {
       `/api/v1/credit-cards/${creditCardId}/invoice/pay?${query}`,
       request,
     )
+  },
+
+  findPendingPurchases() {
+    return apiClient.get<PendingPurchaseResponse[]>('/api/v1/credit-cards/purchases/pending')
+  },
+
+  deletePurchase(purchaseId: string) {
+    return apiClient.delete<void>(`/api/v1/credit-cards/purchases/${purchaseId}`)
   },
 }
