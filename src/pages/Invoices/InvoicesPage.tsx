@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
+import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
 import { invoicesApi } from '../../features/invoices/api/invoicesApi'
+import { purchasesApi } from '../../features/purchases/api/purchasesApi'
+import { ConfirmDialog } from '../../components/ui/dialog'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
+import { useNotification } from '../../app/providers/useNotification'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
@@ -16,10 +20,7 @@ import InvoicePaymentForm from '../../features/invoices/components/InvoicePaymen
 import InvoiceFilter from '../../features/invoices/components/InvoiceFilter'
 import InvoiceInstallmentList from '../../features/invoices/components/InvoiceInstallmentList'
 import InvoiceSummary from '../../features/invoices/components/InvoiceSummary'
-import { Alert } from '../../components/ui/alert'
-import { useNotification } from '../../app/providers/useNotification'
 import PendingPurchaseList from '../../features/invoices/components/PendingPurchaseList'
-import { ConfirmDialog } from '../../components/ui/dialog'
 
 function InvoicesPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -78,39 +79,25 @@ function InvoicesPage() {
     }
   }, [])
 
-  useEffect(() => {
-    let isCancelled = false
+  const loadPendingPurchases = useCallback(async () => {
+    try {
+      setPendingPurchasesErrorMessage(null)
 
-    async function loadPendingPurchases() {
-      try {
-        setPendingPurchasesErrorMessage(null)
+      const response = await invoicesApi.findPendingPurchases()
 
-        const response = await invoicesApi.findPendingPurchases()
-
-        if (!isCancelled) {
-          setPendingPurchases(response)
-        }
-      } catch (error) {
-        if (isCancelled) {
-          return
-        }
-
-        setPendingPurchasesErrorMessage(
-          getApiErrorMessage(error, 'Não foi possível carregar as compras pendentes.'),
-        )
-      } finally {
-        if (!isCancelled) {
-          setIsLoadingPendingPurchases(false)
-        }
-      }
-    }
-
-    void loadPendingPurchases()
-
-    return () => {
-      isCancelled = true
+      setPendingPurchases(response)
+    } catch (error) {
+      setPendingPurchasesErrorMessage(
+        getApiErrorMessage(error, 'Não foi possível carregar as compras pendentes.'),
+      )
+    } finally {
+      setIsLoadingPendingPurchases(false)
     }
   }, [])
+
+  useEffect(() => {
+    void loadPendingPurchases()
+  }, [loadPendingPurchases])
 
   async function handleDeletePurchase() {
     if (!purchaseToDelete) {
@@ -133,6 +120,25 @@ function InvoicesPage() {
       notify.error(getApiErrorMessage(error, 'Não foi possível excluir a compra.'))
     } finally {
       setIsDeletingPurchase(false)
+    }
+  }
+
+  async function handleCategoryChange(
+    purchase: PendingPurchaseResponse,
+    categoryId: string | null,
+    subCategoryId: string | null,
+  ) {
+    try {
+      await purchasesApi.updateCategory(purchase.id, {
+        categoryId,
+        subCategoryId,
+      })
+
+      await loadPendingPurchases()
+
+      notify.success('Categoria da compra atualizada com sucesso.')
+    } catch (error) {
+      notify.error(getApiErrorMessage(error, 'Não foi possível atualizar a categoria da compra.'))
     }
   }
 
@@ -220,7 +226,11 @@ function InvoicesPage() {
           )}
 
           {!isLoadingPendingPurchases && !pendingPurchasesErrorMessage && (
-            <PendingPurchaseList purchases={pendingPurchases} onDelete={setPurchaseToDelete} />
+            <PendingPurchaseList
+              purchases={pendingPurchases}
+              onDelete={setPurchaseToDelete}
+              onCategoryChange={handleCategoryChange}
+            />
           )}
         </>
       )}

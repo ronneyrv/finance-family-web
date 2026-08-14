@@ -3,6 +3,8 @@ export type PurchaseRequest = {
   totalAmount: number
   installments: number
   purchaseDate: string
+  categoryId: string
+  subCategoryId?: string
 }
 
 export type InstallmentResponse = {

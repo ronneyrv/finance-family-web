@@ -174,9 +174,7 @@ function TransactionForm({
 
     if (nextPaymentMethod === 'CREDIT_CARD') {
       setAccountId('')
-      setCategoryId('')
-      setSubCategoryId('')
-      setSubCategories([])
+      setInstallments('1')
     } else {
       setCreditCardId('')
       setInstallments('')
@@ -187,6 +185,22 @@ function TransactionForm({
     setCategoryId(nextCategoryId)
     setSubCategoryId('')
     setSubCategories([])
+  }
+
+  function resetFormAfterCreation() {
+    setDescription('')
+    setAmount('')
+    setTransactionDate('')
+    setSubCategoryId('')
+
+    if (type === 'INCOME') {
+      const incomeCategory = categories.find((category) => category.type === 'INCOME')
+
+      setCategoryId(incomeCategory?.id ?? '')
+    } else {
+      setCategoryId('')
+      setSubCategories([])
+    }
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -201,17 +215,20 @@ function TransactionForm({
           totalAmount: parseCurrencyInput(amount),
           installments: Number(installments),
           purchaseDate: transactionDate,
+          categoryId,
+          subCategoryId: subCategoryId || undefined,
         })
 
         setDescription('')
         setAmount('')
         setTransactionDate('')
         setCreditCardId('')
-        setInstallments('')
+        setInstallments('1')
         setAccountId('')
-        setCategoryId('')
         setSubCategoryId('')
-        setSubCategories([])
+
+        const expenseCategory = categories.find((category) => category.type === 'EXPENSE')
+        setCategoryId(expenseCategory?.id ?? '')
 
         notify.success('Compra no cartão registrada com sucesso.')
 
@@ -239,12 +256,7 @@ function TransactionForm({
 
         onCreated?.(createdTransaction)
 
-        setDescription('')
-        setAmount('')
-        setTransactionDate('')
-        setCategoryId('')
-        setSubCategoryId('')
-        setSubCategories([])
+        resetFormAfterCreation()
 
         notify.success('Transação criada com sucesso.')
       }
@@ -328,18 +340,52 @@ function TransactionForm({
           </div>
 
           {paymentMethod === 'CREDIT_CARD' ? (
-            <div className="grid gap-4 sm:grid-cols-12">
-              <div className="sm:col-span-2">
-                <CreditCardSelector
-                  creditCards={creditCards}
-                  value={creditCardId}
-                  onChange={setCreditCardId}
-                />
-              </div>
+            <div className="grid gap-4 sm:grid-cols-4">
+              <CreditCardSelector
+                creditCards={creditCards}
+                value={creditCardId}
+                onChange={setCreditCardId}
+              />
 
-              <div className="sm:col-span-1">
-                <InstallmentSelector value={installments} onChange={setInstallments} />
-              </div>
+              <InstallmentSelector value={installments} onChange={setInstallments} />
+
+              <label>
+                <span className="text-sm text-(--color-text)">Categoria</span>
+
+                <select
+                  required
+                  value={categoryId}
+                  onChange={(event) => handleCategoryChange(event.target.value)}
+                  className={fieldClassName}
+                >
+                  <option value="">Selecione</option>
+
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span className="text-sm text-(--color-text)">Subcategoria</span>
+
+                <select
+                  value={subCategoryId}
+                  disabled={!categoryId}
+                  onChange={(event) => setSubCategoryId(event.target.value)}
+                  className={fieldClassName}
+                >
+                  <option value="">Sem subcategoria</option>
+
+                  {subCategories.map((subCategory) => (
+                    <option key={subCategory.id} value={subCategory.id}>
+                      {subCategory.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-3">

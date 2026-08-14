@@ -32,4 +32,8 @@ export type PendingPurchaseResponse = {
   installmentCount: number
   creditCardId: string
   creditCardName: string
+  categoryId: string | null
+  categoryName: string | null
+  subCategoryId: string | null
+  subCategoryName: string | null
 }
