@@ -5,13 +5,19 @@ import { EmptyState } from '../../../components/ui/empty-state'
 import { ActionButton } from '../../../components/ui/action-button'
 import { formatDate } from '../../../lib/formatters/date'
 import type { PendingPurchaseResponse } from '../model/invoiceTypes'
+import PurchaseCategorySelector from './PurchaseCategorySelector'
 
 type PendingPurchaseListProps = {
   purchases: PendingPurchaseResponse[]
   onDelete: (purchase: PendingPurchaseResponse) => void
+  onCategoryChange: (
+    purchase: PendingPurchaseResponse,
+    categoryId: string | null,
+    subCategoryId: string | null,
+  ) => void
 }
 
-function PendingPurchaseList({ purchases, onDelete }: PendingPurchaseListProps) {
+function PendingPurchaseList({ purchases, onDelete, onCategoryChange }: PendingPurchaseListProps) {
   if (purchases.length === 0) {
     return (
       <EmptyState
@@ -37,9 +43,9 @@ function PendingPurchaseList({ purchases, onDelete }: PendingPurchaseListProps) 
         {purchases.map((purchase) => (
           <article
             key={purchase.id}
-            className="grid gap-4 rounded-lg border border-(--color-border) bg-(--color-surface-hover) p-4 sm:grid-cols-[minmax(0,1fr)_auto]"
+            className="grid gap-4 rounded-lg border border-(--color-border) bg-(--color-surface-hover) p-4 sm:grid-cols-[minmax(220px,1.5fr)_minmax(180px,1fr)_minmax(180px,1fr)_90px_60px_110px_32px] sm:items-center"
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="rounded-lg bg-(--color-background) p-2 text-(--color-text-muted)">
                 <CreditCard size={18} />
               </div>
@@ -51,8 +57,16 @@ function PendingPurchaseList({ purchases, onDelete }: PendingPurchaseListProps) 
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-4 sm:justify-end">
-              <div className="grid grid-cols-3 gap-6 sm:flex sm:items-center">
+            <PurchaseCategorySelector
+              categoryId={purchase.categoryId}
+              subCategoryId={purchase.subCategoryId}
+              onChange={(categoryId, subCategoryId) =>
+                onCategoryChange(purchase, categoryId, subCategoryId)
+              }
+            />
+
+            <div className="flex items-center justify-between gap-4 sm:contents">
+              <div className="grid grid-cols-3 gap-6 sm:contents">
                 <div>
                   <p className="text-xs text-(--color-text-muted)">Data</p>
 
