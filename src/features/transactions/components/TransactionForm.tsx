@@ -1,4 +1,4 @@
-import { useEffect, useState, type SubmitEvent } from 'react'
+import { useEffect, useRef, useState, type SubmitEvent } from 'react'
 
 import MoneyInput from '../../../components/ui/money/MoneyInput'
 import CreditCardSelector from './form/CreditCardSelector'
@@ -59,6 +59,8 @@ function TransactionForm({
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notify } = useNotification()
+
+  const descriptionInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -258,6 +260,8 @@ function TransactionForm({
 
         resetFormAfterCreation()
 
+        descriptionInputRef.current?.focus()
+
         notify.success('Transação criada com sucesso.')
       }
     } catch (error) {
@@ -301,6 +305,7 @@ function TransactionForm({
               <span className="text-sm text-(--color-text)">Descrição</span>
 
               <input
+                ref={descriptionInputRef}
                 required
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
