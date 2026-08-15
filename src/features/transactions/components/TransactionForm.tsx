@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react'
+import { useEffect, useState, type SubmitEvent } from 'react'
 
 import MoneyInput from '../../../components/ui/money/MoneyInput'
 import CreditCardSelector from './form/CreditCardSelector'
@@ -59,8 +59,6 @@ function TransactionForm({
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notify } = useNotification()
-
-  const descriptionInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -260,7 +258,10 @@ function TransactionForm({
 
         resetFormAfterCreation()
 
-        descriptionInputRef.current?.focus()
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        })
 
         notify.success('Transação criada com sucesso.')
       }
@@ -305,7 +306,6 @@ function TransactionForm({
               <span className="text-sm text-(--color-text)">Descrição</span>
 
               <input
-                ref={descriptionInputRef}
                 required
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
@@ -316,7 +316,13 @@ function TransactionForm({
             <label className="sm:col-span-1">
               <span className="text-sm text-(--color-text)">Valor</span>
 
-              <MoneyInput required placeholder="0,00" value={amount} onChange={setAmount} />
+              <MoneyInput
+                required
+                placeholder="0,00"
+                value={amount}
+                onChange={setAmount}
+                enterKeyHint="next"
+              />
             </label>
 
             <label className="sm:col-span-1">
@@ -325,6 +331,7 @@ function TransactionForm({
               <input
                 required
                 type="date"
+                enterKeyHint="next"
                 value={transactionDate}
                 onChange={(event) => setTransactionDate(event.target.value)}
                 className={fieldClassName}
