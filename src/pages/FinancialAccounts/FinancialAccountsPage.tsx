@@ -3,13 +3,15 @@ import { useEffect, useState } from 'react'
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
-import { ConfirmDialog } from '../../components/ui/dialog'
+import { ConfirmDialog, Dialog } from '../../components/ui/dialog'
 import { useNotification } from '../../app/providers/useNotification'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
 import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
 import FinancialAccountForm from '../../features/financial-accounts/components/FinancialAccountForm'
 import FinancialAccountList from '../../features/financial-accounts/components/FinancialAccountList'
+import { Button } from '../../components/ui/button'
+import TransferForm from '../../features/transfers/components/TransferForm'
 
 function FinancialAccountsPage() {
   const [financialAccounts, setFinancialAccounts] = useState<FinancialAccountResponse[]>([])
@@ -24,40 +26,26 @@ function FinancialAccountsPage() {
 
   const [isDeleting, setIsDeleting] = useState(false)
 
+  const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false)
+
   const { notify } = useNotification()
 
+  async function loadFinancialAccounts() {
+    try {
+      setErrorMessage(null)
+
+      const response = await financialAccountsApi.findAll()
+
+      setFinancialAccounts(response)
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error, 'Não foi possível carregar as contas financeiras.'))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
-    let isCancelled = false
-
-    async function loadFinancialAccounts() {
-      try {
-        setErrorMessage(null)
-
-        const response = await financialAccountsApi.findAll()
-
-        if (!isCancelled) {
-          setFinancialAccounts(response)
-        }
-      } catch (error) {
-        if (isCancelled) {
-          return
-        }
-
-        setErrorMessage(
-          getApiErrorMessage(error, 'Não foi possível carregar as contas financeiras.'),
-        )
-      } finally {
-        if (!isCancelled) {
-          setIsLoading(false)
-        }
-      }
-    }
-
     void loadFinancialAccounts()
-
-    return () => {
-      isCancelled = true
-    }
   }, [])
 
   function handleFinancialAccountCreated(createdFinancialAccount: FinancialAccountResponse) {
@@ -117,6 +105,12 @@ function FinancialAccountsPage() {
         description="Gerencie suas contas, saldos disponíveis e fontes de pagamento."
       />
 
+      <div className="mt-6">
+        <Button type="button" onClick={() => setIsTransferDialogOpen(true)}>
+          Transferir entre contas
+        </Button>
+      </div>
+
       <FinancialAccountForm
         key={financialAccountToEdit?.id ?? 'new'}
         financialAccount={financialAccountToEdit ?? undefined}
@@ -136,6 +130,21 @@ function FinancialAccountsPage() {
           onDelete={setFinancialAccountToDelete}
         />
       )}
+
+      <Dialog
+        open={isTransferDialogOpen}
+        title="Transferir entre contas"
+        onClose={() => setIsTransferDialogOpen(false)}
+      >
+        <TransferForm
+          financialAccounts={financialAccounts}
+          onSuccess={() => {
+            setIsTransferDialogOpen(false)
+            void loadFinancialAccounts()
+          }}
+          onCancel={() => setIsTransferDialogOpen(false)}
+        />
+      </Dialog>
 
       <ConfirmDialog
         open={financialAccountToDelete !== null}
