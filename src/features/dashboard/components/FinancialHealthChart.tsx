@@ -81,7 +81,11 @@ function FinancialHealthChart({ data, title, description, scope }: FinancialHeal
       ) : (
         <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={chartData} barCategoryGap="20%" margin={{ top: 30 }}>
+            <ComposedChart
+              data={chartData}
+              barCategoryGap="20%"
+              margin={{ top: 55, right: 20, left: 10 }}
+            >
               <CartesianGrid
                 horizontal
                 vertical={false}
