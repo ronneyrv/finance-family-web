@@ -81,7 +81,7 @@ function PurchaseCategorySelector({
   }
 
   return (
-    <div className="grid gap-3 sm:contents">
+    <div className="grid gap-3 md:grid-cols-2">
       <label>
         <span className="text-sm text-(--color-text)">Categoria</span>
 
