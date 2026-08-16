@@ -26,8 +26,14 @@ export const dashboardApi = {
     return apiClient.get<IncomeCommitmentResponse>('/api/v1/dashboard/income-commitment')
   },
 
-  getExpensesByCategory() {
-    return apiClient.get<CategoryExpenseResponse[]>('/api/v1/dashboard/categories')
+  getExpensesByCategory(year: number) {
+    return apiClient.get<CategoryExpenseResponse[]>(`/api/v1/dashboard/categories?year=${year}`)
+  },
+
+  getMonthlyExpensesByCategory(month: number, year: number) {
+    return apiClient.get<CategoryExpenseResponse[]>(
+      `/api/v1/dashboard/categories/monthly?month=${month}&year=${year}`,
+    )
   },
 
   getMonthlySummary(year: number) {
