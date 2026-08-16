@@ -14,6 +14,7 @@ import FinancialHealthChart from '../../features/dashboard/components/FinancialH
 import IncomeCommitmentChart from '../../features/dashboard/components/IncomeCommitmentChart'
 import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyProjectionChart'
 import MonthlyResultChart from '../../features/dashboard/components/MonthlyResultChart'
+import MonthlyCategoryExpenses from '../../features/dashboard/components/MonthlyCategoryExpenses'
 import type {
   CashFlowResponse,
   CategoryExpenseResponse,
@@ -31,6 +32,7 @@ import type {
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null)
   const [incomeCommitment, setIncomeCommitment] = useState<IncomeCommitmentResponse | null>(null)
   const [financialHealth, setFinancialHealth] = useState<FinancialHealthResponse | null>(null)
@@ -38,6 +40,9 @@ function DashboardPage() {
   const [yearlyDataError, setYearlyDataError] = useState<string | null>(null)
 
   const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
+  const [monthlyCategoryExpenses, setMonthlyCategoryExpenses] = useState<CategoryExpenseResponse[]>(
+    [],
+  )
   const [creditCardInvoices, setCreditCardInvoices] = useState<CreditCardInvoiceSummaryResponse[]>(
     [],
   )
@@ -64,14 +69,12 @@ function DashboardPage() {
           summaryResponse,
           incomeCommitmentResponse,
           financialHealthResponse,
-          categoryExpensesResponse,
           filtersResponse,
           creditCardInvoicesResponse,
         ] = await Promise.all([
           dashboardApi.getSummary(),
           dashboardApi.getIncomeCommitment(),
           dashboardApi.getFinancialHealth(),
-          dashboardApi.getExpensesByCategory(),
           dashboardApi.getFilters(),
           dashboardApi.getCreditCardInvoices(),
         ])
@@ -80,9 +83,9 @@ function DashboardPage() {
           setSummary(summaryResponse)
           setIncomeCommitment(incomeCommitmentResponse)
           setFinancialHealth(financialHealthResponse)
-          setCategoryExpenses(categoryExpensesResponse)
           setFilters(filtersResponse)
           setSelectedYear(filtersResponse.defaultYear)
+          setSelectedMonth(filtersResponse.defaultMonth)
           setCreditCardInvoices(creditCardInvoicesResponse)
         }
       } catch (error) {
@@ -121,6 +124,7 @@ function DashboardPage() {
 
       try {
         const [
+          categoryExpensesResponse,
           monthlySummaryResponse,
           familyCumulativeResultResponse,
           myCumulativeResultResponse,
@@ -128,6 +132,7 @@ function DashboardPage() {
           monthlyProjectionResponse,
           creditCardTrendResponse,
         ] = await Promise.all([
+          dashboardApi.getExpensesByCategory(year),
           dashboardApi.getMonthlySummary(year),
           dashboardApi.getCumulativeResult(year),
           dashboardApi.getMyCumulativeResult(year),
@@ -137,6 +142,7 @@ function DashboardPage() {
         ])
 
         if (!isCancelled) {
+          setCategoryExpenses(categoryExpensesResponse)
           setMonthlySummary(monthlySummaryResponse)
           setFamilyCumulativeResult(familyCumulativeResultResponse)
           setMyCumulativeResult(myCumulativeResultResponse)
@@ -166,32 +172,92 @@ function DashboardPage() {
     }
   }, [selectedYear])
 
+  useEffect(() => {
+    if (selectedMonth === null || selectedYear === null) {
+      return
+    }
+
+    const month = selectedMonth
+    const year = selectedYear
+    let isCancelled = false
+
+    async function loadMonthlyCategoryExpenses() {
+      try {
+        const response = await dashboardApi.getMonthlyExpensesByCategory(month, year)
+
+        if (!isCancelled) {
+          setMonthlyCategoryExpenses(response)
+        }
+      } catch (error) {
+        if (isCancelled) {
+          return
+        }
+
+        setYearlyDataError(
+          getApiErrorMessage(error, 'Não foi possível carregar as despesas mensais por categoria.'),
+        )
+      }
+    }
+
+    void loadMonthlyCategoryExpenses()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [selectedMonth, selectedYear])
+
   return (
     <section>
       <PageHeader
         section={
-          <div className="flex flex-col items-start gap-2 sm:items-end">
-            <label
-              htmlFor="dashboard-year"
-              className="text-xs font-medium uppercase tracking-wide text-(--color-text-muted)"
-            >
-              Ano
-            </label>
+          <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-end">
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="dashboard-year"
+                className="text-xs font-medium uppercase tracking-wide text-(--color-text-muted)"
+              >
+                Ano
+              </label>
 
-            <select
-              id="dashboard-year"
-              value={selectedYear ?? ''}
-              onChange={(event) => setSelectedYear(Number(event.target.value))}
-              disabled={!filters}
-              className="h-10 w-32 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
-            >
-              {filters &&
-                filters.years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-            </select>
+              <select
+                id="dashboard-year"
+                value={selectedYear ?? ''}
+                onChange={(event) => setSelectedYear(Number(event.target.value))}
+                disabled={!filters}
+                className="h-10 w-32 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
+              >
+                {filters &&
+                  filters.years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="dashboard-month"
+                className="text-xs font-medium uppercase tracking-wide text-(--color-text-muted)"
+              >
+                Mês
+              </label>
+
+              <select
+                id="dashboard-month"
+                value={selectedMonth ?? ''}
+                onChange={(event) => setSelectedMonth(Number(event.target.value))}
+                disabled={!filters}
+                className="h-10 w-32 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
+              >
+                {filters &&
+                  filters.months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+              </select>
+            </div>
           </div>
         }
         title="Dashboard"
@@ -207,25 +273,37 @@ function DashboardPage() {
           </div>
         )}
 
-        {!isOverviewLoading && !overviewError && summary && (
-          <>
-            <DashboardSummaryCards summary={summary} />
+        {!isOverviewLoading &&
+          !overviewError &&
+          summary &&
+          selectedYear !== null &&
+          selectedMonth !== null && (
+            <>
+              <DashboardSummaryCards summary={summary} />
 
-            <div className="mt-6 grid gap-6 lg:h-100 lg:grid-cols-12">
-              <div className="lg:col-span-3 lg:min-h-0">
-                <CreditCardInvoices invoices={creditCardInvoices} />
+              <div className="mt-6 grid gap-6 lg:h-100 lg:grid-cols-12">
+                <div className="lg:col-span-4 lg:min-h-0">
+                  <CreditCardInvoices invoices={creditCardInvoices} />
+                </div>
+
+                <div className="lg:col-span-4 lg:min-h-0">
+                  <CategoryExpenses expenses={categoryExpenses} year={selectedYear} />
+                </div>
+
+                <div className="lg:col-span-4 lg:min-h-0">
+                  <MonthlyCategoryExpenses
+                    expenses={monthlyCategoryExpenses}
+                    month={selectedMonth}
+                    year={selectedYear}
+                  />
+                </div>
               </div>
 
-              <div className="lg:col-span-3 lg:min-h-0">
-                <CategoryExpenses expenses={categoryExpenses} />
-              </div>
-
-              <div className="lg:col-span-6 lg:min-h-0">
+              <div className="mt-6">
                 <AnnualCreditCardTrendChart data={creditCardTrend} />
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
         {isYearlyDataLoading && <Loading message="Carregando dados do período..." />}
 
