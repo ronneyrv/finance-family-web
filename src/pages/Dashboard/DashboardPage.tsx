@@ -341,20 +341,20 @@ function DashboardPage() {
               <CashFlowChart data={cashFlow} />
             </div>
 
-            <div className="mt-6 grid gap-6 lg:grid-cols-12 lg:items-stretch">
+            <div className="mt-6 grid gap-6 md:grid-cols-2">
               {financialHealth && (
-                <div className="lg:col-span-3 [&>div]:h-full">
+                <div className="[&>div]:h-full">
                   <FinancialHealthCard data={financialHealth} />
                 </div>
               )}
 
               {incomeCommitment && (
-                <div className="lg:col-span-3 [&>div]:h-full">
+                <div className="[&>div]:h-full">
                   <IncomeCommitmentChart data={incomeCommitment} />
                 </div>
               )}
 
-              <div className="lg:col-span-6 [&>div]:h-full">
+              <div className="md:col-span-2 [&>div]:h-full">
                 <MonthlyProjectionChart data={monthlyProjection} />
               </div>
             </div>
