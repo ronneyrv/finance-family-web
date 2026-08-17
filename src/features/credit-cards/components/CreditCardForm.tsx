@@ -3,6 +3,7 @@ import { useState, type SubmitEvent } from 'react'
 import MoneyInput from '../../../components/ui/money/MoneyInput'
 import { Card } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
+import { scrollToTop } from '../../../lib/utils/scrollToTop'
 import { creditCardsApi } from '../api/creditCardsApi'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 import { useNotification } from '../../../app/providers/useNotification'
@@ -60,6 +61,8 @@ function CreditCardForm({ creditCard, onCreated, onUpdated, onCancelEdit }: Cred
         setCreditLimit('')
         setClosingDay('')
         setDueDay('')
+
+        scrollToTop()
 
         notify.success('Cartão cadastrado com sucesso.')
       }

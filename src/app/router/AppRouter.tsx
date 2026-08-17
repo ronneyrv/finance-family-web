@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
 import { ProtectedRoute } from '../../components/auth/ProtectedRoute'
+import { PublicOnlyRoute } from '../../components/auth/PublicOnlyRoute'
 import AppLayout from '../../components/layout/AppLayout'
 import Loading from '../../components/ui/loading/Loading'
 
@@ -11,7 +11,7 @@ const RegisterPage = lazy(() => import('../../pages/Register/RegisterPage'))
 const DashboardPage = lazy(() => import('../../pages/Dashboard/DashboardPage'))
 const TransactionsPage = lazy(() => import('../../pages/Transactions/TransactionsPage'))
 const RecurringTransactionsPage = lazy(
-  () => import('../../pages/RecurringTransactions/     RecurringTransactionsPage'),
+  () => import('../../pages/RecurringTransactions/RecurringTransactionsPage'),
 )
 const FinancialAccountsPage = lazy(
   () => import('../../pages/FinancialAccounts/FinancialAccountsPage'),

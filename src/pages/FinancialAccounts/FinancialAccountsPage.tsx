@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/ui/alert'
+import { Button } from '../../components/ui/button'
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
-import { ConfirmDialog, Dialog } from '../../components/ui/dialog'
+import { scrollToTop } from '../../lib/utils/scrollToTop'
 import { useNotification } from '../../app/providers/useNotification'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { financialAccountsApi } from '../../features/financial-accounts/api/financialAccountsApi'
+import { ConfirmDialog, Dialog } from '../../components/ui/dialog'
 import type { FinancialAccountResponse } from '../../features/financial-accounts/model/financialAccountTypes'
 import FinancialAccountForm from '../../features/financial-accounts/components/FinancialAccountForm'
 import FinancialAccountList from '../../features/financial-accounts/components/FinancialAccountList'
-import { Button } from '../../components/ui/button'
 import TransferForm from '../../features/transfers/components/TransferForm'
 
 function FinancialAccountsPage() {
@@ -65,6 +66,7 @@ function FinancialAccountsPage() {
     )
 
     setFinancialAccountToEdit(null)
+    scrollToTop()
   }
 
   async function handleDeleteFinancialAccount() {
@@ -126,7 +128,10 @@ function FinancialAccountsPage() {
       {!isLoading && !errorMessage && (
         <FinancialAccountList
           financialAccounts={financialAccounts}
-          onEdit={setFinancialAccountToEdit}
+          onEdit={(financialAccount) => {
+            setFinancialAccountToEdit(financialAccount)
+            scrollToTop()
+          }}
           onDelete={setFinancialAccountToDelete}
         />
       )}

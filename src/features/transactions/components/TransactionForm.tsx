@@ -7,6 +7,7 @@ import PaymentMethodSelector from './form/PaymentMethodSelector'
 import TransactionTypeSelector from './form/TransactionTypeSelector'
 import FinancialAccountSelector from './form/FinancialAccountSelector'
 import { Card } from '../../../components/ui/card'
+import { scrollToTop } from '../../../lib/utils/scrollToTop'
 import { purchasesApi } from '../../purchases/api/purchasesApi'
 import { categoriesApi } from '../../categories/api/categoriesApi'
 import { creditCardsApi } from '../../credit-cards/api/creditCardsApi'
@@ -230,6 +231,8 @@ function TransactionForm({
         const expenseCategory = categories.find((category) => category.type === 'EXPENSE')
         setCategoryId(expenseCategory?.id ?? '')
 
+        scrollToTop()
+
         notify.success('Compra no cartão registrada com sucesso.')
 
         return
@@ -258,10 +261,7 @@ function TransactionForm({
 
         resetFormAfterCreation()
 
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        })
+        scrollToTop()
 
         notify.success('Transação criada com sucesso.')
       }
