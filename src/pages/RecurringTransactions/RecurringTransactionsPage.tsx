@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
+import { scrollToTop } from '../../lib/utils/scrollToTop'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { useNotification } from '../../app/providers/useNotification'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
@@ -112,9 +113,11 @@ function RecurringTransactionsPage() {
       />
 
       <RecurringTransactionForm
+        key={editingRecurringTransaction?.id ?? 'new'}
         recurringTransaction={editingRecurringTransaction ?? undefined}
         onCreated={(created) => {
           setRecurringTransactions((current) => [...current, created])
+          scrollToTop()
         }}
         onUpdated={(updated) => {
           setRecurringTransactions((current) =>
@@ -122,6 +125,7 @@ function RecurringTransactionsPage() {
           )
 
           setEditingRecurringTransaction(null)
+          scrollToTop()
         }}
         onCancelEdit={() => setEditingRecurringTransaction(null)}
       />
@@ -133,7 +137,10 @@ function RecurringTransactionsPage() {
       {!isLoading && !errorMessage && (
         <RecurringTransactionList
           recurringTransactions={recurringTransactions}
-          onEdit={setEditingRecurringTransaction}
+          onEdit={(transaction) => {
+            setEditingRecurringTransaction(transaction)
+            scrollToTop()
+          }}
           onToggleStatus={handleToggleStatus}
           onDelete={(id) => {
             const transaction = recurringTransactions.find((item) => item.id === id)

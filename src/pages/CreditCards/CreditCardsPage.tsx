@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 
-import CreditCardList from '../../features/credit-cards/components/CreditCardList'
-import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
+import { scrollToTop } from '../../lib/utils/scrollToTop'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { creditCardsApi } from '../../features/credit-cards/api/creditCardsApi'
 import { useNotification } from '../../app/providers/useNotification'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import type { CreditCardResponse } from '../../features/credit-cards/model/creditCardTypes'
+import CreditCardForm from '../../features/credit-cards/components/CreditCardForm'
+import CreditCardList from '../../features/credit-cards/components/CreditCardList'
 
 function CreditCardsPage() {
   const [creditCards, setCreditCards] = useState<CreditCardResponse[]>([])
@@ -68,6 +69,7 @@ function CreditCardsPage() {
     )
 
     setCreditCardToEdit(null)
+    scrollToTop()
   }
 
   async function handleDeleteCreditCard() {
@@ -121,7 +123,10 @@ function CreditCardsPage() {
       {!isLoading && !errorMessage && (
         <CreditCardList
           creditCards={creditCards}
-          onEdit={setCreditCardToEdit}
+          onEdit={(creditCard) => {
+            setCreditCardToEdit(creditCard)
+            scrollToTop()
+          }}
           onDelete={setCreditCardToDelete}
         />
       )}

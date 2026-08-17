@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/card'
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
+import { scrollToTop } from '../../lib/utils/scrollToTop'
 import { ConfirmDialog } from '../../components/ui/dialog'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
 import { useNotification } from '../../app/providers/useNotification'
@@ -141,6 +142,7 @@ function TransactionsPage() {
     )
 
     setTransactionToEdit(null)
+    scrollToTop()
   }
 
   function handleFilterSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -245,7 +247,10 @@ function TransactionsPage() {
 
       <TransactionList
         transactions={transactions}
-        onEdit={setTransactionToEdit}
+        onEdit={(transaction) => {
+          setTransactionToEdit(transaction)
+          scrollToTop()
+        }}
         onDelete={setTransactionToDelete}
       />
 

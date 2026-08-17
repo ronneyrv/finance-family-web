@@ -3,6 +3,7 @@ import { useState, type SubmitEvent } from 'react'
 import MoneyInput from '../../../components/ui/money/MoneyInput'
 import { Card } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
+import { scrollToTop } from '../../../lib/utils/scrollToTop'
 import { fieldClassName } from '../../../components/ui/forms/fieldClass'
 import { useNotification } from '../../../app/providers/useNotification'
 import { parseCurrencyInput } from '../../../lib/parsers/currency'
@@ -71,6 +72,8 @@ function FinancialAccountForm({
         setName('')
         setAccountType('CHECKING_ACCOUNT')
         setInitialBalance('')
+
+        scrollToTop()
 
         notify.success('Conta financeira cadastrada com sucesso.')
       }
