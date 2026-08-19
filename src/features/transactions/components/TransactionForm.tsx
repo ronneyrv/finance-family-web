@@ -226,10 +226,10 @@ function TransactionForm({
         setCreditCardId('')
         setInstallments('1')
         setAccountId('')
+        setCategoryId('')
         setSubCategoryId('')
 
-        const expenseCategory = categories.find((category) => category.type === 'EXPENSE')
-        setCategoryId(expenseCategory?.id ?? '')
+        setSubCategories([])
 
         scrollToTop()
 
