@@ -19,6 +19,7 @@ export type InvoiceResponse = {
   dueDay: number
   month: number
   year: number
+  dueDate: string
   total: number
   availableLimit: number
   installments: InvoiceInstallmentResponse[]

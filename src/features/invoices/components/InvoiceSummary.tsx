@@ -1,5 +1,6 @@
 import { CalendarDays, CreditCard, WalletCards } from 'lucide-react'
 
+import { formatDate } from '../../../lib/formatters/date'
 import { formatCurrency } from '../../../lib/formatters/currency'
 import type { InvoiceResponse } from '../model/invoiceTypes'
 
@@ -43,7 +44,7 @@ function InvoiceSummary({ invoice }: InvoiceSummaryProps) {
           </p>
 
           <p className="mt-2 text-xs text-(--color-text-muted)">
-            Fecha dia {invoice.closingDay} · Vence dia {invoice.dueDay}
+            Fecha dia {invoice.closingDay} · Vence em {formatDate(invoice.dueDate)}
           </p>
         </article>
       </div>
