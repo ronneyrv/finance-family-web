@@ -40,7 +40,9 @@ function IncomeCommitmentChart({ data }: IncomeCommitmentChartProps) {
           <UsersRound size={15} className="text-(--color-text-muted)" aria-label="Família" />
         </div>
 
-        <p className="mt-1 text-sm text-slate-400">Quanto da renda mensal está comprometida.</p>
+        <p className="mt-1 text-sm text-slate-400">
+          Quanto da renda mensal está comprometida com despesas e parcelas do mês.
+        </p>
       </div>
 
       <div className="mt-6">
@@ -94,7 +96,7 @@ function IncomeCommitmentChart({ data }: IncomeCommitmentChartProps) {
         </div>
 
         <div>
-          <p className="text-xs text-(--color-text-muted)">Parcelas do cartão</p>
+          <p className="text-xs text-(--color-text-muted)">Parcelas do cartão no mês</p>
 
           <p className="mt-1 font-medium">{formatCurrency(unpaidCreditCardInstallments)}</p>
         </div>
