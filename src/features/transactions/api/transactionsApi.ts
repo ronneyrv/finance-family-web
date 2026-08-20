@@ -7,6 +7,8 @@ type FindAllTransactionsParams = {
   size?: number
   startDate?: string
   endDate?: string
+  categoryId?: string
+  description?: string
 }
 
 function buildQueryString(params: FindAllTransactionsParams) {
@@ -26,6 +28,14 @@ function buildQueryString(params: FindAllTransactionsParams) {
 
   if (params.endDate) {
     searchParams.set('endDate', params.endDate)
+  }
+
+  if (params.categoryId) {
+    searchParams.set('categoryId', params.categoryId)
+  }
+
+  if (params.description) {
+    searchParams.set('description', params.description)
   }
 
   const queryString = searchParams.toString()
