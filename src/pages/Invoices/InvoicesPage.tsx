@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 
 import { Alert } from '../../components/ui/alert'
 import { Loading } from '../../components/ui/loading'
@@ -41,6 +42,7 @@ function InvoicesPage() {
   const [pendingPurchasesErrorMessage, setPendingPurchasesErrorMessage] = useState<string | null>(
     null,
   )
+  const [showPendingPurchases, setShowPendingPurchases] = useState(false)
 
   const [purchaseToDelete, setPurchaseToDelete] = useState<PendingPurchaseResponse | null>(null)
   const [isDeletingPurchase, setIsDeletingPurchase] = useState(false)
@@ -95,9 +97,21 @@ function InvoicesPage() {
     }
   }, [])
 
-  useEffect(() => {
-    void loadPendingPurchases()
-  }, [loadPendingPurchases])
+  async function handleTogglePendingPurchases() {
+    if (showPendingPurchases) {
+      setShowPendingPurchases(false)
+      return
+    }
+
+    setShowPendingPurchases(true)
+    await loadPendingPurchases()
+  }
+
+  function handleBackToPendingPurchases() {
+    setInvoice(null)
+    setSelectedCreditCardId(null)
+    setShowPendingPurchases(true)
+  }
 
   async function handleDeletePurchase() {
     if (!purchaseToDelete) {
@@ -217,20 +231,34 @@ function InvoicesPage() {
 
       {!invoice && (
         <>
-          {isLoadingPendingPurchases && (
-            <Loading className="mt-8" message="Carregando compras pendentes..." />
-          )}
+          <button
+            type="button"
+            onClick={() => void handleTogglePendingPurchases()}
+            className="mt-8 flex w-full items-center justify-between rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-hover)"
+          >
+            <span>Últimas compras</span>
 
-          {pendingPurchasesErrorMessage && (
-            <Alert className="mt-8">{pendingPurchasesErrorMessage}</Alert>
-          )}
+            {showPendingPurchases ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+          </button>
 
-          {!isLoadingPendingPurchases && !pendingPurchasesErrorMessage && (
-            <PendingPurchaseList
-              purchases={pendingPurchases}
-              onDelete={setPurchaseToDelete}
-              onCategoryChange={handleCategoryChange}
-            />
+          {showPendingPurchases && (
+            <>
+              {isLoadingPendingPurchases && (
+                <Loading className="mt-8" message="Carregando compras pendentes..." />
+              )}
+
+              {pendingPurchasesErrorMessage && (
+                <Alert className="mt-8">{pendingPurchasesErrorMessage}</Alert>
+              )}
+
+              {!isLoadingPendingPurchases && !pendingPurchasesErrorMessage && (
+                <PendingPurchaseList
+                  purchases={pendingPurchases}
+                  onDelete={setPurchaseToDelete}
+                  onCategoryChange={handleCategoryChange}
+                />
+              )}
+            </>
           )}
         </>
       )}
@@ -239,6 +267,15 @@ function InvoicesPage() {
 
       {invoice && (
         <>
+          <button
+            type="button"
+            onClick={handleBackToPendingPurchases}
+            className="mt-8 flex items-center gap-2 rounded-lg border border-(--color-border) bg-(--color-surface) px-4 py-2.5 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-hover)"
+          >
+            <ChevronRight className="rotate-180" size={18} />
+            Últimas compras
+          </button>
+
           <InvoiceSummary invoice={invoice} />
 
           <InvoiceInstallmentList installments={invoice.installments} />
