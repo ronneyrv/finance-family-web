@@ -6,12 +6,14 @@ import { Loading } from '../../components/ui/loading'
 import { PageHeader } from '../../components/ui/page'
 import { scrollToTop } from '../../lib/utils/scrollToTop'
 import { ConfirmDialog } from '../../components/ui/dialog'
+import { categoriesApi } from '../../features/categories/api/categoriesApi'
 import { fieldClassName } from '../../components/ui/forms/fieldClass'
 import { useNotification } from '../../app/providers/useNotification'
 import { transactionsApi } from '../../features/transactions/api/transactionsApi'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import { ChevronDown, ChevronRight, Filter } from 'lucide-react'
 import type { TransactionResponse } from '../../features/transactions/model/transactionTypes'
+import type { CategoryResponse } from '../../features/categories/model/categoryTypes'
 import TransactionForm from '../../features/transactions/components/TransactionForm'
 import TransactionList from '../../features/transactions/components/TransactionList'
 
@@ -31,9 +33,28 @@ function TransactionsPage() {
 
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [categoryId, setCategoryId] = useState('')
+  const [description, setDescription] = useState('')
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
+
+  const [appliedCategoryId, setAppliedCategoryId] = useState('')
+  const [appliedDescription, setAppliedDescription] = useState('')
 
   const [appliedStartDate, setAppliedStartDate] = useState('')
   const [appliedEndDate, setAppliedEndDate] = useState('')
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const response = await categoriesApi.findAll()
+        setCategories(response)
+      } catch (error) {
+        notify.error(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
+      }
+    }
+
+    void loadCategories()
+  }, [notify])
 
   useEffect(() => {
     let isCancelled = false
@@ -47,6 +68,8 @@ function TransactionsPage() {
           size: 20,
           startDate: appliedStartDate || undefined,
           endDate: appliedEndDate || undefined,
+          categoryId: appliedCategoryId || undefined,
+          description: appliedDescription || undefined,
         })
 
         if (!isCancelled) {
@@ -72,7 +95,7 @@ function TransactionsPage() {
     return () => {
       isCancelled = true
     }
-  }, [page, appliedStartDate, appliedEndDate, reloadKey])
+  }, [page, appliedStartDate, appliedEndDate, appliedCategoryId, appliedDescription, reloadKey])
 
   if (isLoading) {
     return <Loading message="Carregando transações..." />
@@ -151,13 +174,19 @@ function TransactionsPage() {
     setPage(0)
     setAppliedStartDate(startDate)
     setAppliedEndDate(endDate)
+    setAppliedCategoryId(categoryId)
+    setAppliedDescription(description)
   }
 
   function handleClearFilters() {
     setStartDate('')
     setEndDate('')
+    setCategoryId('')
+    setDescription('')
     setAppliedStartDate('')
     setAppliedEndDate('')
+    setAppliedCategoryId('')
+    setAppliedDescription('')
     setPage(0)
   }
 
@@ -201,7 +230,7 @@ function TransactionsPage() {
               </p>
             </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
+            <div className="mt-4 grid gap-4 md:grid-cols-4 md:items-end">
               <label>
                 <span className="text-sm text-(--color-text)">Data inicial</span>
 
@@ -220,6 +249,36 @@ function TransactionsPage() {
                   type="date"
                   value={endDate}
                   onChange={(event) => setEndDate(event.target.value)}
+                  className={fieldClassName}
+                />
+              </label>
+
+              <label>
+                <span className="text-sm text-(--color-text)">Categoria</span>
+
+                <select
+                  value={categoryId}
+                  onChange={(event) => setCategoryId(event.target.value)}
+                  className={fieldClassName}
+                >
+                  <option value="">Todas as categorias</option>
+
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span className="text-sm text-(--color-text)">Descrição</span>
+
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder="Ex.: mercado"
                   className={fieldClassName}
                 />
               </label>
