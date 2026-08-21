@@ -46,6 +46,10 @@ function InvoiceInstallmentList({ installments }: InvoiceInstallmentListProps) {
                 <p className="font-medium">{installment.description}</p>
 
                 <p className="mt-1 text-sm text-(--color-text-muted)">
+                  Compra em {formatDate(installment.purchaseDate)}
+                </p>
+
+                <p className="mt-1 text-sm text-(--color-text-muted)">
                   Parcela {installment.installment}
                 </p>
               </div>

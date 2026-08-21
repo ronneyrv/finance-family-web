@@ -7,6 +7,7 @@ export type InvoicePaymentRequest = {
 
 export type InvoiceInstallmentResponse = {
   description: string
+  purchaseDate: string
   installment: string
   amount: number
   paid: boolean
