@@ -36,6 +36,18 @@ export const dashboardApi = {
     )
   },
 
+  getIncomeByCategory(year: number) {
+    return apiClient.get<CategoryExpenseResponse[]>(
+      `/api/v1/dashboard/categories/income?year=${year}`,
+    )
+  },
+
+  getMonthlyIncomeByCategory(month: number, year: number) {
+    return apiClient.get<CategoryExpenseResponse[]>(
+      `/api/v1/dashboard/categories/income/monthly?month=${month}&year=${year}`,
+    )
+  },
+
   getMonthlySummary(year: number) {
     return apiClient.get<MonthlySummaryResponse[]>(`/api/v1/dashboard/monthly?year=${year}`)
   },
