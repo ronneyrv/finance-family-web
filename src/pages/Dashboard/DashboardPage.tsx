@@ -28,6 +28,8 @@ import type {
   MonthlyProjectionResponse,
   MonthlySummaryResponse,
 } from '../../features/dashboard/model/dashboardTypes'
+import MonthlyCategoryIncomes from '../../features/dashboard/components/MonthlyCategoryIncomes'
+import CategoryIncomes from '../../features/dashboard/components/CategoryIncomes'
 
 function DashboardPage() {
   const [filters, setFilters] = useState<DashboardFiltersResponse | null>(null)
@@ -41,6 +43,10 @@ function DashboardPage() {
 
   const [categoryExpenses, setCategoryExpenses] = useState<CategoryExpenseResponse[]>([])
   const [monthlyCategoryExpenses, setMonthlyCategoryExpenses] = useState<CategoryExpenseResponse[]>(
+    [],
+  )
+  const [categoryIncomes, setCategoryIncomes] = useState<CategoryExpenseResponse[]>([])
+  const [monthlyCategoryIncomes, setMonthlyCategoryIncomes] = useState<CategoryExpenseResponse[]>(
     [],
   )
   const [creditCardInvoices, setCreditCardInvoices] = useState<CreditCardInvoiceSummaryResponse[]>(
@@ -125,6 +131,7 @@ function DashboardPage() {
       try {
         const [
           categoryExpensesResponse,
+          categoryIncomesResponse,
           monthlySummaryResponse,
           familyCumulativeResultResponse,
           myCumulativeResultResponse,
@@ -133,6 +140,7 @@ function DashboardPage() {
           creditCardTrendResponse,
         ] = await Promise.all([
           dashboardApi.getExpensesByCategory(year),
+          dashboardApi.getIncomeByCategory(year),
           dashboardApi.getMonthlySummary(year),
           dashboardApi.getCumulativeResult(year),
           dashboardApi.getMyCumulativeResult(year),
@@ -143,6 +151,7 @@ function DashboardPage() {
 
         if (!isCancelled) {
           setCategoryExpenses(categoryExpensesResponse)
+          setCategoryIncomes(categoryIncomesResponse)
           setMonthlySummary(monthlySummaryResponse)
           setFamilyCumulativeResult(familyCumulativeResultResponse)
           setMyCumulativeResult(myCumulativeResultResponse)
@@ -181,12 +190,16 @@ function DashboardPage() {
     const year = selectedYear
     let isCancelled = false
 
-    async function loadMonthlyCategoryExpenses() {
+    async function loadMonthlyCategoryData() {
       try {
-        const response = await dashboardApi.getMonthlyExpensesByCategory(month, year)
+        const [expensesResponse, incomesResponse] = await Promise.all([
+          dashboardApi.getMonthlyExpensesByCategory(month, year),
+          dashboardApi.getMonthlyIncomeByCategory(month, year),
+        ])
 
         if (!isCancelled) {
-          setMonthlyCategoryExpenses(response)
+          setMonthlyCategoryExpenses(expensesResponse)
+          setMonthlyCategoryIncomes(incomesResponse)
         }
       } catch (error) {
         if (isCancelled) {
@@ -194,12 +207,12 @@ function DashboardPage() {
         }
 
         setYearlyDataError(
-          getApiErrorMessage(error, 'Não foi possível carregar as despesas mensais por categoria.'),
+          getApiErrorMessage(error, 'Não foi possível carregar os dados mensais por categoria.'),
         )
       }
     }
 
-    void loadMonthlyCategoryExpenses()
+    void loadMonthlyCategoryData()
 
     return () => {
       isCancelled = true
@@ -281,26 +294,38 @@ function DashboardPage() {
             <>
               <DashboardSummaryCards summary={summary} />
 
-              <div className="mt-6 grid gap-6 lg:h-100 lg:grid-cols-12">
-                <div className="lg:col-span-4 lg:min-h-0">
-                  <CreditCardInvoices invoices={creditCardInvoices} />
-                </div>
+              <div className="mt-6">
+                <CreditCardInvoices invoices={creditCardInvoices} />
+              </div>
 
-                <div className="lg:col-span-4 lg:min-h-0">
+              <div className="mt-6">
+                <AnnualCreditCardTrendChart data={creditCardTrend} />
+              </div>
+
+              <div className="mt-6 grid gap-6 lg:h-100 lg:grid-cols-12">
+                <div className="lg:col-span-3 lg:min-h-0">
                   <CategoryExpenses expenses={categoryExpenses} year={selectedYear} />
                 </div>
 
-                <div className="lg:col-span-4 lg:min-h-0">
+                <div className="lg:col-span-3 lg:min-h-0">
                   <MonthlyCategoryExpenses
                     expenses={monthlyCategoryExpenses}
                     month={selectedMonth}
                     year={selectedYear}
                   />
                 </div>
-              </div>
 
-              <div className="mt-6">
-                <AnnualCreditCardTrendChart data={creditCardTrend} />
+                <div className="lg:col-span-3 lg:min-h-0">
+                  <CategoryIncomes incomes={categoryIncomes} year={selectedYear} />
+                </div>
+
+                <div className="lg:col-span-3 lg:min-h-0">
+                  <MonthlyCategoryIncomes
+                    incomes={monthlyCategoryIncomes}
+                    month={selectedMonth}
+                    year={selectedYear}
+                  />
+                </div>
               </div>
             </>
           )}
