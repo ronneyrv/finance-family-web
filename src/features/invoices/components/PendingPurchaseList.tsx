@@ -9,6 +9,7 @@ import PurchaseCategorySelector from './PurchaseCategorySelector'
 
 type PendingPurchaseListProps = {
   purchases: PendingPurchaseResponse[]
+  hasActiveFilters?: boolean
   onDelete: (purchase: PendingPurchaseResponse) => void
   onCategoryChange: (
     purchase: PendingPurchaseResponse,
@@ -17,12 +18,21 @@ type PendingPurchaseListProps = {
   ) => void
 }
 
-function PendingPurchaseList({ purchases, onDelete, onCategoryChange }: PendingPurchaseListProps) {
+function PendingPurchaseList({
+  purchases,
+  hasActiveFilters = false,
+  onDelete,
+  onCategoryChange,
+}: PendingPurchaseListProps) {
   if (purchases.length === 0) {
     return (
       <EmptyState
-        title="Nenhuma compra pendente"
-        description="Não há compras no crédito aguardando pagamento."
+        title={hasActiveFilters ? 'Nenhuma compra encontrada' : 'Nenhuma compra pendente'}
+        description={
+          hasActiveFilters
+            ? 'Nenhuma compra corresponde aos filtros selecionados.'
+            : 'Não há compras no crédito aguardando pagamento.'
+        }
       />
     )
   }
