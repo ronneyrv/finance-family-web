@@ -5,7 +5,6 @@ import { PageHeader } from '../../components/ui/page'
 import { dashboardApi } from '../../features/dashboard/api/dashboardApi'
 import { getApiErrorMessage } from '../../lib/api/getApiErrorMessage'
 import AnnualCreditCardTrendChart from '../../features/dashboard/components/AnnualCreditCardTrendChart'
-import CashFlowChart from '../../features/dashboard/components/CashFlowChart'
 import CategoryExpenses from '../../features/dashboard/components/CategoryExpenses'
 import CreditCardInvoices from '../../features/dashboard/components/CreditCardInvoices'
 import DashboardSummaryCards from '../../features/dashboard/components/DashboardSummaryCards'
@@ -16,7 +15,6 @@ import MonthlyProjectionChart from '../../features/dashboard/components/MonthlyP
 import MonthlyResultChart from '../../features/dashboard/components/MonthlyResultChart'
 import MonthlyCategoryExpenses from '../../features/dashboard/components/MonthlyCategoryExpenses'
 import type {
-  CashFlowResponse,
   CategoryExpenseResponse,
   CreditCardExpenseTrendResponse,
   CreditCardInvoiceSummaryResponse,
@@ -57,7 +55,6 @@ function DashboardPage() {
     [],
   )
   const [myCumulativeResult, setMyCumulativeResult] = useState<CumulativeResultResponse[]>([])
-  const [cashFlow, setCashFlow] = useState<CashFlowResponse[]>([])
   const [monthlyProjection, setMonthlyProjection] = useState<MonthlyProjectionResponse[]>([])
   const [creditCardTrend, setCreditCardTrend] = useState<CreditCardExpenseTrendResponse[]>([])
 
@@ -135,7 +132,6 @@ function DashboardPage() {
           monthlySummaryResponse,
           familyCumulativeResultResponse,
           myCumulativeResultResponse,
-          cashFlowResponse,
           monthlyProjectionResponse,
           creditCardTrendResponse,
         ] = await Promise.all([
@@ -144,7 +140,6 @@ function DashboardPage() {
           dashboardApi.getMonthlySummary(year),
           dashboardApi.getCumulativeResult(year),
           dashboardApi.getMyCumulativeResult(year),
-          dashboardApi.getCashFlow(year),
           dashboardApi.getProjection(year),
           dashboardApi.getCreditCardTrend(year),
         ])
@@ -155,7 +150,6 @@ function DashboardPage() {
           setMonthlySummary(monthlySummaryResponse)
           setFamilyCumulativeResult(familyCumulativeResultResponse)
           setMyCumulativeResult(myCumulativeResultResponse)
-          setCashFlow(cashFlowResponse)
           setMonthlyProjection(monthlyProjectionResponse)
           setCreditCardTrend(creditCardTrendResponse)
         }
@@ -360,10 +354,6 @@ function DashboardPage() {
                 description="Entradas, despesas e evolução do resultado acumulado da família."
                 scope="family"
               />
-            </div>
-
-            <div className="mt-6">
-              <CashFlowChart data={cashFlow} />
             </div>
 
             <div className="mt-6 grid gap-6 md:grid-cols-2">
