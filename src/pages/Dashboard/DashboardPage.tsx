@@ -69,13 +69,11 @@ function DashboardPage() {
         setOverviewError(null)
 
         const [
-          summaryResponse,
           incomeCommitmentResponse,
           financialHealthResponse,
           filtersResponse,
           creditCardInvoicesResponse,
         ] = await Promise.all([
-          dashboardApi.getSummary(),
           dashboardApi.getIncomeCommitment(),
           dashboardApi.getFinancialHealth(),
           dashboardApi.getFilters(),
@@ -83,7 +81,6 @@ function DashboardPage() {
         ])
 
         if (!isCancelled) {
-          setSummary(summaryResponse)
           setIncomeCommitment(incomeCommitmentResponse)
           setFinancialHealth(financialHealthResponse)
           setFilters(filtersResponse)
@@ -112,6 +109,40 @@ function DashboardPage() {
       isCancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    if (selectedMonth === null || selectedYear === null) {
+      return
+    }
+
+    const month = selectedMonth
+    const year = selectedYear
+    let isCancelled = false
+
+    async function loadSummary() {
+      try {
+        const summaryResponse = await dashboardApi.getSummary(month, year)
+
+        if (!isCancelled) {
+          setSummary(summaryResponse)
+        }
+      } catch (error) {
+        if (isCancelled) {
+          return
+        }
+
+        setOverviewError(
+          getApiErrorMessage(error, 'Não foi possível carregar o resumo financeiro.'),
+        )
+      }
+    }
+
+    void loadSummary()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [selectedMonth, selectedYear])
 
   useEffect(() => {
     if (selectedYear === null) {
