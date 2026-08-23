@@ -1,4 +1,5 @@
-export type AccountType = 'CHECKING_ACCOUNT' | 'SAVINGS_ACCOUNT' | 'DIGITAL_ACCOUNT' | 'CASH'
+export type AccountType =
+  'CHECKING_ACCOUNT' | 'SAVINGS_ACCOUNT' | 'DIGITAL_ACCOUNT' | 'CASH' | 'INVESTMENT'
 
 export type FinancialAccountRequest = {
   name: string

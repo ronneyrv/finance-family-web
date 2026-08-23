@@ -1,4 +1,4 @@
-import { Banknote, Landmark, PiggyBank, WalletCards } from 'lucide-react'
+import { Banknote, ChartNoAxesCombined, Landmark, PiggyBank, WalletCards } from 'lucide-react'
 
 import { Money } from '../../../components/ui/money'
 import { EmptyState } from '../../../components/ui/empty-state'
@@ -16,6 +16,7 @@ const accountTypeLabels: Record<AccountType, string> = {
   SAVINGS_ACCOUNT: 'Conta poupança',
   DIGITAL_ACCOUNT: 'Conta digital',
   CASH: 'Dinheiro',
+  INVESTMENT: 'Investimentos',
 }
 
 const accountTypeIcons = {
@@ -23,6 +24,7 @@ const accountTypeIcons = {
   SAVINGS_ACCOUNT: PiggyBank,
   DIGITAL_ACCOUNT: WalletCards,
   CASH: Banknote,
+  INVESTMENT: ChartNoAxesCombined,
 } satisfies Record<AccountType, typeof Landmark>
 
 function FinancialAccountList({ financialAccounts, onEdit, onDelete }: FinancialAccountListProps) {

@@ -20,6 +20,7 @@ export type DashboardSummaryResponse = {
   balance: number
   cashBalance: number
   bankBalance: number
+  investmentBalance: number
 }
 
 export type FinancialHealthResponse = {
