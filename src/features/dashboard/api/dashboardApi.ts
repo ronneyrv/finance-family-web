@@ -13,8 +13,10 @@ import type {
 } from '../model/dashboardTypes'
 
 export const dashboardApi = {
-  getSummary() {
-    return apiClient.get<DashboardSummaryResponse>('/api/v1/dashboard/summary')
+  getSummary(month: number, year: number) {
+    return apiClient.get<DashboardSummaryResponse>(
+      `/api/v1/dashboard/summary?month=${month}&year=${year}`,
+    )
   },
 
   getFinancialHealth() {
