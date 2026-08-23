@@ -24,6 +24,7 @@ const accountTypeLabels: Record<AccountType, string> = {
   SAVINGS_ACCOUNT: 'Conta poupança',
   DIGITAL_ACCOUNT: 'Conta digital',
   CASH: 'Dinheiro',
+  INVESTMENT: 'Investimentos',
 }
 
 function FinancialAccountForm({

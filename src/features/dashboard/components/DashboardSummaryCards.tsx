@@ -1,4 +1,11 @@
-import { Banknote, Landmark, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
+import {
+  Banknote,
+  ChartNoAxesCombined,
+  Landmark,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+} from 'lucide-react'
 
 import { Money } from '../../../components/ui/money'
 import type { DashboardSummaryResponse } from '../model/dashboardTypes'
@@ -43,6 +50,13 @@ const summaryCards = [
     iconClass: 'text-violet-500',
     iconBackground: 'bg-violet-500/15',
   },
+  {
+    key: 'investmentBalance',
+    label: 'Investimentos',
+    icon: ChartNoAxesCombined,
+    iconClass: 'text-emerald-500',
+    iconBackground: 'bg-emerald-500/15',
+  },
 ] satisfies Array<{
   key: keyof DashboardSummaryResponse
   label: string
@@ -53,7 +67,7 @@ const summaryCards = [
 
 function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {summaryCards.map((card) => {
         const Icon = card.icon
 
