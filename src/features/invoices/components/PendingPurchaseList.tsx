@@ -10,6 +10,7 @@ import PurchaseCategorySelector from './PurchaseCategorySelector'
 type PendingPurchaseListProps = {
   purchases: PendingPurchaseResponse[]
   hasActiveFilters?: boolean
+  isUpdating?: boolean
   onDelete: (purchase: PendingPurchaseResponse) => void
   onCategoryChange: (
     purchase: PendingPurchaseResponse,
@@ -21,6 +22,7 @@ type PendingPurchaseListProps = {
 function PendingPurchaseList({
   purchases,
   hasActiveFilters = false,
+  isUpdating = false,
   onDelete,
   onCategoryChange,
 }: PendingPurchaseListProps) {
@@ -73,6 +75,7 @@ function PendingPurchaseList({
               <PurchaseCategorySelector
                 categoryId={purchase.categoryId}
                 subCategoryId={purchase.subCategoryId}
+                disabled={isUpdating}
                 onChange={(categoryId, subCategoryId) =>
                   onCategoryChange(purchase, categoryId, subCategoryId)
                 }
