@@ -74,6 +74,21 @@ describe('NotificationProvider', () => {
     expect(screen.getByText('Info message')).toBeInTheDocument()
   })
 
+  it('does not render duplicate notifications', () => {
+    render(
+      <NotificationProvider>
+        <TestConsumer />
+      </NotificationProvider>,
+    )
+
+    act(() => {
+      screen.getByRole('button', { name: 'Error' }).click()
+      screen.getByRole('button', { name: 'Error' }).click()
+    })
+
+    expect(screen.getAllByText('Error message')).toHaveLength(1)
+  })
+
   it('removes a notification when it is closed', () => {
     render(
       <NotificationProvider>

@@ -17,20 +17,39 @@ const TOAST_DURATION = 5000
 
 function NotificationProvider({ children }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
+  const activeNotifications = useRef<Set<string>>(new Set())
   const timers = useRef<number[]>([])
 
   const removeNotification = useCallback((id: number) => {
-    setNotifications((current) => current.filter((notification) => notification.id !== id))
+    setNotifications((current) => {
+      const notification = current.find((item) => item.id === id)
+
+      if (notification) {
+        const notificationKey = `${notification.variant}:${notification.message}`
+        activeNotifications.current.delete(notificationKey)
+      }
+
+      return current.filter((item) => item.id !== id)
+    })
   }, [])
 
   const addNotification = useCallback(
     (variant: ToastVariant, message: string) => {
+      const notificationKey = `${variant}:${message}`
+
+      if (activeNotifications.current.has(notificationKey)) {
+        return
+      }
+
       const id = Date.now() + Math.random()
+
+      activeNotifications.current.add(notificationKey)
 
       setNotifications((current) => [...current, { id, variant, message }])
 
       const timer = window.setTimeout(() => {
         removeNotification(id)
+        activeNotifications.current.delete(notificationKey)
         timers.current = timers.current.filter((currentTimer) => currentTimer !== timer)
       }, TOAST_DURATION)
 
