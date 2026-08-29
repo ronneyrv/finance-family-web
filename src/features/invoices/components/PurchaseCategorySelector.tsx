@@ -9,12 +9,14 @@ type PurchaseCategorySelectorProps = {
   categoryId: string | null
   subCategoryId: string | null
   onChange: (categoryId: string | null, subCategoryId: string | null) => void
+  disabled?: boolean
 }
 
 function PurchaseCategorySelector({
   categoryId,
   subCategoryId,
   onChange,
+  disabled = false,
 }: PurchaseCategorySelectorProps) {
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
@@ -86,6 +88,7 @@ function PurchaseCategorySelector({
         <span className="text-sm text-(--color-text)">Categoria</span>
 
         <select
+          disabled={disabled}
           value={categoryId ?? ''}
           onChange={(event) => handleCategoryChange(event.target.value)}
           className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2.5 text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"
@@ -104,8 +107,8 @@ function PurchaseCategorySelector({
         <span className="text-sm text-(--color-text)">Subcategoria</span>
 
         <select
+          disabled={disabled || !categoryId}
           value={subCategoryId ?? ''}
-          disabled={!categoryId}
           onChange={(event) => onChange(categoryId, event.target.value || null)}
           className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2.5 text-(--color-text) transition focus:border-(--color-primary) focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >

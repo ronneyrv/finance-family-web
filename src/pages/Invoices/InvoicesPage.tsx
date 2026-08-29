@@ -74,6 +74,7 @@ function InvoicesPage() {
 
   const [purchaseToDelete, setPurchaseToDelete] = useState<PendingPurchaseResponse | null>(null)
   const [isDeletingPurchase, setIsDeletingPurchase] = useState(false)
+  const [isUpdatingPurchase, setIsUpdatingPurchase] = useState(false)
 
   const { notify } = useNotification()
 
@@ -293,6 +294,8 @@ function InvoicesPage() {
     subCategoryId: string | null,
   ) {
     try {
+      setIsUpdatingPurchase(true)
+
       await purchasesApi.updateCategory(purchase.id, {
         categoryId,
         subCategoryId,
@@ -303,6 +306,8 @@ function InvoicesPage() {
       notify.success('Categoria da compra atualizada com sucesso.')
     } catch (error) {
       notify.error(getApiErrorMessage(error, 'Não foi possível atualizar a categoria da compra.'))
+    } finally {
+      setIsUpdatingPurchase(false)
     }
   }
 
@@ -540,6 +545,7 @@ function InvoicesPage() {
                 <PendingPurchaseList
                   purchases={filteredPendingPurchases}
                   hasActiveFilters={hasActivePendingPurchaseFilters}
+                  isUpdating={isUpdatingPurchase}
                   onDelete={setPurchaseToDelete}
                   onCategoryChange={handleCategoryChange}
                 />
