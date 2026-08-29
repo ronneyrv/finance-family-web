@@ -3,6 +3,7 @@ import type { RecurringTransactionResponse } from '../model/recurringTransaction
 
 type RecurringTransactionListProps = {
   recurringTransactions: RecurringTransactionResponse[]
+  updatingTransactionId?: string | null
 
   onEdit: (transaction: RecurringTransactionResponse) => void
 
@@ -13,6 +14,7 @@ type RecurringTransactionListProps = {
 
 function RecurringTransactionList({
   recurringTransactions,
+  updatingTransactionId = null,
   onEdit,
   onToggleStatus,
   onDelete,
@@ -89,6 +91,7 @@ function RecurringTransactionList({
                         ? `Desativar ${transaction.description}`
                         : `Ativar ${transaction.description}`
                     }
+                    disabled={updatingTransactionId === transaction.id}
                     onClick={() => onToggleStatus(transaction.id, !transaction.active)}
                   />
 

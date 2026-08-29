@@ -23,6 +23,8 @@ function RecurringTransactionsPage() {
   const [transactionToDelete, setTransactionToDelete] =
     useState<RecurringTransactionResponse | null>(null)
 
+  const [updatingTransactionId, setUpdatingTransactionId] = useState<string | null>(null)
+
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -63,6 +65,8 @@ function RecurringTransactionsPage() {
 
   async function handleToggleStatus(id: string, active: boolean) {
     try {
+      setUpdatingTransactionId(id)
+
       const updated = await recurringTransactionsApi.updateStatus(id, active)
 
       setRecurringTransactions((current) =>
@@ -78,6 +82,8 @@ function RecurringTransactionsPage() {
       )
     } catch (error) {
       notify.error(getApiErrorMessage(error, 'Não foi possível atualizar a recorrência.'))
+    } finally {
+      setUpdatingTransactionId(null)
     }
   }
 
@@ -147,6 +153,7 @@ function RecurringTransactionsPage() {
             scrollToTop()
           }}
           onToggleStatus={handleToggleStatus}
+          updatingTransactionId={updatingTransactionId}
           onDelete={(id) => {
             const transaction = recurringTransactions.find((item) => item.id === id)
 
