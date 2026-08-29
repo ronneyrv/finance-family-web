@@ -25,6 +25,7 @@ function RecurringTransactionsPage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const { notify } = useNotification()
 
@@ -86,6 +87,8 @@ function RecurringTransactionsPage() {
     }
 
     try {
+      setIsDeleting(true)
+
       await recurringTransactionsApi.delete(transactionToDelete.id)
 
       notify.success('Recorrência excluída com sucesso.')
@@ -101,6 +104,8 @@ function RecurringTransactionsPage() {
       setTransactionToDelete(null)
     } catch (error) {
       notify.error(getApiErrorMessage(error, 'Não foi possível excluir a recorrência.'))
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -157,7 +162,9 @@ function RecurringTransactionsPage() {
         title="Excluir recorrência"
         description={`Deseja excluir "${transactionToDelete?.description}"?`}
         confirmLabel="Excluir"
+        confirmLoadingLabel="Excluindo..."
         confirmVariant="danger"
+        isLoading={isDeleting}
         onCancel={() => setTransactionToDelete(null)}
         onConfirm={confirmDelete}
       />
