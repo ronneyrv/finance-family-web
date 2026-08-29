@@ -61,24 +61,45 @@ function TransactionForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notify } = useNotification()
 
+  const [categoriesError, setCategoriesError] = useState<string | null>(null)
+  const [subCategoriesError, setSubCategoriesError] = useState<string | null>(null)
+
+  const [financialAccountsError, setFinancialAccountsError] = useState<string | null>(null)
+  const [creditCardsError, setCreditCardsError] = useState<string | null>(null)
+
   useEffect(() => {
     let isCancelled = false
 
     async function loadPaymentSources() {
-      try {
-        const [financialAccountsResponse, creditCardsResponse] = await Promise.all([
-          financialAccountsApi.findAll(),
-          creditCardsApi.findAll(),
-        ])
+      setFinancialAccountsError(null)
+      setCreditCardsError(null)
 
-        if (!isCancelled) {
-          setFinancialAccounts(financialAccountsResponse)
-          setCreditCards(creditCardsResponse)
-        }
-      } catch (error) {
-        if (!isCancelled) {
-          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as contas e cartões.'))
-        }
+      const [financialAccountsResult, creditCardsResult] = await Promise.allSettled([
+        financialAccountsApi.findAll(),
+        creditCardsApi.findAll(),
+      ])
+
+      if (isCancelled) {
+        return
+      }
+
+      if (financialAccountsResult.status === 'fulfilled') {
+        setFinancialAccounts(financialAccountsResult.value)
+      } else {
+        setFinancialAccountsError(
+          getApiErrorMessage(
+            financialAccountsResult.reason,
+            'Não foi possível carregar as contas financeiras.',
+          ),
+        )
+      }
+
+      if (creditCardsResult.status === 'fulfilled') {
+        setCreditCards(creditCardsResult.value)
+      } else {
+        setCreditCardsError(
+          getApiErrorMessage(creditCardsResult.reason, 'Não foi possível carregar os cartões.'),
+        )
       }
     }
 
@@ -94,6 +115,8 @@ function TransactionForm({
 
     async function loadCategories() {
       try {
+        setCategoriesError(null)
+
         const response = await categoriesApi.findAll(type)
 
         if (!isCancelled) {
@@ -109,7 +132,7 @@ function TransactionForm({
         }
       } catch (error) {
         if (!isCancelled) {
-          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
+          setCategoriesError(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
         }
       }
     }
@@ -130,6 +153,8 @@ function TransactionForm({
 
     async function loadSubCategories() {
       try {
+        setSubCategoriesError(null)
+
         const response = await categoriesApi.findSubCategories(categoryId)
 
         if (!isCancelled) {
@@ -137,7 +162,9 @@ function TransactionForm({
         }
       } catch (error) {
         if (!isCancelled) {
-          notify.error(getApiErrorMessage(error, 'Não foi possível carregar as subcategorias.'))
+          setSubCategoriesError(
+            getApiErrorMessage(error, 'Não foi possível carregar as subcategorias.'),
+          )
         }
       }
     }
@@ -186,6 +213,7 @@ function TransactionForm({
     setCategoryId(nextCategoryId)
     setSubCategoryId('')
     setSubCategories([])
+    setSubCategoriesError(null)
   }
 
   function resetFormAfterCreation() {
@@ -353,11 +381,17 @@ function TransactionForm({
 
           {paymentMethod === 'CREDIT_CARD' ? (
             <div className="grid gap-4 sm:grid-cols-4">
-              <CreditCardSelector
-                creditCards={creditCards}
-                value={creditCardId}
-                onChange={setCreditCardId}
-              />
+              <div>
+                <CreditCardSelector
+                  creditCards={creditCards}
+                  value={creditCardId}
+                  onChange={setCreditCardId}
+                />
+
+                {creditCardsError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{creditCardsError}</p>
+                )}
+              </div>
 
               <InstallmentSelector value={installments} onChange={setInstallments} />
 
@@ -378,6 +412,9 @@ function TransactionForm({
                     </option>
                   ))}
                 </select>
+                {categoriesError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{categoriesError}</p>
+                )}
               </label>
 
               <label>
@@ -397,15 +434,24 @@ function TransactionForm({
                     </option>
                   ))}
                 </select>
+                {subCategoriesError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{subCategoriesError}</p>
+                )}
               </label>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-3">
-              <FinancialAccountSelector
-                accounts={availableAccounts}
-                value={accountId}
-                onChange={setAccountId}
-              />
+              <div>
+                <FinancialAccountSelector
+                  accounts={availableAccounts}
+                  value={accountId}
+                  onChange={setAccountId}
+                />
+
+                {financialAccountsError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{financialAccountsError}</p>
+                )}
+              </div>
 
               <label>
                 <span className="text-sm text-(--color-text)">Categoria</span>
@@ -427,6 +473,9 @@ function TransactionForm({
                     </option>
                   ))}
                 </select>
+                {categoriesError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{categoriesError}</p>
+                )}
               </label>
 
               <label>
@@ -446,6 +495,9 @@ function TransactionForm({
                     </option>
                   ))}
                 </select>
+                {subCategoriesError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{subCategoriesError}</p>
+                )}
               </label>
             </div>
           )}
