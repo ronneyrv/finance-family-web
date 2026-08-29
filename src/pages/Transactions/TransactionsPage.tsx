@@ -43,13 +43,15 @@ function TransactionsPage() {
   const [appliedStartDate, setAppliedStartDate] = useState('')
   const [appliedEndDate, setAppliedEndDate] = useState('')
 
+  const [categoriesError, setCategoriesError] = useState<string | null>(null)
+
   useEffect(() => {
     async function loadCategories() {
       try {
         const response = await categoriesApi.findAll()
         setCategories(response)
       } catch (error) {
-        notify.error(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
+        setCategoriesError(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
       }
     }
 
@@ -269,6 +271,10 @@ function TransactionsPage() {
                     </option>
                   ))}
                 </select>
+
+                {categoriesError && (
+                  <p className="mt-1 text-xs text-(--color-text-muted)">{categoriesError}</p>
+                )}
               </label>
 
               <label>
