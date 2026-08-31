@@ -34,34 +34,25 @@ function RecurringTransactionForm({
   onCancelEdit,
 }: RecurringTransactionFormProps) {
   const [description, setDescription] = useState(recurringTransaction?.description ?? '')
-
   const [amount, setAmount] = useState(
     recurringTransaction ? formatCurrencyInputValue(recurringTransaction.amount) : '',
   )
-
   const [type, setType] = useState<TransactionType>(recurringTransaction?.type ?? 'EXPENSE')
-
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
     recurringTransaction?.paymentMethod ?? 'PIX',
   )
-
   const [dayOfMonth, setDayOfMonth] = useState(
     recurringTransaction ? String(recurringTransaction.dayOfMonth) : '',
   )
-
   const [startDate, setStartDate] = useState(recurringTransaction?.startDate ?? '')
-
   const [endDate, setEndDate] = useState(recurringTransaction?.endDate ?? '')
-
   const [categoryId, setCategoryId] = useState(recurringTransaction?.categoryId ?? '')
-
   const [subCategoryId, setSubCategoryId] = useState(recurringTransaction?.subCategoryId ?? '')
-
   const [categories, setCategories] = useState<CategoryResponse[]>([])
-
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
-
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false)
+  const [isLoadingSubCategories, setIsLoadingSubCategories] = useState(false)
 
   const { notify } = useNotification()
 
@@ -97,6 +88,8 @@ function RecurringTransactionForm({
     let isCancelled = false
 
     async function loadCategories() {
+      setIsLoadingCategories(true)
+
       try {
         const response = await categoriesApi.findAll(type)
 
@@ -106,6 +99,10 @@ function RecurringTransactionForm({
       } catch (error) {
         if (!isCancelled) {
           notify.error(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoadingCategories(false)
         }
       }
     }
@@ -125,6 +122,8 @@ function RecurringTransactionForm({
     let isCancelled = false
 
     async function loadSubCategories() {
+      setIsLoadingSubCategories(true)
+
       try {
         const response = await categoriesApi.findSubCategories(categoryId)
 
@@ -134,6 +133,10 @@ function RecurringTransactionForm({
       } catch (error) {
         if (!isCancelled) {
           notify.error(getApiErrorMessage(error, 'Não foi possível carregar as subcategorias.'))
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoadingSubCategories(false)
         }
       }
     }
@@ -290,6 +293,7 @@ function RecurringTransactionForm({
 
             <select
               required
+              disabled={isLoadingCategories || isSubmitting}
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className={fieldClassName}
@@ -308,6 +312,7 @@ function RecurringTransactionForm({
             <span className="text-sm">Subcategoria</span>
 
             <select
+              disabled={isLoadingSubCategories || isSubmitting}
               value={subCategoryId}
               onChange={(e) => setSubCategoryId(e.target.value)}
               className={fieldClassName}
