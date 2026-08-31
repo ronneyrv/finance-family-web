@@ -4,9 +4,15 @@ type CreditCardSelectorProps = {
   creditCards: CreditCardResponse[]
   value: string
   onChange: (value: string) => void
+  disabled?: boolean
 }
 
-function CreditCardSelector({ creditCards, value, onChange }: CreditCardSelectorProps) {
+function CreditCardSelector({
+  creditCards,
+  value,
+  onChange,
+  disabled = false,
+}: CreditCardSelectorProps) {
   return (
     <label htmlFor="credit-card">
       <span className="text-sm text-(--color-text)">Cartão de crédito</span>
@@ -14,6 +20,7 @@ function CreditCardSelector({ creditCards, value, onChange }: CreditCardSelector
       <select
         id="credit-card"
         required
+        disabled={disabled}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2.5 text-(--color-text) transition focus:border-(--color-primary) focus:outline-none"

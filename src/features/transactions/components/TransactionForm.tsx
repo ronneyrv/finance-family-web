@@ -58,6 +58,7 @@ function TransactionForm({
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [subCategories, setSubCategories] = useState<SubCategoryResponse[]>([])
 
+  const [isLoadingPaymentSources, setIsLoadingPaymentSources] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { notify } = useNotification()
 
@@ -67,10 +68,14 @@ function TransactionForm({
   const [financialAccountsError, setFinancialAccountsError] = useState<string | null>(null)
   const [creditCardsError, setCreditCardsError] = useState<string | null>(null)
 
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false)
+  const [isLoadingSubCategories, setIsLoadingSubCategories] = useState(false)
+
   useEffect(() => {
     let isCancelled = false
 
     async function loadPaymentSources() {
+      setIsLoadingPaymentSources(true)
       setFinancialAccountsError(null)
       setCreditCardsError(null)
 
@@ -101,6 +106,8 @@ function TransactionForm({
           getApiErrorMessage(creditCardsResult.reason, 'Não foi possível carregar os cartões.'),
         )
       }
+
+      setIsLoadingPaymentSources(false)
     }
 
     void loadPaymentSources()
@@ -114,6 +121,8 @@ function TransactionForm({
     let isCancelled = false
 
     async function loadCategories() {
+      setIsLoadingCategories(true)
+
       try {
         setCategoriesError(null)
 
@@ -134,6 +143,10 @@ function TransactionForm({
         if (!isCancelled) {
           setCategoriesError(getApiErrorMessage(error, 'Não foi possível carregar as categorias.'))
         }
+      } finally {
+        if (!isCancelled) {
+          setIsLoadingCategories(false)
+        }
       }
     }
 
@@ -152,6 +165,8 @@ function TransactionForm({
     let isCancelled = false
 
     async function loadSubCategories() {
+      setIsLoadingSubCategories(true)
+
       try {
         setSubCategoriesError(null)
 
@@ -165,6 +180,10 @@ function TransactionForm({
           setSubCategoriesError(
             getApiErrorMessage(error, 'Não foi possível carregar as subcategorias.'),
           )
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoadingSubCategories(false)
         }
       }
     }
@@ -386,6 +405,7 @@ function TransactionForm({
                   creditCards={creditCards}
                   value={creditCardId}
                   onChange={setCreditCardId}
+                  disabled={isLoadingPaymentSources || isSubmitting}
                 />
 
                 {creditCardsError && (
@@ -402,6 +422,7 @@ function TransactionForm({
                   required
                   value={categoryId}
                   onChange={(event) => handleCategoryChange(event.target.value)}
+                  disabled={type === 'INCOME' || isLoadingCategories || isSubmitting}
                   className={fieldClassName}
                 >
                   <option value="">Selecione</option>
@@ -422,7 +443,7 @@ function TransactionForm({
 
                 <select
                   value={subCategoryId}
-                  disabled={!categoryId}
+                  disabled={!categoryId || isLoadingSubCategories || isSubmitting}
                   onChange={(event) => setSubCategoryId(event.target.value)}
                   className={fieldClassName}
                 >
@@ -446,6 +467,7 @@ function TransactionForm({
                   accounts={availableAccounts}
                   value={accountId}
                   onChange={setAccountId}
+                  disabled={isLoadingPaymentSources || isSubmitting}
                 />
 
                 {financialAccountsError && (
