@@ -44,6 +44,7 @@ function TransactionsPage() {
   const [appliedEndDate, setAppliedEndDate] = useState('')
 
   const [categoriesError, setCategoriesError] = useState<string | null>(null)
+  const [showTransactionForm, setShowTransactionForm] = useState(false)
 
   useEffect(() => {
     async function loadCategories() {
@@ -108,6 +109,8 @@ function TransactionsPage() {
   }
 
   function handleTransactionCreated() {
+    setShowTransactionForm(false)
+
     if (page !== 0) {
       setPage(0)
     } else {
@@ -196,13 +199,28 @@ function TransactionsPage() {
     <section>
       <PageHeader description="Acompanhe suas receitas e despesas." />
 
-      <TransactionForm
-        key={transactionToEdit?.id ?? 'new'}
-        transaction={transactionToEdit ?? undefined}
-        onCreated={handleTransactionCreated}
-        onUpdated={handleTransactionUpdated}
-        onCancelEdit={() => setTransactionToEdit(null)}
-      />
+      {!showTransactionForm && !transactionToEdit && (
+        <button
+          type="button"
+          onClick={() => setShowTransactionForm(true)}
+          className="mb-6 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+        >
+          + Nova transação
+        </button>
+      )}
+
+      {(showTransactionForm || transactionToEdit) && (
+        <TransactionForm
+          key={transactionToEdit?.id ?? 'new'}
+          transaction={transactionToEdit ?? undefined}
+          onCreated={handleTransactionCreated}
+          onUpdated={handleTransactionUpdated}
+          onCancelEdit={() => {
+            setTransactionToEdit(null)
+            setShowTransactionForm(false)
+          }}
+        />
+      )}
 
       <button
         type="button"
