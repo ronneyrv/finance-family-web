@@ -117,11 +117,7 @@ function RecurringTransactionsPage() {
 
   return (
     <section>
-      <PageHeader
-        section="Planejamento financeiro"
-        title="Transações recorrentes"
-        description="Gerencie receitas e despesas recorrentes."
-      />
+      <PageHeader description="Gerencie receitas e despesas recorrentes." />
 
       <RecurringTransactionForm
         key={editingRecurringTransaction?.id ?? 'new'}

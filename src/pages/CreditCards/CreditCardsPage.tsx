@@ -102,11 +102,7 @@ function CreditCardsPage() {
 
   return (
     <section>
-      <PageHeader
-        section="Cartões"
-        title="Cartões de crédito"
-        description="Gerencie cartões, limites e ciclos de faturamento."
-      />
+      <PageHeader description="Gerencie cartões, limites e ciclos de faturamento." />
 
       <CreditCardForm
         key={creditCardToEdit?.id ?? 'new'}

@@ -101,11 +101,7 @@ function FinancialAccountsPage() {
 
   return (
     <section>
-      <PageHeader
-        section="Contas e saldos"
-        title="Contas financeiras"
-        description="Gerencie suas contas, saldos disponíveis e fontes de pagamento."
-      />
+      <PageHeader description="Gerencie suas contas, saldos disponíveis e fontes de pagamento." />
 
       <div className="mt-6">
         <Button type="button" onClick={() => setIsTransferDialogOpen(true)}>

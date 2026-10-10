@@ -384,11 +384,7 @@ function InvoicesPage() {
 
   return (
     <section>
-      <PageHeader
-        section="Cartões e faturas"
-        title="Faturas"
-        description="Consulte os lançamentos e acompanhe a situação das suas faturas."
-      />
+      <PageHeader description="Consulte os lançamentos e acompanhe a situação das suas faturas." />
 
       {isLoadingCards && <Loading className="mt-8" message="Carregando cartões..." />}
 

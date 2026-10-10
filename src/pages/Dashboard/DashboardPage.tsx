@@ -298,7 +298,6 @@ function DashboardPage() {
             </div>
           </div>
         }
-        title="Dashboard"
         description="Acompanhe a evolução financeira da sua família."
       />
 

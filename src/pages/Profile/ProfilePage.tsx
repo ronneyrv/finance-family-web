@@ -118,11 +118,7 @@ function ProfilePage() {
 
   return (
     <>
-      <PageHeader
-        section="Conta"
-        title="Meu Perfil"
-        description="Gerencie suas informações pessoais."
-      />
+      <PageHeader description="Gerencie suas informações pessoais." />
 
       <Card className="mt-8">
         <form onSubmit={handleSubmit}>

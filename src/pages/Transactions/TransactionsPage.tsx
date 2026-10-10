@@ -194,11 +194,7 @@ function TransactionsPage() {
 
   return (
     <section>
-      <PageHeader
-        section="Movimentações"
-        title="Transações"
-        description="Acompanhe suas receitas e despesas."
-      />
+      <PageHeader description="Acompanhe suas receitas e despesas." />
 
       <TransactionForm
         key={transactionToEdit?.id ?? 'new'}
