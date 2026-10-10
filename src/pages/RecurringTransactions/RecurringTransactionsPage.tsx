@@ -24,6 +24,7 @@ function RecurringTransactionsPage() {
     useState<RecurringTransactionResponse | null>(null)
 
   const [updatingTransactionId, setUpdatingTransactionId] = useState<string | null>(null)
+  const [showRecurringTransactionForm, setShowRecurringTransactionForm] = useState(false)
 
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -119,23 +120,40 @@ function RecurringTransactionsPage() {
     <section>
       <PageHeader description="Gerencie receitas e despesas recorrentes." />
 
-      <RecurringTransactionForm
-        key={editingRecurringTransaction?.id ?? 'new'}
-        recurringTransaction={editingRecurringTransaction ?? undefined}
-        onCreated={(created) => {
-          setRecurringTransactions((current) => [...current, created])
-          scrollToTop()
-        }}
-        onUpdated={(updated) => {
-          setRecurringTransactions((current) =>
-            current.map((item) => (item.id === updated.id ? updated : item)),
-          )
+      {!showRecurringTransactionForm && !editingRecurringTransaction && (
+        <button
+          type="button"
+          onClick={() => setShowRecurringTransactionForm(true)}
+          className="mt-6 mb-2 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+        >
+          + Nova recorrência
+        </button>
+      )}
 
-          setEditingRecurringTransaction(null)
-          scrollToTop()
-        }}
-        onCancelEdit={() => setEditingRecurringTransaction(null)}
-      />
+      {(showRecurringTransactionForm || editingRecurringTransaction) && (
+        <RecurringTransactionForm
+          key={editingRecurringTransaction?.id ?? 'new'}
+          recurringTransaction={editingRecurringTransaction ?? undefined}
+          onCreated={(created) => {
+            setRecurringTransactions((current) => [...current, created])
+            setShowRecurringTransactionForm(false)
+            scrollToTop()
+          }}
+          onUpdated={(updated) => {
+            setRecurringTransactions((current) =>
+              current.map((item) => (item.id === updated.id ? updated : item)),
+            )
+
+            setEditingRecurringTransaction(null)
+            setShowRecurringTransactionForm(false)
+            scrollToTop()
+          }}
+          onCancelEdit={() => {
+            setEditingRecurringTransaction(null)
+            setShowRecurringTransactionForm(false)
+          }}
+        />
+      )}
 
       {isLoading && <Loading className="mt-8" message="Carregando recorrências..." />}
 

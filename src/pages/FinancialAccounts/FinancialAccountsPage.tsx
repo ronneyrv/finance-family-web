@@ -28,6 +28,7 @@ function FinancialAccountsPage() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false)
+  const [showFinancialAccountForm, setShowFinancialAccountForm] = useState(false)
 
   const { notify } = useNotification()
 
@@ -54,6 +55,8 @@ function FinancialAccountsPage() {
       ...currentFinancialAccounts,
       createdFinancialAccount,
     ])
+
+    setShowFinancialAccountForm(false)
   }
 
   function handleFinancialAccountUpdated(updatedFinancialAccount: FinancialAccountResponse) {
@@ -109,13 +112,26 @@ function FinancialAccountsPage() {
         </Button>
       </div>
 
-      <FinancialAccountForm
-        key={financialAccountToEdit?.id ?? 'new'}
-        financialAccount={financialAccountToEdit ?? undefined}
-        onCreated={handleFinancialAccountCreated}
-        onUpdated={handleFinancialAccountUpdated}
-        onCancelEdit={() => setFinancialAccountToEdit(null)}
-      />
+      {!showFinancialAccountForm && !financialAccountToEdit && (
+        <div className="mt-6 mb-2">
+          <Button type="button" onClick={() => setShowFinancialAccountForm(true)}>
+            + Nova conta
+          </Button>
+        </div>
+      )}
+
+      {(showFinancialAccountForm || financialAccountToEdit) && (
+        <FinancialAccountForm
+          key={financialAccountToEdit?.id ?? 'new'}
+          financialAccount={financialAccountToEdit ?? undefined}
+          onCreated={handleFinancialAccountCreated}
+          onUpdated={handleFinancialAccountUpdated}
+          onCancelEdit={() => {
+            setFinancialAccountToEdit(null)
+            setShowFinancialAccountForm(false)
+          }}
+        />
+      )}
 
       {isLoading && <Loading className="mt-8" message="Carregando contas financeiras..." />}
 

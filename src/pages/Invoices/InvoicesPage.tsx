@@ -46,7 +46,7 @@ function InvoicesPage() {
   const [pendingPurchasesErrorMessage, setPendingPurchasesErrorMessage] = useState<string | null>(
     null,
   )
-  const [showPendingPurchases, setShowPendingPurchases] = useState(false)
+  const [showPendingPurchases, setShowPendingPurchases] = useState(true)
 
   const [showPendingPurchaseFilters, setShowPendingPurchaseFilters] = useState(false)
 
@@ -63,6 +63,7 @@ function InvoicesPage() {
   const [appliedPendingPurchaseDescription, setAppliedPendingPurchaseDescription] = useState('')
 
   const [showInvoiceItemFilters, setShowInvoiceItemFilters] = useState(false)
+  const [showInvoiceFilter, setShowInvoiceFilter] = useState(false)
 
   const [invoiceItemStartDate, setInvoiceItemStartDate] = useState('')
   const [invoiceItemEndDate, setInvoiceItemEndDate] = useState('')
@@ -150,15 +151,9 @@ function InvoicesPage() {
     }
   }, [])
 
-  async function handleTogglePendingPurchases() {
-    if (showPendingPurchases) {
-      setShowPendingPurchases(false)
-      return
-    }
-
-    setShowPendingPurchases(true)
-    await loadPendingPurchases()
-  }
+  useEffect(() => {
+    void loadPendingPurchases()
+  }, [loadPendingPurchases])
 
   function handleBackToPendingPurchases() {
     setInvoice(null)
@@ -166,6 +161,7 @@ function InvoicesPage() {
     setShowPendingPurchases(true)
 
     setShowInvoiceItemFilters(false)
+    setShowInvoiceFilter(false)
 
     setInvoiceItemStartDate('')
     setInvoiceItemEndDate('')
@@ -323,8 +319,10 @@ function InvoicesPage() {
 
       setInvoice(response)
       setSelectedCreditCardId(creditCardId)
+      setShowPendingPurchases(false)
 
       setShowInvoiceItemFilters(false)
+      setShowInvoiceFilter(false)
 
       setInvoiceItemStartDate('')
       setInvoiceItemEndDate('')
@@ -390,7 +388,17 @@ function InvoicesPage() {
 
       {cardsErrorMessage && <Alert className="mt-8">{cardsErrorMessage}</Alert>}
 
-      {!isLoadingCards && !cardsErrorMessage && (
+      {!invoice && !showInvoiceFilter && !isLoadingCards && !cardsErrorMessage && (
+        <button
+          type="button"
+          onClick={() => setShowInvoiceFilter(true)}
+          className="mt-6 mb-2 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+        >
+          + Consultar fatura
+        </button>
+      )}
+
+      {!invoice && showInvoiceFilter && !isLoadingCards && !cardsErrorMessage && (
         <InvoiceFilter
           creditCards={creditCards}
           isLoading={isLoadingInvoice}
@@ -400,16 +408,6 @@ function InvoicesPage() {
 
       {!invoice && (
         <>
-          <button
-            type="button"
-            onClick={() => void handleTogglePendingPurchases()}
-            className="mt-8 flex w-full items-center justify-between rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm font-medium text-(--color-text) transition hover:bg-(--color-surface-hover)"
-          >
-            <span>Últimas compras</span>
-
-            {showPendingPurchases ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-          </button>
-
           {showPendingPurchases && (
             <>
               {!isLoadingPendingPurchases && !pendingPurchasesErrorMessage && (

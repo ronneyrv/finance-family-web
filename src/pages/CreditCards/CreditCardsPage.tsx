@@ -22,6 +22,7 @@ function CreditCardsPage() {
   const [creditCardToDelete, setCreditCardToDelete] = useState<CreditCardResponse | null>(null)
 
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showCreditCardForm, setShowCreditCardForm] = useState(false)
 
   const { notify } = useNotification()
 
@@ -59,6 +60,7 @@ function CreditCardsPage() {
 
   function handleCreditCardCreated(createdCreditCard: CreditCardResponse) {
     setCreditCards((currentCreditCards) => [...currentCreditCards, createdCreditCard])
+    setShowCreditCardForm(false)
   }
 
   function handleCreditCardUpdated(updatedCreditCard: CreditCardResponse) {
@@ -104,13 +106,28 @@ function CreditCardsPage() {
     <section>
       <PageHeader description="Gerencie cartões, limites e ciclos de faturamento." />
 
-      <CreditCardForm
-        key={creditCardToEdit?.id ?? 'new'}
-        creditCard={creditCardToEdit ?? undefined}
-        onCreated={handleCreditCardCreated}
-        onUpdated={handleCreditCardUpdated}
-        onCancelEdit={() => setCreditCardToEdit(null)}
-      />
+      {!showCreditCardForm && !creditCardToEdit && (
+        <button
+          type="button"
+          onClick={() => setShowCreditCardForm(true)}
+          className="mt-6 mb-2 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+        >
+          + Novo cartão
+        </button>
+      )}
+
+      {(showCreditCardForm || creditCardToEdit) && (
+        <CreditCardForm
+          key={creditCardToEdit?.id ?? 'new'}
+          creditCard={creditCardToEdit ?? undefined}
+          onCreated={handleCreditCardCreated}
+          onUpdated={handleCreditCardUpdated}
+          onCancelEdit={() => {
+            setCreditCardToEdit(null)
+            setShowCreditCardForm(false)
+          }}
+        />
+      )}
 
       {isLoading && <Loading className="mt-8" message="Carregando cartões..." />}
 
