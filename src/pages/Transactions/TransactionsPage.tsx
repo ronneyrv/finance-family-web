@@ -203,7 +203,7 @@ function TransactionsPage() {
         <button
           type="button"
           onClick={() => setShowTransactionForm(true)}
-          className="mb-6 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+          className="mt-6 mb-2 inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
         >
           + Nova transação
         </button>
