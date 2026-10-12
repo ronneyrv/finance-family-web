@@ -20,13 +20,13 @@ function MobileNavigation() {
             to={path}
             className={({ isActive }) =>
               [
-                'flex min-h-14 flex-col items-center justify-center gap-0.5 px-0.5 text-[10px]',
+                'flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] leading-tight',
                 isActive ? 'text-emerald-400' : 'text-slate-500',
               ].join(' ')
             }
           >
             <Icon size={20} aria-hidden="true" />
-            <span>{label}</span>
+            <span className="w-full truncate text-center">{label}</span>
           </NavLink>
         ))}
       </div>
