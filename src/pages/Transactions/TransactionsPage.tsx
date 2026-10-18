@@ -1,4 +1,5 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Card } from '../../components/ui/card'
 import { Alert } from '../../components/ui/alert'
@@ -45,6 +46,7 @@ function TransactionsPage() {
 
   const [categoriesError, setCategoriesError] = useState<string | null>(null)
   const [showTransactionForm, setShowTransactionForm] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function loadCategories() {
@@ -215,6 +217,7 @@ function TransactionsPage() {
           transaction={transactionToEdit ?? undefined}
           onCreated={handleTransactionCreated}
           onUpdated={handleTransactionUpdated}
+          onPurchaseCreated={() => navigate('/invoices')}
           onCancelEdit={() => {
             setTransactionToEdit(null)
             setShowTransactionForm(false)

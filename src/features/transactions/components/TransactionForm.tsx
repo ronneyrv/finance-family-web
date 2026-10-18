@@ -29,6 +29,7 @@ type TransactionFormProps = {
   onCreated?: (transaction: TransactionResponse) => void
   onUpdated?: (transaction: TransactionResponse) => void
   onCancelEdit?: () => void
+  onPurchaseCreated?: () => void
 }
 
 function TransactionForm({
@@ -36,6 +37,7 @@ function TransactionForm({
   onCreated,
   onUpdated,
   onCancelEdit,
+  onPurchaseCreated,
 }: TransactionFormProps) {
   const [description, setDescription] = useState(transaction?.description ?? '')
   const [amount, setAmount] = useState(
@@ -267,20 +269,8 @@ function TransactionForm({
           subCategoryId: subCategoryId || undefined,
         })
 
-        setDescription('')
-        setAmount('')
-        setTransactionDate('')
-        setCreditCardId('')
-        setInstallments('1')
-        setAccountId('')
-        setCategoryId('')
-        setSubCategoryId('')
-
-        setSubCategories([])
-
-        scrollToTop()
-
         notify.success('Compra no cartão registrada com sucesso.')
+        onPurchaseCreated?.()
 
         return
       }
