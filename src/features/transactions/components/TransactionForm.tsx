@@ -23,6 +23,7 @@ import type { FinancialAccountResponse } from '../../financial-accounts/model/fi
 import type { CreditCardResponse } from '../../credit-cards/model/creditCardTypes'
 import type { CategoryResponse, SubCategoryResponse } from '../../categories/model/categoryTypes'
 import type { PaymentMethod, TransactionResponse, TransactionType } from '../model/transactionTypes'
+import { formatCurrency } from '../../../lib/formatters/currency'
 
 type TransactionFormProps = {
   transaction?: TransactionResponse
@@ -269,7 +270,14 @@ function TransactionForm({
           subCategoryId: subCategoryId || undefined,
         })
 
-        notify.success('Compra no cartão registrada com sucesso.')
+        notify.success(
+          description +
+            ' de ' +
+            formatCurrency(parseCurrencyInput(amount)) +
+            ' em ' +
+            Number(installments) +
+            'X no cartão.',
+        )
         onPurchaseCreated?.()
 
         return
